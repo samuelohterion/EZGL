@@ -120,7 +120,16 @@ class ShaderProgram {
 		setUniformFloat( GLchar const *p_name, GLfloat const &p_value );
 
 		void
-		setUniformMat4x4F( GLchar const *p_name, GLfloat *p_mat4x4 );
+		setUniformVec2F( GLchar const *p_name, GLfloat const *p_vec2 );
+
+		void
+		setUniformVec3F( GLchar const *p_name, GLfloat const *p_vec3 );
+
+		void
+		setUniformVec4F( GLchar const *p_name, GLfloat const *p_vec4 );
+
+		void
+		setUniformMat4x4F( GLchar const *p_name, GLfloat const *p_mat4x4 );
 
 		GLint
 		setVertexAttrib( std::string const &p_name, GLint p_size, GLenum p_type, GLboolean p_normalized, GLsizei p_stride, void const *p_offset );

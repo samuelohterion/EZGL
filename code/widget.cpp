@@ -45,8 +45,9 @@ void GL2DWidget::mouseMoveEvent( QMouseEvent *p_mouseEvent ) {
 
 	if( p_mouseEvent->buttons() | Qt::LeftButton ) {
 
-		mousex = p_mouseEvent->pos( ).x( );
-		mousey = p_mouseEvent->pos( ).y( );
+		mouse = glm::vec2(
+			p_mouseEvent->pos( ).x( ),
+			height( ) - 1 - p_mouseEvent->pos( ).y( ) );
 	}
 }
 
@@ -54,8 +55,9 @@ void GL2DWidget::mousePressEvent( QMouseEvent *p_mouseEvent ) {
 
 	if( p_mouseEvent->buttons() | Qt::LeftButton ) {
 
-		mousex = p_mouseEvent->pos( ).x( );
-		mousey = p_mouseEvent->pos( ).y( );
+		mouse = glm::vec2(
+			p_mouseEvent->pos( ).x( ),
+			height( ) - 1 - p_mouseEvent->pos( ).y( ) );
 	}
 }
 
@@ -79,15 +81,31 @@ GL2DWidget::initializeGL( ) {
 
 	glClearColor( 0., 0., 0., 1. );
 
-	int
-	w = this->width( ),
-	h = this->height( );
+	dims = glm::vec2(
+		this->width( ),
+		this->height( ) );
 
-	glViewport( 0, 0, w, h );
+	rdims.x = 1. / dims.x;
+	rdims.y = 1. / dims.y;
+
+	mouse.x = dims.x / 2.;
+	mouse.y = dims.y / 2.;
+
+	glViewport( 0, 0, dims.x, dims.y );
 }
 
 void
 GL2DWidget::resizeGL( int p_width, int p_height ) {
+
+	dims = glm::vec2(
+		p_width,
+		p_height );
+
+	rdims.x = 1. / dims.x;
+	rdims.y = 1. / dims.y;
+
+	mouse.x = dims.x / 2.;
+	mouse.y = dims.y / 2.;
 
 	glViewport( 0, 0, p_width, p_height );
 }
@@ -115,10 +133,10 @@ GL2DWidget::paintGL( ) {
 	time = 1e-6 * clock.elapsedMicros( );
 
 	shader->setUniformFloat( "time", time );
-	shader->setUniformInt( "width", width( ) );
-	shader->setUniformInt( "height", height( ) );
-	shader->setUniformInt( "mousex", mousex );
-	shader->setUniformInt( "mousey", height( ) - mousey );
+	shader->setUniformVec2F( "dims", &dims[ 0 ] );
+	shader->setUniformVec2F( "rdims", &rdims[ 0 ] );
+	shader->setUniformVec2F( "mouse", &mouse[ 0 ] );
+	shader->setUniformVec3F( "mousebuttons", &mousebuttons[ 0 ] );
 
 
 	glDrawArrays( GL_TRIANGLES, 0, 6 * 2 );

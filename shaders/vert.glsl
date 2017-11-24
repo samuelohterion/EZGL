@@ -2,32 +2,18 @@
 
 precision highp float;
 
-uniform int  width;
-uniform int  height;
-uniform int  mousex;
-uniform int  mousey;
+uniform float time;
+uniform vec2 dims;
+uniform vec2 rdims;
+uniform vec2 mouse;
 
-in vec2 iPos;
-
-out vec2
-oimouse;
-
-out vec2
-oidims;
-
-out vec2
-oirecidims;
-
-out vec2
-oipos;
+in vec2 vertex;
+out vec2 pos;
 
 void
 main( void ) {
 
-	gl_Position = vec4( iPos, 0., 1. );
-	oimouse = vec2( mousex,mousey );
-	oidims = vec2( width, height );
-	oirecidims = vec2( 1./ width, 1. / height );
-	oipos = .5 * ( vec2( 1. ) + iPos ) * ( oidims - 1. );
+	gl_Position = vec4( vertex.x, vertex.y, 0., 1. );
+	pos = .5 * ( vec2( 1. ) + vertex ) * ( dims - 1. );
 }
 

@@ -51,10 +51,13 @@ public QGLWidget {
 		vao,
 		vbo;
 
-		GLint
-		mousex,
-		mousey,
-		mousekey;
+		glm::vec2
+		dims,
+		rdims,
+		mouse;
+
+		glm::vec3
+		mousebuttons;
 
 	public:
 
