@@ -30,6 +30,9 @@ DISTFILES += \
 	../shaders/vert_es_2_0.glsl \
 	../shaders/frag_desktop.glsl \
 	../shaders/vert_desktop.glsl \
+	../shaders/my_frag.glsl \
 	../shaders/frag.glsl \
 	../shaders/vert.glsl \
-	../shaders/hole.glsl
+	../shaders/hole.glsl \
+	../shaders/ubo_frag.glsl \
+	../shaders/ubo_vert.glsl

@@ -237,17 +237,6 @@ ShaderProgram::setUniformFloat( GLchar const *p_name, GLfloat const &p_value ) {
 	glUniform1f( glGetUniformLocation( __id, p_name ), p_value );
 }
 
-GLint
-ShaderProgram::setVertexAttrib( std::string const &p_name, GLint p_size, GLenum p_type, GLboolean p_normalized, GLsizei p_stride, void const *p_offset ) {
-
-	GLint
-	var = glGetAttribLocation( __id,  p_name.c_str( ) );
-	glVertexAttribPointer( var, p_size, p_type, p_normalized, p_stride, p_offset );
-	glEnableVertexAttribArray( var );
-
-	return var;
-}
-
 void
 ShaderProgram::setUniformVec2F( GLchar const *p_name, GLfloat const *p_vec2 ) {
 
@@ -271,4 +260,16 @@ ShaderProgram::setUniformMat4x4F( GLchar const *p_name, GLfloat const *p_mat4x4 
 
 	glUniformMatrix4fv( glGetUniformLocation( __id, p_name ), 1, false, p_mat4x4 );
 }
+
+GLint
+ShaderProgram::setVertexAttrib( std::string const &p_name, GLint p_size, GLenum p_type, GLboolean p_normalized, GLsizei p_stride, void const *p_offset ) {
+
+	GLint
+	var = glGetAttribLocation( __id,  p_name.c_str( ) );
+	glVertexAttribPointer( var, p_size, p_type, p_normalized, p_stride, p_offset );
+	glEnableVertexAttribArray( var );
+
+	return var;
+}
+
 

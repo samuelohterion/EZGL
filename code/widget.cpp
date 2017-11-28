@@ -3,7 +3,11 @@
 
 GL2DWidget::GL2DWidget( QWidget *parent ) :
 QGLWidget( parent ),
-ui( new Ui::Widget ) {
+ui( new Ui::Widget ),
+vao( 0 ),
+vbo( 0 ),
+vert_ubo( 0 ),
+frag_ubo( 0 ) {
 
 	ui->setupUi( this );
 
@@ -25,6 +29,8 @@ ui( new Ui::Widget ) {
 
 GL2DWidget::~GL2DWidget( ){
 
+	glDeleteBuffers( 1, &frag_ubo);
+	glDeleteBuffers( 1, &vert_ubo);
 	glDeleteBuffers( 1, &vbo );
 	glDeleteVertexArrays( 1, &vao );
 
@@ -34,34 +40,46 @@ GL2DWidget::~GL2DWidget( ){
 }
 
 void
+GL2DWidget::keyPressEvent( QKeyEvent *p_keyEvent ) {
+
+}
+
+void
 GL2DWidget::keyReleaseEvent( QKeyEvent *p_keyEvent ) {
 
-	if( p_keyEvent->key( ) == 'F' )
+	if( p_keyEvent->key( ) == Qt::Key_F )
 
 		toggleFullscreen( );
+
+	if( p_keyEvent->key( ) == Qt::Key_Escape || p_keyEvent->key( ) == Qt::Key_Q )
+
+		close( );
 }
 
-void GL2DWidget::mouseMoveEvent( QMouseEvent *p_mouseEvent ) {
+void
+GL2DWidget::mouseMoveEvent( QMouseEvent *p_mouseEvent ) {
 
-	if( p_mouseEvent->buttons() | Qt::LeftButton ) {
+	if( p_mouseEvent->buttons( ) | Qt::LeftButton ) {
 
-		mouse = glm::vec2(
+		fvars.mouse = glm::vec2(
 			p_mouseEvent->pos( ).x( ),
 			height( ) - 1 - p_mouseEvent->pos( ).y( ) );
 	}
 }
 
-void GL2DWidget::mousePressEvent( QMouseEvent *p_mouseEvent ) {
+void
+GL2DWidget::mousePressEvent( QMouseEvent *p_mouseEvent ) {
 
-	if( p_mouseEvent->buttons() | Qt::LeftButton ) {
+	if( p_mouseEvent->buttons( ) | Qt::LeftButton ) {
 
-		mouse = glm::vec2(
+		fvars.mouse = glm::vec2(
 			p_mouseEvent->pos( ).x( ),
 			height( ) - 1 - p_mouseEvent->pos( ).y( ) );
 	}
 }
 
-void GL2DWidget::mouseReleaseEvent( QMouseEvent *p_mouseEvent ) {
+void
+GL2DWidget::mouseReleaseEvent( QMouseEvent *p_mouseEvent ) {
 
 //	if( p_mouseEvent->buttons() | Qt::LeftButton ) {
 
@@ -75,39 +93,42 @@ void GL2DWidget::mouseReleaseEvent( QMouseEvent *p_mouseEvent ) {
 void
 GL2DWidget::initializeGL( ) {
 
+	fvars.dims = glm::vec2(
+		this->width( ),
+		this->height( ) );
+
+//	fvars.rdims.x = 1. / fvars.dims.x;
+//	fvars.rdims.y = 1. / fvars.dims.y;
+
+	fvars.mouse.x = fvars.dims.x / 2.;
+	fvars.mouse.y = fvars.dims.y / 2.;
+
+	glViewport( 0, 0, fvars.dims.x, fvars.dims.y );
+
 	createShaders( );
 
 	createBufferObjects( );
 
+	createUniformBufferObjects( );
+
 	glClearColor( 0., 0., 0., 1. );
 
-	dims = glm::vec2(
-		this->width( ),
-		this->height( ) );
-
-	rdims.x = 1. / dims.x;
-	rdims.y = 1. / dims.y;
-
-	mouse.x = dims.x / 2.;
-	mouse.y = dims.y / 2.;
-
-	glViewport( 0, 0, dims.x, dims.y );
 }
 
 void
 GL2DWidget::resizeGL( int p_width, int p_height ) {
 
-	dims = glm::vec2(
+	fvars.dims = glm::vec2(
 		p_width,
 		p_height );
 
-	rdims.x = 1. / dims.x;
-	rdims.y = 1. / dims.y;
+//	fvars.rdims.x = 1. / fvars.dims.x;
+//	fvars.rdims.y = 1. / fvars.dims.y;
 
-	mouse.x = dims.x / 2.;
-	mouse.y = dims.y / 2.;
+	fvars.mouse.x = fvars.dims.x / 2.;
+	fvars.mouse.y = fvars.dims.y / 2.;
 
-	glViewport( 0, 0, p_width, p_height );
+	glViewport( 0, 0, fvars.dims.x, fvars.dims.y );
 }
 
 void
@@ -125,32 +146,43 @@ GL2DWidget::paintGL( ) {
 
 	//glmatrices.pvm = proj * view * model;
 
-	glBindVertexArray( vao );
-
 	shader->bind( );
 
-	float
-	time = 1e-6 * clock.elapsedMicros( );
+	fvars.time = 1e-6 * clock.elapsedMicros( );
 
-	shader->setUniformFloat( "time", time );
-	shader->setUniformVec2F( "dims", &dims[ 0 ] );
-	shader->setUniformVec2F( "rdims", &rdims[ 0 ] );
-	shader->setUniformVec2F( "mouse", &mouse[ 0 ] );
-	shader->setUniformVec3F( "mousebuttons", &mousebuttons[ 0 ] );
+	glBindBuffer( GL_UNIFORM_BUFFER, vert_ubo );
+
+	glBufferData( GL_UNIFORM_BUFFER, uniformBlockSizeVertVars, &vvars, GL_STATIC_DRAW );
+
+	glBindBuffer( GL_UNIFORM_BUFFER, frag_ubo );
+
+	glBufferData( GL_UNIFORM_BUFFER, uniformBlockSizeFragVars, &fvars, GL_STATIC_DRAW );
+
+	glBindVertexArray( vao );
+
+//	shader->setUniformFloat( "time", time );
+//	shader->setUniformVec2F( "dims", &dims[ 0 ] );
+//	shader->setUniformVec2F( "rdims", &rdims[ 0 ] );
+//	shader->setUniformVec2F( "mouse", &mouse[ 0 ] );
+//	shader->setUniformVec4F( "mousebuttons", &mousebuttons[ 0 ] );
+//	shader->setUniformFloat(); "mousebuttons", &mousebuttons[ 0 ] );
 
 
 	glDrawArrays( GL_TRIANGLES, 0, 6 * 2 );
 //	glLineWidth( 10 + 5 * sin( time * .00123 ) );
 //	glDrawArrays( GL_LINES, 0, 3 * 2 * 6 );
 
-	shader->release( );
 	glBindVertexArray( 0 );
+
+	glBindBuffer( GL_UNIFORM_BUFFER, 0 );
+
+	shader->release( );
 }
 
 void
 GL2DWidget::createShaders( ) {
 
-	shader = new ShaderProgram( "../../shaders/vert.glsl", "../../shaders/frag.glsl", Shader::FROM_FILE );
+	shader = new ShaderProgram( "../../shaders/ubo_vert.glsl", "../../shaders/ubo_frag.glsl", Shader::FROM_FILE );
 }
 
 void
@@ -182,6 +214,56 @@ GL2DWidget::createBufferObjects( ) {
 	glDisableVertexAttribArray( 0 );
 }
 
+bool
+GL2DWidget::createUniformBufferObjects( ) {
+
+	int
+	maxBindingPoints;
+
+	glGetIntegerv( GL_MAX_UNIFORM_BUFFER_BINDINGS, &maxBindingPoints );
+
+	if( maxBindingPoints < 2 ) {
+
+		return false;
+	}
+
+	glDeleteBuffers( 1, &vert_ubo );
+	glDeleteBuffers( 1, &frag_ubo );
+
+
+	glGenBuffers( 1, &vert_ubo );
+	glBindBuffer( GL_UNIFORM_BUFFER, vert_ubo );
+
+	uniformBlockIndexVertVars = glGetUniformBlockIndex( shader->id( ), "VertVars" );
+
+	glGetActiveUniformBlockiv( shader->id( ), uniformBlockIndexVertVars, GL_UNIFORM_BLOCK_DATA_SIZE, &uniformBlockSizeVertVars );
+
+	glBindBufferBase( GL_UNIFORM_BUFFER, 1, vert_ubo );
+
+	glUniformBlockBinding( shader->id( ), uniformBlockIndexVertVars, 1 );
+
+	glBufferData( GL_UNIFORM_BUFFER, uniformBlockSizeVertVars, NULL, GL_STATIC_DRAW );
+
+
+	glGenBuffers( 1, &frag_ubo );
+	glBindBuffer( GL_UNIFORM_BUFFER, frag_ubo );
+
+	uniformBlockIndexFragVars = glGetUniformBlockIndex( shader->id( ), "FragVars" );
+
+	glGetActiveUniformBlockiv( shader->id( ), uniformBlockIndexFragVars, GL_UNIFORM_BLOCK_DATA_SIZE, &uniformBlockSizeFragVars );
+
+	glBindBufferBase( GL_UNIFORM_BUFFER, 1, frag_ubo );
+
+	glUniformBlockBinding( shader->id( ), uniformBlockIndexFragVars, 1 );
+
+	glBufferData( GL_UNIFORM_BUFFER, uniformBlockSizeFragVars, NULL, GL_STATIC_DRAW );
+
+
+	glBindBuffer( GL_UNIFORM, 0 );
+
+	return true;
+}
+
 void
 GL2DWidget::toggleFullscreen( ) {
 
@@ -207,6 +289,3 @@ GL2DWidget::slotStopTimer( ) {
 
 	timer.stop( );
 }
-
-
-

@@ -49,17 +49,43 @@ public QGLWidget {
 
 		GLuint
 		vao,
-		vbo;
+		vbo,
+		vert_ubo,
+		frag_ubo,
+		uniformBlockIndexVertVars,
+		uniformBlockIndexFragVars;
 
-		glm::vec2
-		dims,
-		rdims,
-		mouse;
+		GLint
+		uniformBlockSizeVertVars,
+		uniformBlockSizeFragVars;
 
-		glm::vec3
-		mousebuttons;
+		struct VertVars {
+
+			glm::vec2
+			dims;
+
+		} vvars;
+
+		struct FragVars {
+
+			glm::vec2
+			dims;
+
+//			float
+//			g,h;
+
+			glm::vec2
+			mouse;
+
+			float
+			time,time2;
+
+		} fvars;
 
 	public:
+
+		void
+		keyPressEvent( QKeyEvent *p_keyEvent );
 
 		void
 		keyReleaseEvent( QKeyEvent *p_keyEvent );
@@ -91,6 +117,9 @@ public QGLWidget {
 
 		void
 		createBufferObjects( );
+
+		bool
+		createUniformBufferObjects( );
 
 		void
 		toggleFullscreen( );
