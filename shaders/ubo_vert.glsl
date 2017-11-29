@@ -19,3 +19,4 @@ main( ) {
 //	pos = .5 * ( 1. + in_position ) * ( dims + sin( time ) );
 	pos = .5 * ( 1. + in_position ) * ( dims - 1. );
 }
+

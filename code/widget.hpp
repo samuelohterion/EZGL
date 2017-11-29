@@ -9,6 +9,7 @@
 #include "clock.hpp"
 #include "shaderprogram.hpp"
 #include <glm/glm.hpp>
+#include <GL/gl.h>
 #include <GLES3/gl3.h>
 
 namespace Ui {
@@ -49,38 +50,20 @@ public QGLWidget {
 
 		GLuint
 		vao,
-		vbo,
-		vert_ubo,
-		frag_ubo,
-		uniformBlockIndexVertVars,
-		uniformBlockIndexFragVars;
+        vbo;
 
-		GLint
-		uniformBlockSizeVertVars,
-		uniformBlockSizeFragVars;
-
-		struct VertVars {
+        struct Vars {
 
 			glm::vec2
 			dims;
-
-		} vvars;
-
-		struct FragVars {
-
-			glm::vec2
-			dims;
-
-//			float
-//			g,h;
 
 			glm::vec2
 			mouse;
 
 			float
-			time,time2;
+            time;
 
-		} fvars;
+        } vars;
 
 	public:
 

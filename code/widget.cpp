@@ -5,9 +5,7 @@ GL2DWidget::GL2DWidget( QWidget *parent ) :
 QGLWidget( parent ),
 ui( new Ui::Widget ),
 vao( 0 ),
-vbo( 0 ),
-vert_ubo( 0 ),
-frag_ubo( 0 ) {
+vbo( 0 ) {
 
 	ui->setupUi( this );
 
@@ -29,8 +27,6 @@ frag_ubo( 0 ) {
 
 GL2DWidget::~GL2DWidget( ){
 
-	glDeleteBuffers( 1, &frag_ubo);
-	glDeleteBuffers( 1, &vert_ubo);
 	glDeleteBuffers( 1, &vbo );
 	glDeleteVertexArrays( 1, &vao );
 
@@ -61,7 +57,7 @@ GL2DWidget::mouseMoveEvent( QMouseEvent *p_mouseEvent ) {
 
 	if( p_mouseEvent->buttons( ) | Qt::LeftButton ) {
 
-		fvars.mouse = glm::vec2(
+        vars.mouse = glm::vec2(
 			p_mouseEvent->pos( ).x( ),
 			height( ) - 1 - p_mouseEvent->pos( ).y( ) );
 	}
@@ -72,7 +68,7 @@ GL2DWidget::mousePressEvent( QMouseEvent *p_mouseEvent ) {
 
 	if( p_mouseEvent->buttons( ) | Qt::LeftButton ) {
 
-		fvars.mouse = glm::vec2(
+        vars.mouse = glm::vec2(
 			p_mouseEvent->pos( ).x( ),
 			height( ) - 1 - p_mouseEvent->pos( ).y( ) );
 	}
@@ -93,23 +89,23 @@ GL2DWidget::mouseReleaseEvent( QMouseEvent *p_mouseEvent ) {
 void
 GL2DWidget::initializeGL( ) {
 
-	fvars.dims = glm::vec2(
+    vars.dims = glm::vec2(
 		this->width( ),
 		this->height( ) );
 
 //	fvars.rdims.x = 1. / fvars.dims.x;
 //	fvars.rdims.y = 1. / fvars.dims.y;
 
-	fvars.mouse.x = fvars.dims.x / 2.;
-	fvars.mouse.y = fvars.dims.y / 2.;
+    vars.mouse.x = vars.dims.x / 2.;
+    vars.mouse.y = vars.dims.y / 2.;
 
-	glViewport( 0, 0, fvars.dims.x, fvars.dims.y );
+    glViewport( 0, 0, vars.dims.x, vars.dims.y );
 
 	createShaders( );
 
 	createBufferObjects( );
 
-	createUniformBufferObjects( );
+//	createUniformBufferObjects( );
 
 	glClearColor( 0., 0., 0., 1. );
 
@@ -118,17 +114,17 @@ GL2DWidget::initializeGL( ) {
 void
 GL2DWidget::resizeGL( int p_width, int p_height ) {
 
-	fvars.dims = glm::vec2(
+    vars.dims = glm::vec2(
 		p_width,
 		p_height );
 
 //	fvars.rdims.x = 1. / fvars.dims.x;
 //	fvars.rdims.y = 1. / fvars.dims.y;
 
-	fvars.mouse.x = fvars.dims.x / 2.;
-	fvars.mouse.y = fvars.dims.y / 2.;
+    vars.mouse.x = vars.dims.x / 2.;
+    vars.mouse.y = vars.dims.y / 2.;
 
-	glViewport( 0, 0, fvars.dims.x, fvars.dims.y );
+    glViewport( 0, 0, vars.dims.x, vars.dims.y );
 }
 
 void
@@ -148,8 +144,8 @@ GL2DWidget::paintGL( ) {
 
 	shader->bind( );
 
-	fvars.time = 1e-6 * clock.elapsedMicros( );
-
+    vars.time = 1e-6 * clock.elapsedMicros( );
+/*
 	glBindBuffer( GL_UNIFORM_BUFFER, vert_ubo );
 
 	glBufferData( GL_UNIFORM_BUFFER, uniformBlockSizeVertVars, &vvars, GL_STATIC_DRAW );
@@ -157,13 +153,13 @@ GL2DWidget::paintGL( ) {
 	glBindBuffer( GL_UNIFORM_BUFFER, frag_ubo );
 
 	glBufferData( GL_UNIFORM_BUFFER, uniformBlockSizeFragVars, &fvars, GL_STATIC_DRAW );
-
+*/
 	glBindVertexArray( vao );
 
-//	shader->setUniformFloat( "time", time );
-//	shader->setUniformVec2F( "dims", &dims[ 0 ] );
+    shader->setUniformFloat( "time", vars.time );
+    shader->setUniformVec2F( "dims", &vars.dims[ 0 ] );
 //	shader->setUniformVec2F( "rdims", &rdims[ 0 ] );
-//	shader->setUniformVec2F( "mouse", &mouse[ 0 ] );
+    shader->setUniformVec2F( "mouse", &vars.mouse[ 0 ] );
 //	shader->setUniformVec4F( "mousebuttons", &mousebuttons[ 0 ] );
 //	shader->setUniformFloat(); "mousebuttons", &mousebuttons[ 0 ] );
 
@@ -182,7 +178,7 @@ GL2DWidget::paintGL( ) {
 void
 GL2DWidget::createShaders( ) {
 
-	shader = new ShaderProgram( "../../shaders/ubo_vert.glsl", "../../shaders/ubo_frag.glsl", Shader::FROM_FILE );
+    shader = new ShaderProgram( "../../shaders/mandel_vert.glsl", "../../shaders/mandel_frag.glsl", Shader::FROM_FILE );
 }
 
 void
@@ -216,7 +212,7 @@ GL2DWidget::createBufferObjects( ) {
 
 bool
 GL2DWidget::createUniformBufferObjects( ) {
-
+/*
 	int
 	maxBindingPoints;
 
@@ -260,8 +256,8 @@ GL2DWidget::createUniformBufferObjects( ) {
 
 
 	glBindBuffer( GL_UNIFORM, 0 );
-
-	return true;
+*/
+    return true;
 }
 
 void
