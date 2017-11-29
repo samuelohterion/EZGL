@@ -36,5 +36,10 @@ DISTFILES += \
 	../shaders/hole.glsl \
 	../shaders/ubo_frag.glsl \
 	../shaders/ubo_vert.glsl \
+<<<<<<< HEAD
     ../shaders/mandel_vert.glsl \
     ../shaders/mandel_frag.glsl
+=======
+	../shaders/m_frag.glsl \
+	../shaders/m_vert.glsl
+>>>>>>> 207fb90fa53f4bf1f925c10a5eac51f7e54e16ab
