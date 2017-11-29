@@ -35,4 +35,6 @@ DISTFILES += \
 	../shaders/vert.glsl \
 	../shaders/hole.glsl \
 	../shaders/ubo_frag.glsl \
-	../shaders/ubo_vert.glsl
+	../shaders/ubo_vert.glsl \
+	../shaders/m_frag.glsl \
+	../shaders/m_vert.glsl

@@ -4,6 +4,7 @@
 #include <QGLWidget>
 #include <QMouseEvent>
 #include <QKeyEvent>
+#include <QWheelEvent>
 #include <QEvent>
 #include <QTimer>
 #include "clock.hpp"
@@ -49,38 +50,24 @@ public QGLWidget {
 
 		GLuint
 		vao,
-		vbo,
-		vert_ubo,
-		frag_ubo,
-		uniformBlockIndexVertVars,
-		uniformBlockIndexFragVars;
+		vbo;
 
-		GLint
-		uniformBlockSizeVertVars,
-		uniformBlockSizeFragVars;
-
-		struct VertVars {
+		struct Vars {
 
 			glm::vec2
 			dims;
-
-		} vvars;
-
-		struct FragVars {
-
-			glm::vec2
-			dims;
-
-//			float
-//			g,h;
 
 			glm::vec2
 			mouse;
 
-			float
-			time,time2;
+			GLfloat
+			time,
+			zoom;
 
-		} fvars;
+			GLuint
+			buttons;
+
+		} vars;
 
 	public:
 
@@ -98,6 +85,9 @@ public QGLWidget {
 
 		void
 		mouseReleaseEvent( QMouseEvent *p_mouseEvent );
+
+		void
+		wheelEvent( QWheelEvent *p_wheelEvent );
 
 	public:
 
@@ -117,9 +107,6 @@ public QGLWidget {
 
 		void
 		createBufferObjects( );
-
-		bool
-		createUniformBufferObjects( );
 
 		void
 		toggleFullscreen( );
