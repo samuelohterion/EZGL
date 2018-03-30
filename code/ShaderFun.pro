@@ -14,13 +14,12 @@ CONFIG += c++11
 
 SOURCES += \
 	main.cpp \
-	widget.cpp \
-	shaderprogram.cpp
+	widget.cpp
 
 HEADERS += \
 	widget.hpp \
-	clock.hpp \
-	shaderprogram.hpp
+	clock.hpp  \
+	glrenderer.hpp
 
 FORMS += \
 	widget.ui
@@ -36,10 +35,13 @@ DISTFILES += \
 	../shaders/hole.glsl \
 	../shaders/ubo_frag.glsl \
 	../shaders/ubo_vert.glsl \
-<<<<<<< HEAD
-    ../shaders/mandel_vert.glsl \
-    ../shaders/mandel_frag.glsl
-=======
 	../shaders/m_frag.glsl \
-	../shaders/m_vert.glsl
->>>>>>> 207fb90fa53f4bf1f925c10a5eac51f7e54e16ab
+	../shaders/m_vert.glsl \
+	../shaders/raytrace.vsh \
+	../shaders/raytrace.fsh \
+	../shaders/stage1.vsh \
+	../shaders/stage1.fsh \
+	../shaders/stage2.vsh \
+	../shaders/stage2.fsh \
+    ../shaders/stage3.vsh \
+    ../shaders/stage3.fsh

@@ -7,11 +7,12 @@
 #include <QWheelEvent>
 #include <QEvent>
 #include <QTimer>
-#include "clock.hpp"
-#include "shaderprogram.hpp"
-#include <glm/glm.hpp>
+#include "../../../includes/glm/glm/glm.hpp"
 #include <GL/gl.h>
 #include <GLES3/gl3.h>
+#include <map>
+#include "clock.hpp"
+#include "glrenderer.hpp"
 
 namespace Ui {
 
@@ -43,23 +44,34 @@ public QGLWidget {
 
 	public:
 
-		std::vector< float >
+/*
+ * std::vector< GLfloat >
 		vertices;
 
 		ShaderProgram
-		*shader;
+		*shader1,
+		*shader2;
 
 		GLuint
 		vao,
-		vbo;
+		vbo,
+		fbo,
+		rbo,
+		tbo;
 
-		struct Vars {
+		std::vector< GLfloat >
+		tex;
+*/
+		GLRenderer
+		glr;
+
+		struct ViewControlVars {
 
 			glm::vec2
-			dims;
-
-			glm::vec2
-			mouse;
+			dims,
+			ratio,
+			mouse,
+			dmouse;
 
 			GLfloat
 			time,
@@ -68,7 +80,35 @@ public QGLWidget {
 			GLuint
 			buttons;
 
-		} vars;
+		} viewControlVars;
+
+		struct Shader1Vars {
+
+			glm::vec2
+			dims,
+			ratio,
+			cntr;
+
+			float
+			zoom,
+			time;
+		} s1Vars;
+
+		struct Shader2Vars {
+
+			glm::vec2
+			dims;
+
+			float
+			time;
+		} s2Vars;
+
+		struct Shader3Vars {
+
+			glm::vec2
+			dimsRec;
+		} s3Vars;
+
 
 	public:
 
@@ -104,10 +144,7 @@ public QGLWidget {
 	public:
 
 		void
-		createShaders( );
-
-		void
-		createBufferObjects( );
+		updateShaderUniforms( );
 
 		void
 		toggleFullscreen( );
