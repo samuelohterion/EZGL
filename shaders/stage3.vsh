@@ -13,7 +13,7 @@ vCoords;
 void
 main( void ) {
 
-vCoords = vec2( coords.x, coords.y );
+	vCoords = vec2( coords.x, coords.y );
 
-gl_Position = vec4( verts, 0, 1 );
+	gl_Position = vec4( verts, 0, 1 );
 }

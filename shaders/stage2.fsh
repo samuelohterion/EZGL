@@ -18,11 +18,11 @@ fCol;
 void
 main( void ) {
 
-vec3
-	d;
+	vec3
+		d;
 
-d.r  = texture( TX1, vCoords ).r;
+	d.r  = texture( TX1, vCoords ).r;
 	d.g  = floor( 32. * log2( d.r ) );
-	d.b =  d.r / 256.;
+	d.b  = d.r / 256.;
 	fCol = vec4( d, 1 );
 }

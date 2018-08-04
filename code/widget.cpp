@@ -160,7 +160,7 @@ GL2DWidget::initializeGL( ) {
 
 	glr.frameBuffer( "FB1" );
 
-	glr.addTexture(
+	glr.texture(
 		"TX1",
 		new GLRenderer::Texture(
 			"TX1",
@@ -174,7 +174,7 @@ GL2DWidget::initializeGL( ) {
 		)
 	);
 
-	glr.addTexture(
+	glr.texture(
 		"TX2",
 		new GLRenderer::Texture(
 			"TX2",

@@ -22,7 +22,7 @@ vPos;
 void
 main( void ) {
 
-vPos = ratio * ( zoom * verts - cntr );
+	vPos = ratio * ( zoom * verts - cntr );
 
-gl_Position = vec4( verts, 0, 1 );
+	gl_Position = vec4( verts, 0, 1 );
 }

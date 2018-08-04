@@ -9,7 +9,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include "../../../includes/glm/glm/glm.hpp"
+#include "../../glm/glm/glm.hpp"
 #include <GLES3/gl32.h>
 #include "clock.hpp"
 
@@ -114,7 +114,7 @@ GLRenderer {
 					glTexParameteri( target, GL_TEXTURE_WRAP_S, wrap_s );
 					glTexParameteri( target, GL_TEXTURE_WRAP_T, wrap_t );
 
-					glTexImage2D( target, level, internal_format, width, height, 0, format, type, 0 );
+					glTexImage2D( target, level, internal_format, width, height, 0, format, type, nullptr );
 
 					glBindTexture( GL_TEXTURE_2D, 0 );
 				}
@@ -145,7 +145,7 @@ GLRenderer {
 					glBindTexture( target, id );
 
 					//glTexStorage2D( target, 0, GL_RG32F, simWidth, simHeight );
-					glTexImage2D( target, level, internal_format, width, height, 0, format, type, 0 );
+					glTexImage2D( target, level, internal_format, width, height, 0, format, type, nullptr );
 
 					glBindTexture( GL_TEXTURE_2D, 0 );
 				}
@@ -257,7 +257,7 @@ GLRenderer {
 
 				ShaderCode( GLenum p_shaderType, CStr &p_text, CreationMethod const &p_method ) :
 				__type( p_shaderType ),
-				__infoLog( 0 ) {
+				__infoLog( nullptr ) {
 
 					if( p_method == FROM_CODE ) {
 
@@ -309,7 +309,7 @@ GLRenderer {
 
 					__id = glCreateShader( __type );
 
-					glShaderSource( __id, 1, &cStr, 0 );
+					glShaderSource( __id, 1, &cStr, nullptr );
 					glCompileShader( __id );
 
 					glGetShaderiv( __id, GL_COMPILE_STATUS, &__success );
@@ -318,7 +318,7 @@ GLRenderer {
 
 						__infoLog = new GLchar[ 0x200 ];
 
-						glGetShaderInfoLog( __id, 0x200, 0, __infoLog );
+						glGetShaderInfoLog( __id, 0x200, nullptr, __infoLog );
 
 						std::string const
 						shaderTypeString =
@@ -407,11 +407,11 @@ GLRenderer {
 				Shader( CStr &p_name, CStr &p_vertexText, CStr &p_fragmentText, ShaderCode::CreationMethod const &p_method ) :
 				Named( p_name ),
 				__vertexShader( new ShaderCode( GL_VERTEX_SHADER, p_vertexText, p_method ) ),
-				__geometryShader( 0 ),
+				__geometryShader( nullptr ),
 				__fragmentShader( new ShaderCode( GL_FRAGMENT_SHADER, p_fragmentText, p_method ) ),
 				__success( 0 ),
 				__id( 0 ),
-				__infoLog( 0 ) {
+				__infoLog( nullptr ) {
 
 					if( __vertexShader && __fragmentShader &&
 						__vertexShader->ok( ) && __fragmentShader->ok( ) ) {
@@ -428,7 +428,7 @@ GLRenderer {
 
 							__infoLog = new GLchar[ 0x200 ];
 
-							glGetProgramInfoLog( __id, 0x200, 0, __infoLog );
+							glGetProgramInfoLog( __id, 0x200, nullptr, __infoLog );
 							std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << __infoLog << std::endl;
 
 							return;
@@ -442,7 +442,7 @@ GLRenderer {
 				Shader( CStr &p_name, CStr &p_vertexText, CStr &p_fragmentText, ShaderCode::CreationMethod const &p_method, std::vector< GLuint > const &p_locId, std::vector< Str > const &p_names ) :
 				Named( p_name ),
 				__vertexShader( new ShaderCode( GL_VERTEX_SHADER, p_vertexText, p_method ) ),
-				__geometryShader( 0 ),
+				__geometryShader( nullptr ),
 				__fragmentShader( new ShaderCode( GL_FRAGMENT_SHADER, p_fragmentText, p_method ) ),
 				__success( 0 ) {
 
@@ -466,7 +466,7 @@ GLRenderer {
 
 							__infoLog = new GLchar[ 0x200 ];
 
-							glGetProgramInfoLog( __id, 0x200, 0, __infoLog );
+							glGetProgramInfoLog( __id, 0x200, nullptr, __infoLog );
 							std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << __infoLog << std::endl;
 
 							return;
@@ -484,7 +484,7 @@ GLRenderer {
 				__fragmentShader( new ShaderCode( GL_FRAGMENT_SHADER, p_fragmentText, p_method ) ),
 				__success( 0 ),
 				__id( 0 ),
-				__infoLog( 0 ) {
+				__infoLog( nullptr ) {
 
 					if( __vertexShader && __geometryShader && __fragmentShader &&
 						__vertexShader->ok( ) && __geometryShader->ok( ) && __fragmentShader->ok( ) ) {
@@ -502,7 +502,7 @@ GLRenderer {
 
 							__infoLog = new GLchar[ 0x200 ];
 
-							glGetProgramInfoLog( __id, 0x200, 0, __infoLog );
+							glGetProgramInfoLog( __id, 0x200, nullptr, __infoLog );
 							std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << __infoLog << std::endl;
 
 							return;
@@ -542,7 +542,7 @@ GLRenderer {
 
 							__infoLog = new GLchar[ 0x200 ];
 
-							glGetProgramInfoLog( __id, 0x200, 0, __infoLog );
+							glGetProgramInfoLog( __id, 0x200, nullptr, __infoLog );
 							std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << __infoLog << std::endl;
 
 							return;
@@ -1428,10 +1428,12 @@ GLRenderer {
 			return *currentFrameBuffer;
 		}
 
-		void
-		addTexture( CStr p_name, Texture *p_texture ) {
+		Texture
+		&texture( CStr p_name, Texture *p_texture ) {
 
 			tx[ p_name ] = p_texture;
+
+			return * tx[ p_name ];
 		}
 
 		Shader

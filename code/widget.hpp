@@ -7,7 +7,7 @@
 #include <QWheelEvent>
 #include <QEvent>
 #include <QTimer>
-#include "../../../includes/glm/glm/glm.hpp"
+#include "../../glm/glm/glm.hpp"
 #include <GL/gl.h>
 #include <GLES3/gl3.h>
 #include <map>
@@ -44,24 +44,6 @@ public QGLWidget {
 
 	public:
 
-/*
- * std::vector< GLfloat >
-		vertices;
-
-		ShaderProgram
-		*shader1,
-		*shader2;
-
-		GLuint
-		vao,
-		vbo,
-		fbo,
-		rbo,
-		tbo;
-
-		std::vector< GLfloat >
-		tex;
-*/
 		GLRenderer
 		glr;
 
@@ -108,7 +90,6 @@ public QGLWidget {
 			glm::vec2
 			dimsRec;
 		} s3Vars;
-
 
 	public:
 
