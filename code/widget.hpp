@@ -19,7 +19,7 @@ namespace Ui {
 	class Widget;
 }
 
-class GL2DWidget :
+class GLWidget :
 public QGLWidget {
 
 		Q_OBJECT
@@ -27,9 +27,9 @@ public QGLWidget {
 	public:
 
 		explicit
-		GL2DWidget( QWidget *parent = 0 );
+		GLWidget( QWidget *parent = nullptr );
 
-		~GL2DWidget( );
+		~GLWidget( );
 
 	private:
 
@@ -44,52 +44,17 @@ public QGLWidget {
 
 	public:
 
-		GLRenderer
-		glr;
+//		GLRenderer
+//		glr;
 
-		struct ViewControlVars {
+		QMap< QString, GLProject * >
+		projects;
 
-			glm::vec2
-			dims,
-			ratio,
-			mouse,
-			dmouse;
+		QString
+		currentProject;
 
-			GLfloat
-			time,
-			zoom;
-
-			GLuint
-			buttons;
-
-		} viewControlVars;
-
-		struct Shader1Vars {
-
-			glm::vec2
-			dims,
-			ratio,
-			cntr;
-
-			float
-			zoom,
-			time;
-		} s1Vars;
-
-		struct Shader2Vars {
-
-			glm::vec2
-			dims;
-
-			float
-			time;
-		} s2Vars;
-
-		struct Shader3Vars {
-
-			glm::vec2
-			dimsRec;
-		} s3Vars;
+		ViewControlData
+		viewControlData;
 
 	public:
 

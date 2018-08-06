@@ -1,7 +1,7 @@
 #include "widget.hpp"
 #include "ui_widget.h"
 
-GL2DWidget::GL2DWidget( QWidget *parent ) :
+GLWidget::GLWidget( QWidget *parent ) :
 QGLWidget( parent ),
 ui( new Ui::Widget ) {
 
@@ -20,18 +20,20 @@ ui( new Ui::Widget ) {
 
 	connect( &timer, SIGNAL( timeout( ) ), this, SLOT( slotTimerFun( ) ) );
 
-	viewControlVars.zoom = 1.;
-
 	timer.start( 1000. );
 }
 
-GL2DWidget::~GL2DWidget( ){
+GLWidget::~GLWidget( ){
+
+	for( auto & p : projects )
+
+		delete p;
 
 	delete ui;
 }
 
 void
-GL2DWidget::keyPressEvent( QKeyEvent *p_keyEvent ) {
+GLWidget::keyPressEvent( QKeyEvent *p_keyEvent ) {
 
 	p_keyEvent->accept( );
 
@@ -41,7 +43,7 @@ GL2DWidget::keyPressEvent( QKeyEvent *p_keyEvent ) {
 }
 
 void
-GL2DWidget::keyReleaseEvent( QKeyEvent *p_keyEvent ) {
+GLWidget::keyReleaseEvent( QKeyEvent *p_keyEvent ) {
 
 	if( p_keyEvent->key( ) == Qt::Key_F )
 
@@ -59,17 +61,10 @@ GL2DWidget::keyReleaseEvent( QKeyEvent *p_keyEvent ) {
 }
 
 void
-GL2DWidget::mouseMoveEvent( QMouseEvent *p_mouseEvent ) {
+GLWidget::mouseMoveEvent( QMouseEvent *p_mouseEvent ) {
 
-	if( p_mouseEvent->buttons( ) & Qt::LeftButton ) {
-
-//		viewControlVars.mouse = glm::vec2(
-//			p_mouseEvent->pos( ).x( ),
-//			height( ) - 1 - p_mouseEvent->pos( ).y( ) );
-
-//		s1Vars.cntr.x += viewControlVars.zoom * ( 2. * ( viewControlVars.mouse.x / viewControlVars.dims.x ) - 1. );
-//		s1Vars.cntr.y += viewControlVars.zoom * ( 2. * ( viewControlVars.mouse.y / viewControlVars.dims.y ) - 1. );
-	}
+	viewControlData.mousex = p_mouseEvent->pos( ).x( );
+	viewControlData.mousey = height( ) - 1 - p_mouseEvent->pos( ).y( );
 
 	p_mouseEvent->accept( );
 
@@ -79,21 +74,10 @@ GL2DWidget::mouseMoveEvent( QMouseEvent *p_mouseEvent ) {
 }
 
 void
-GL2DWidget::mousePressEvent( QMouseEvent *p_mouseEvent ) {
+GLWidget::mousePressEvent( QMouseEvent *p_mouseEvent ) {
 
-	if( p_mouseEvent->buttons( ) & Qt::LeftButton ) {
-
-		viewControlVars.dmouse = viewControlVars.mouse;
-
-		viewControlVars.mouse = glm::vec2(
-			p_mouseEvent->pos( ).x( ),
-			height( ) - 1 - p_mouseEvent->pos( ).y( ) );
-
-		viewControlVars.dmouse = viewControlVars.mouse - viewControlVars.dmouse;
-
-		s1Vars.cntr.x -= 2 * viewControlVars.dmouse.x / viewControlVars.dims.x * viewControlVars.zoom;
-		s1Vars.cntr.y -= 2 * viewControlVars.dmouse.y / viewControlVars.dims.y * viewControlVars.zoom;
-	}
+	viewControlData.mousex = p_mouseEvent->pos( ).x( );
+	viewControlData.mousey = height( ) - 1 - p_mouseEvent->pos( ).y( );
 
 	p_mouseEvent->accept( );
 
@@ -103,11 +87,12 @@ GL2DWidget::mousePressEvent( QMouseEvent *p_mouseEvent ) {
 }
 
 void
-GL2DWidget::mouseReleaseEvent( QMouseEvent *p_mouseEvent ) {
+GLWidget::mouseReleaseEvent( QMouseEvent *p_mouseEvent ) {
+
+	viewControlData.mousex = p_mouseEvent->pos( ).x( );
+	viewControlData.mousey = height( ) - 1 - p_mouseEvent->pos( ).y( );
 
 	p_mouseEvent->accept( );
-
-	viewControlVars.mouse = glm::vec2( .5 * viewControlVars.dims.x, .5 * viewControlVars.dims.y );
 
 	if( !timer.isActive( ) )
 
@@ -115,11 +100,9 @@ GL2DWidget::mouseReleaseEvent( QMouseEvent *p_mouseEvent ) {
 }
 
 void
-GL2DWidget::wheelEvent( QWheelEvent *p_wheelEvent ) {
+GLWidget::wheelEvent( QWheelEvent *p_wheelEvent ) {
 
-	viewControlVars.zoom *= ( 1. - p_wheelEvent->angleDelta( ).ry( ) / 6000. );
-
-	std::cout << viewControlVars.zoom << std::endl;
+	viewControlData.ticks = p_wheelEvent->delta( );
 
 	p_wheelEvent->accept( );
 
@@ -129,32 +112,32 @@ GL2DWidget::wheelEvent( QWheelEvent *p_wheelEvent ) {
 }
 
 void
-GL2DWidget::initializeGL( ) {
+GLWidget::initializeGL( ) {
 
-	viewControlVars.dims = glm::vec2( width( ), height( ) );
+	viewControlData.width = width( );
+	viewControlData.height = height( );
 
-	viewControlVars.mouse.x = viewControlVars.dims.x / 2.;
-	viewControlVars.mouse.y = viewControlVars.dims.y / 2.;
-	viewControlVars.dmouse.x = 0.;
-	viewControlVars.dmouse.y = 0.;
+	viewControlData.mousex = viewControlData.width >> 1;
+	viewControlData.mousey = viewControlData.height >> 1;
+	viewControlData.ticks = 0;
 
-	viewControlVars.buttons = 0;
-	viewControlVars.zoom = 100.;
+	viewControlData.buttons = 0;
+	viewControlData.time    = 0;
 
-	glViewport( 0, 0, viewControlVars.dims.x, viewControlVars.dims.y );
-
-	glr.shader( "S1", "../../shaders/stage1.vsh", "../../shaders/stage1.fsh", GLRenderer::ShaderCode::FROM_FILE );
+	glViewport( 0, 0, viewControlData.width, viewControlData.height );
+/*
+	glr.shader( "S1", "../shaders/stage1.vsh", "../shaders/stage1.fsh", GLRenderer::ShaderCode::FROM_FILE );
 	glr.shader( "S1" ).addUniform( "ratio", GLRenderer::Shader::VEC2,  GLRenderer::Shader::SCALAR, &s1Vars.ratio );
 	glr.shader( "S1" ).addUniform( "cntr", GLRenderer::Shader::VEC2,  GLRenderer::Shader::SCALAR, &s1Vars.cntr );
 	glr.shader( "S1" ).addUniform( "time", GLRenderer::Shader::FLOAT,  GLRenderer::Shader::SCALAR, &s1Vars.time );
 	glr.shader( "S1" ).addUniform( "zoom", GLRenderer::Shader::FLOAT, GLRenderer::Shader::SCALAR, &s1Vars.zoom );
 
 
-	glr.shader( "S2", "../../shaders/stage2.vsh", "../../shaders/stage2.fsh", GLRenderer::ShaderCode::FROM_FILE );
+	glr.shader( "S2", "../shaders/stage2.vsh", "../shaders/stage2.fsh", GLRenderer::ShaderCode::FROM_FILE );
 	glr.shader( "S2" ).addUniform( "dims", GLRenderer::Shader::VEC2,  GLRenderer::Shader::SCALAR, &s2Vars.dims );
 	glr.shader( "S2" ).addUniform( "time", GLRenderer::Shader::FLOAT,  GLRenderer::Shader::SCALAR, &s2Vars.time );
 
-	glr.shader( "S3", "../../shaders/stage3.vsh", "../../shaders/stage3.fsh", GLRenderer::ShaderCode::FROM_FILE );
+	glr.shader( "S3", "../shaders/stage3.vsh", "../shaders/stage3.fsh", GLRenderer::ShaderCode::FROM_FILE );
 	glr.shader( "S3" ).addUniform( "dimsRec", GLRenderer::Shader::VEC2,  GLRenderer::Shader::SCALAR, &s3Vars.dimsRec );
 //	glr.sh[ "S3" ]->addUniform( "time", GLRenderer::Shader::FLOAT,  GLRenderer::Shader::SCALAR, &s2Vars.time );
 
@@ -224,83 +207,95 @@ GL2DWidget::initializeGL( ) {
 	glr.program( "PRG3" ).addInTexture( "TX2" );
 	glr.program( "PRG3" ).setVertexArray( "VA2" );
 	glr.program( "PRG3" ).build( );
+*/
 
+	if( projects.contains( currentProject ) ) {
+
+		projects[ currentProject ]->setViewControlData( & viewControlData );
+		projects[ currentProject ]->init( );
+	}
+/*
+	glr.shader( "Fun1", "../shaders/fun1.vsh", "../shaders/fun1.fsh", GLRenderer::ShaderCode::FROM_FILE );
+
+//	glm::vec2
+//	ratio = viewControlData.ratio,
+//	dims  = viewControlData.dims;
+
+//	GLfloat
+//	time  = viewControlData.time;
+
+	glr.shader( "Fun1" ).addUniform( "width", GLRenderer::Shader::INT,  GLRenderer::Shader::SCALAR, & viewControlData.width);
+	glr.shader( "Fun1" ).addUniform( "height", GLRenderer::Shader::INT,  GLRenderer::Shader::SCALAR, & viewControlData.height);
+	glr.shader( "Fun1" ).addUniform( "time", GLRenderer::Shader::FLOAT,  GLRenderer::Shader::SCALAR, & viewControlData.time );
+
+	glr.vertices( "VA" )
+	//	    x      y
+		<< -1. << -1.
+		<< +1. << -1.
+		<< -1. << +1.
+		<< +1. << +1.;
+
+	glr.vertices( "VA" ).addAttrib( "verts", 2, 0 );
+
+	glr.program( "FUN" ).setShader( "Fun1" );
+	glr.program( "FUN" ).setVertexArray( "VA" );
+	glr.program( "FUN" ).build( );
+*/
 	glClearColor( 01., 0., 0., 1. );
 }
 
 void
-GL2DWidget::resizeGL( int p_width, int p_height ) {
+GLWidget::resizeGL( int p_width, int p_height ) {
 
-	viewControlVars.dims = glm::vec2(
-		p_width,
-		p_height );
+	viewControlData.width = p_width;
+	viewControlData.height = p_height;
 
-	viewControlVars.mouse.x = viewControlVars.dims.x / 2.;
-	viewControlVars.mouse.y = viewControlVars.dims.y / 2.;
+	viewControlData.mousex = viewControlData.width >> 1;
+	viewControlData.mousey = viewControlData.height >> 1;
 
-	glViewport( 0, 0, viewControlVars.dims.x, viewControlVars.dims.y );
+	glViewport( 0, 0, viewControlData.width, viewControlData.height );
 
-	glr.tx[ "TX1" ]->resize( viewControlVars.dims.x, viewControlVars.dims.y );
-	glr.tx[ "TX2" ]->resize( viewControlVars.dims.x, viewControlVars.dims.y );
+	if( projects.contains( currentProject ) ) {
+
+		projects[ currentProject ]->resize( p_width, p_height );
+	}
+//	glr.tx[ "TX1" ]->resize( viewControlVars.dims.x, viewControlVars.dims.y );
+//	glr.tx[ "TX2" ]->resize( viewControlVars.dims.x, viewControlVars.dims.y );
 }
 
 void
-GL2DWidget::paintGL( ) {
+GLWidget::paintGL( ) {
 
-	updateShaderUniforms( );
+	if( projects.contains( currentProject ) ) {
 
-	glDisable( GL_DEPTH_TEST );
-	glEnable( GL_CULL_FACE );
-
-	glClear( GL_COLOR_BUFFER_BIT );
-
-	glr.run( { "PRG1", "PRG2", "PRG3" } );
+		projects[ currentProject ]->paint( );
+	}
 }
 
 void
-GL2DWidget::updateShaderUniforms( ) {
-
-	viewControlVars.ratio =
-		viewControlVars.dims.x < viewControlVars.dims.y
-			? glm::vec2( 1., viewControlVars.dims.y / viewControlVars.dims.x )
-			: glm::vec2( viewControlVars.dims.x / viewControlVars.dims.y, 1. );
-
-	s1Vars.dims = viewControlVars.dims;
-	s1Vars.ratio = viewControlVars.ratio;
-	s1Vars.zoom = viewControlVars.zoom;
-	s1Vars.time = viewControlVars.time;
-
-	s2Vars.dims = viewControlVars.dims;
-	s2Vars.time = viewControlVars.time;
-
-	s3Vars.dimsRec.x = 1. / viewControlVars.dims.x;
-	s3Vars.dimsRec.y = 1. / viewControlVars.dims.y;
-}
-
-void
-GL2DWidget::toggleFullscreen( ) {
+GLWidget::toggleFullscreen( ) {
 
 	setWindowState( windowState( ) ^ Qt::WindowFullScreen );
 }
 
 void
-GL2DWidget::slotStartTimer( ) {
+GLWidget::slotStartTimer( ) {
 
 	timer.start( );
 }
 
 void
-GL2DWidget::slotTimerFun( ) {
+GLWidget::slotTimerFun( ) {
 
 	timer.setInterval( 1000. / 60. );
 
-	viewControlVars.time = 1e-6 * clock.elapsedMicros( );
+	viewControlData.time = 1e-6f * clock.elapsedMicros( );
 
 	updateGL( );
 }
 
 void
-GL2DWidget::slotStopTimer( ) {
+GLWidget::slotStopTimer( ) {
 
 	timer.stop( );
 }

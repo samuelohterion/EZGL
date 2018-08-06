@@ -18,31 +18,31 @@ typedef std::string Str;
 typedef Str const CStr;
 
 class
-GLRenderer {
+Named {
+
+	private :
+
+		CStr
+		__name;
 
 	public :
 
-		class
-		Named {
+		Named( CStr const & p_name ) :
+		__name( p_name ) {
 
-			private :
+		}
 
-				CStr
-				__name;
+		CStr
+		name( ) const {
 
-			public :
+			return __name;
+		}
+};
 
-				Named( CStr &p_name ) :
-				__name( p_name ) {
+class
+GLRenderer {
 
-				}
-
-				CStr
-				name( ) const {
-
-					return __name;
-				}
-		};
+	public :
 
 		class
 		Texture :
@@ -194,20 +194,6 @@ GLRenderer {
 
 				}
 
-/*				virtual void
-				init( ) {
-
-					*this
-					//	    x      y     s     t
-						<< -1. << -1. << 0. << 0.
-						<< +1. << -1. << 1. << 0.
-						<< -1. << +1. << 0. << 1.
-						<< +1. << +1. << 1. << 1.;
-
-					addAttrib( "verts", 2 );
-					addAttrib( "coords", 2 );
-				}
-*/
 				VertexArray
 				&operator << ( GLfloat const & p_value ) {
 
@@ -1060,54 +1046,6 @@ GLRenderer {
 				}
 		};
 
-//		class Shader :
-//		public Named {
-
-//			public :
-
-//				ShaderProgram
-//				*prg;
-
-//			public :
-
-//				Shader( CStr &p_name, CStr &p_vertexText, CStr &p_fragmentText, ShaderCode::CreationMethod const &p_method ) :
-//				Named( p_name ),
-//				prg( new ShaderProgram( p_name, p_vertexText, p_fragmentText, p_method ) ) {
-//				}
-
-//				Shader( CStr &p_name, CStr &p_vertexText, CStr &p_fragmentText, ShaderCode::CreationMethod const &p_method, std::vector< GLuint > const &p_locId, std::vector< Str > const &p_names ) :
-//				Named( p_name ),
-//				prg( new ShaderProgram( p_name, p_vertexText, p_fragmentText, p_method, p_locId, p_names ) ) {
-//				}
-
-//				Shader( CStr &p_name, CStr &p_vertexText, CStr &p_geometryText, CStr &p_fragmentText, ShaderCode::CreationMethod const &p_method ) :
-//				Named( p_name ),
-//				prg( new ShaderProgram( p_name, p_vertexText, p_geometryText, p_fragmentText, p_method ) ) {
-//				}
-
-//				Shader( CStr &p_name, CStr &p_vertexText, CStr &p_geometryText, CStr &p_fragmentText, ShaderCode::CreationMethod const &p_method, std::vector< GLuint > const &p_locId, std::vector< Str > const &p_names ) :
-//				Named( p_name ),
-//				prg( new ShaderProgram( p_name, p_vertexText, p_geometryText, p_fragmentText, p_method, p_locId, p_names ) ) {
-//				}
-
-//				~Shader( ) {
-
-//					delete prg;
-//				}
-
-//				void
-//				bind( ) {
-
-//					prg->bind( );
-//				}
-
-//				void
-//				release( ) {
-
-//					prg->release( );
-//				}
-//		};
-
 		class FrameBuffer :
 		public Named {
 
@@ -1519,5 +1457,61 @@ GLRenderer {
 		}
 };
 
+struct
+ViewControlData {
+
+	GLint
+	width,
+	height,
+	mousex,
+	mousey,
+	ticks;
+
+	GLuint
+	buttons;
+
+	GLfloat
+	time;
+};
+
+class GLProject :
+public Named {
+
+	public:
+
+		explicit GLProject( CStr p_name, ViewControlData * p_vcd = nullptr ) :
+		Named( p_name ),
+		vcd( p_vcd ) {
+
+		}
+
+		virtual
+		~GLProject(  ) {
+
+		}
+
+	public:
+
+		GLRenderer
+		glr;
+
+		ViewControlData
+		* vcd;
+
+		void
+		setViewControlData( ViewControlData * p_vcd ) {
+
+			vcd = p_vcd;
+		}
+
+		virtual void
+		init( ) = 0;
+
+		virtual void
+		resize( int p_width, int p_height ) = 0;
+
+		virtual void
+		paint( ) = 0;
+};
 #endif // GLRENDERER_HPP
 

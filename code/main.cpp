@@ -1,3 +1,4 @@
+#include "myglproject.hpp"
 #include "widget.hpp"
 #include <QApplication>
 
@@ -7,8 +8,14 @@ main( int argc, char *argv[ ] ) {
 	QApplication
 	a( argc, argv );
 
-	GL2DWidget
+	GLWidget
 	w;
+
+	MyGLProject
+	* glp = new MyGLProject( "p1" );
+
+	w.projects[ "p1" ] = glp;
+	w.currentProject = "p1";
 
 	w.show( );
 
