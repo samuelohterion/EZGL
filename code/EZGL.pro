@@ -49,4 +49,6 @@ DISTFILES += \
 	../shaders/stage3.vsh \
 	../shaders/stage3.fsh \
 	../shaders/fun1.vsh \
-	../shaders/fun1.fsh
+	../shaders/fun1.fsh \
+    ../shaders/mousecontrolled.vsh \
+    ../shaders/phong.fsh

@@ -11,8 +11,8 @@ ui( new Ui::Widget ) {
 	glFormat;
 	glFormat.setVersion( 3, 3 );
 	glFormat.setProfile( QGLFormat::CoreProfile); // Requires >=Qt-4.8.0
-//	glFormat.setSampleBuffers( true );
-//	glFormat.setDoubleBuffer( true );
+	glFormat.setSampleBuffers( true );
+	glFormat.setDoubleBuffer( true );
 
 	this->setFormat( glFormat );
 
@@ -241,7 +241,7 @@ GLWidget::initializeGL( ) {
 	glr.program( "FUN" ).setVertexArray( "VA" );
 	glr.program( "FUN" ).build( );
 */
-	glClearColor( 01., 0., 0., 1. );
+//	glClearColor( 0., 0., 0., 1. );
 }
 
 void
