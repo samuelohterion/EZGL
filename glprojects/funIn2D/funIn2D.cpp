@@ -1,14 +1,21 @@
-#include "myglproject.hpp"
+#include "funIn2D.hpp"
+#include <string>
+#include <dirent.h>
 
-MyGLProject::MyGLProject( CStr const & p_name, ViewControlData * p_vcd ) :
+FunIn2D::FunIn2D( CStr const & p_name, ViewControlData * p_vcd ) :
 GLProject( p_name, p_vcd ) {
 
 }
 
 void
-MyGLProject::init( ) {
-
-	glr.shader( "Fun1", "../shaders/fun1.vsh", "../shaders/fun1.fsh", GLRenderer::ShaderCode::FROM_FILE );
+FunIn2D::init( ) {
+/*
+	char *path=nullptr;
+	size_t size = 255;
+	path=getcwd(path,size);
+	std::cout<<"\n current Path"<<path;
+*/
+	glr.shader( "Fun1", "../EZGL/glprojects/funIn2D/fun1.vsh", "../EZGL/glprojects/funIn2D/fun1.fsh", GLRenderer::ShaderCode::FROM_FILE );
 
 	glr.shader( "Fun1" ).addUniform( "width", GLRenderer::Shader::INT,  GLRenderer::Shader::SCALAR, & vcd->width );
 	glr.shader( "Fun1" ).addUniform( "height", GLRenderer::Shader::INT,  GLRenderer::Shader::SCALAR, & vcd->height );
@@ -19,7 +26,9 @@ MyGLProject::init( ) {
 		<< -1. << -1.
 		<< +1. << -1.
 		<< -1. << +1.
-		<< +1. << +1.;
+		<< +1. << +1.
+
+		<< GLRenderer::VertexArray::Object( 0, 4, GL_TRIANGLE_STRIP );
 
 	glr.vertices( "VA" ).addAttrib( "verts", 2, 0 );
 
@@ -29,12 +38,12 @@ MyGLProject::init( ) {
 }
 
 void
-MyGLProject::resize( int p_width, int p_height ) {
+FunIn2D::resize( int p_width, int p_height ) {
 
 }
 
 void
-MyGLProject::paint( ) {
+FunIn2D::paint( ) {
 
 	glDisable( GL_DEPTH_TEST );
 	glEnable( GL_CULL_FACE );

@@ -10,6 +10,10 @@
 #include <string>
 #include <vector>
 #include "../../glm/glm/glm.hpp"
+#include "../../glm/glm/vec3.hpp" // glm::vec3
+#include "../../glm/glm/vec4.hpp" // glm::vec4
+#include "../../glm/glm/mat4x4.hpp" // glm::mat4
+#include "../../glm/glm/gtc/matrix_transform.hpp" // glm::translate, glm::rotate, glm::scale, glm::perspective
 #include <GLES3/gl32.h>
 #include "clock.hpp"
 
@@ -160,16 +164,40 @@ GLRenderer {
 				GLuint
 				vaoId,
 				vboId,
-				stride,
-				vertexCount;
+				stride;
+
+				GLenum
+				usage;
 
 				struct Attr{ GLint size, offs; };
+
+				class Object {
+
+					public:
+
+						Object( GLint p_offs, GLint p_size, GLenum p_mode ) :
+						offs( p_offs ),
+						size( p_size ),
+						mode( p_mode ) {
+
+						}
+
+					GLint
+					offs,
+					size;
+
+					GLenum
+					mode;
+				};
 
 				std::map< CStr, Attr >
 				attr;
 
 				std::vector< GLfloat >
 				arr;
+
+				std::vector< Object >
+				obj;
 
 			public :
 
@@ -178,7 +206,7 @@ GLRenderer {
 				vaoId( 0 ),
 				vboId( 0 ),
 				stride( 0 ),
-				vertexCount( 0 ) {
+				usage( GL_STATIC_DRAW ) {
 
 					glGenVertexArrays( 1, &vaoId );
 //					glBindVertexArray( vaoId );
@@ -202,14 +230,48 @@ GLRenderer {
 					return *this;
 				}
 
-				void
-				addAttrib( std::string const & p_name, GLuint const &p_size, GLuint const &p_offset ) {
+				VertexArray
+				&operator << ( Object const & p_object ) {
+
+					obj.push_back( p_object );
+
+					return *this;
+				}
+
+				VertexArray
+				&operator << ( glm::vec3 const & p_value ) {
+
+					arr.push_back( p_value.x );
+					arr.push_back( p_value.y );
+					arr.push_back( p_value.z );
+
+					return *this;
+				}
+
+				VertexArray
+				&addAttrib( std::string const & p_name, GLuint const &p_size, GLuint const &p_offset ) {
 
 					attr[ p_name ].size = p_size;
 					attr[ p_name ].offs = p_offset;
 					stride += p_size;
 
-					vertexCount = arr.size( ) / stride;
+//					vertexCount = arr.size( ) / stride;
+
+					return *this;
+				}
+
+				VertexArray
+				&setUsage( GLenum const & p_usage ) {
+
+					usage = p_usage;
+
+					return *this;
+				}
+
+				int
+				vertexCount( ) {
+
+					return arr.size( ) / stride;
 				}
 
 				void
@@ -671,16 +733,20 @@ GLRenderer {
 
 		public:
 
-				void
-				addUniform( CStr & p_name, TYPE p_ut, SIZE p_us, void * p_data ) {
+				Shader
+				&addUniform( CStr & p_name, TYPE p_ut, SIZE p_us, void * p_data ) {
 
 					uniform[ p_name ] = new Uniform( p_ut, p_us, p_data );
+
+					return *this;
 				}
 
-				void
-				setUniformSamplerId( CStr & p_name, GLint p_samplerId ) {
+				Shader
+				&setUniformSamplerId( CStr & p_name, GLint p_samplerId ) {
 
 					glUniform1i( glGetUniformLocation( __id, p_name.c_str( ) ), p_samplerId );
+
+					return *this;
 				}
 
 				void
@@ -1119,34 +1185,44 @@ GLRenderer {
 
 			public :
 
-				void
-				setFrameBuffer( CStr & p_frameBufferName ) {
+				Program
+				&setFrameBuffer( CStr & p_frameBufferName ) {
 
 					frameBuffer = p_frameBufferName;
+
+					return *this;
 				}
 
-				void
-				setVertexArray( CStr & p_vertexArrayName ) {
+				Program
+				&setVertexArray( CStr & p_vertexArrayName ) {
 
 					vertexArray = p_vertexArrayName;
+
+					return *this;
 				}
 
-				void
-				addInTexture( CStr & p_textureName ) {
+				Program
+				&addInTexture( CStr & p_textureName ) {
 
 					inTextures.push_back( p_textureName );
+
+					return *this;
 				}
 
-				void
-				addOutTexture( CStr & p_textureName ) {
+				Program
+				&addOutTexture( CStr & p_textureName ) {
 
 					outTextures.push_back( p_textureName );
+
+					return *this;
 				}
 
-				void
-				setShader( CStr & p_shaderName ) {
+				Program
+				&setShader( CStr & p_shaderName ) {
 
 					shader = p_shaderName;
+
+					return *this;
 				}
 
 				void
@@ -1241,6 +1317,10 @@ GLRenderer {
 
 					va->bind( );
 
+					if( va->usage != GL_STATIC_DRAW )
+
+						glBufferData( GL_ARRAY_BUFFER, sizeof( float ) * va->arr.size( ), va->arr.data( ), va->usage );
+
 					Shader
 					*sh = glr->sh[ shader ];
 
@@ -1254,12 +1334,16 @@ GLRenderer {
 						*tx = glr->tx[ inTextures[ i ] ];
 
 						tx->bind( );
-
 					}
 
 					sh->sendUniforms( );
 					//addUniformInt( tx->name( ).c_str( ), i );
-					glDrawArrays( GL_TRIANGLE_STRIP, 0, va->vertexCount );
+
+					for( auto i : va->obj )
+
+						glDrawArrays( i.mode, i.offs, i.size );
+
+//					glDrawArrays( mode, 0, va->vertexCount );
 
 					for( GLuint i = 0; i < inTextures.size( ); ++ i ) {
 

@@ -14,7 +14,6 @@ view,
 projection;
 
 out vec4
-vPos,
 vVerts,
 vNorms,
 vColors;
@@ -27,9 +26,7 @@ main( void ) {
 	mvp = projection * mv,
 	norm = inverse( mvp ) ;
 
-//	vVerts  = mvp * vec4( vertices, 1. );
-	vPos= vec4( vertices, 1. );
-	vVerts = mvp * vPos;
+	vVerts  = mvp * vec4( vertices, 1. );
 	vNorms  = vec4( norms, 1. ) * norm;
 	vColors = vec4( colors, 1. );
 

@@ -1,5 +1,6 @@
-#include "myglproject.hpp"
-#include "funwithtextures.hpp"
+#include "glprojects/cube/cube.hpp"
+#include "glprojects/funIn2D/funIn2D.hpp"
+#include "glprojects/lighttest/lighttest.hpp"
 #include "widget.hpp"
 #include <QApplication>
 
@@ -12,16 +13,20 @@ main( int argc, char *argv[ ] ) {
 	GLWidget
 	w;
 
-	MyGLProject
-	* glp = new MyGLProject( "p1" );
+	FunIn2D
+	* glp = new FunIn2D( "p1" );
 
-	FunWithTextures
-	* fwt = new FunWithTextures( "p2" );
+	Cube
+	* fwt = new Cube( "p2" );
+
+	LightTest
+	* lt = new LightTest( "p3" );
 
 	w.projects[ "p1" ] = glp;
 	w.projects[ "p2" ] = fwt;
+	w.projects[ "p3" ] = lt;
 
-	w.currentProject = "p2";
+	w.currentProject = "p3";
 
 	w.show( );
 
