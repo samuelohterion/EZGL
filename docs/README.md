@@ -4,125 +4,102 @@ for convenient OpenGL coding in Qt.
 
 ## with glrenderer 
 u can do things like
-### void GL2DWidget::initializeGL( )
+### "simpletriangle.hpp"
+    #ifndef SIMPLETRIANGLE_HPP
+    #define SIMPLETRIANGLE_HPP
+    #include "code/glrenderer.hpp"
 
-	viewControlVars.dims = glm::vec2( width( ), height( ) );
+    class SimpleTriangle :
+    public GLProject {
 
-	viewControlVars.mouse.x = viewControlVars.dims.x / 2.;
-	viewControlVars.mouse.y = viewControlVars.dims.y / 2.;
-	viewControlVars.dmouse.x = 0.;
-	viewControlVars.dmouse.y = 0.;
+	    public:
 
-	viewControlVars.buttons = 0;
-	viewControlVars.zoom = 100.;
+		    SimpleTriangle( CStr const & p_name, ViewControlData *p_vcd = nullptr );
 
-	glViewport( 0, 0, viewControlVars.dims.x, viewControlVars.dims.y );
+	    public:
 
-	glr.shader( "S1", "../../shaders/stage1.vsh", "../../shaders/stage1.fsh", GLRenderer::ShaderCode::FROM_FILE );
-	glr.shader( "S1" ).addUniform( "ratio", GLRenderer::Shader::VEC2,  GLRenderer::Shader::SCALAR, &s1Vars.ratio );
-	glr.shader( "S1" ).addUniform( "cntr", GLRenderer::Shader::VEC2,  GLRenderer::Shader::SCALAR, &s1Vars.cntr );
-	glr.shader( "S1" ).addUniform( "time", GLRenderer::Shader::FLOAT,  GLRenderer::Shader::SCALAR, &s1Vars.time );
-	glr.shader( "S1" ).addUniform( "zoom", GLRenderer::Shader::FLOAT, GLRenderer::Shader::SCALAR, &s1Vars.zoom );
+		    glm::mat4
+		    m,v,p,
+		    mv;
 
+	    public:
 
-	glr.shader( "S2", "../../shaders/stage2.vsh", "../../shaders/stage2.fsh", GLRenderer::ShaderCode::FROM_FILE );
-	glr.shader( "S2" ).addUniform( "dims", GLRenderer::Shader::VEC2,  GLRenderer::Shader::SCALAR, &s2Vars.dims );
-	glr.shader( "S2" ).addUniform( "time", GLRenderer::Shader::FLOAT,  GLRenderer::Shader::SCALAR, &s2Vars.time );
+		    void
+		    init( );
 
-	glr.shader( "S3", "../../shaders/stage3.vsh", "../../shaders/stage3.fsh", GLRenderer::ShaderCode::FROM_FILE );
-	glr.shader( "S3" ).addUniform( "dimsRec", GLRenderer::Shader::VEC2,  GLRenderer::Shader::SCALAR, &s3Vars.dimsRec );
-   
-	glr.frameBuffer( "FB1" );
+		    void
+		    paint( );
 
-	glr.texture(
-		"TX1",
-		new GLRenderer::Texture(
-			"TX1",
-			GL_TEXTURE_2D,
-			0,
-			GL_R32I,
-			GL_NEAREST, GL_NEAREST,
-			GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE,
-			GL_RED_INTEGER, GL_INT,
-			viewControlVars.dims.x, viewControlVars.dims.y
-		)
-	);
+		    void
+		    resize( int p_width, int p_height );
 
-	glr.texture(
-		"TX2",
-		new GLRenderer::Texture(
-			"TX2",
-			GL_TEXTURE_2D,
-			0,
-			GL_RGBA32F,
-			GL_NEAREST, GL_NEAREST,
-			GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE,
-			GL_RGBA, GL_FLOAT,
-			viewControlVars.dims.x, viewControlVars.dims.y
-		)
-	);
+    };
 
-	glr.vertices( "VA1" )
-	//	    x      y
-		<< -1. << -1.
-		<< +1. << -1.
-		<< -1. << +1.
-		<< +1. << +1.;
+    void
+    print( glm::vec4 const & p_vec );
 
-	glr.vertices( "VA1" ).addAttrib( "verts", 2, 0 );
+    void
+    print( glm::mat4 const & p_mat );
+    #endif // SIMPLETRIANGLE_HPP
 
-	glr.vertices( "VA2" )
-	//	    x      y     s     t
-		<< -1. << -1. << 0. << 0.
-		<< +1. << -1. << 1. << 0.
-		<< -1. << +1. << 0. << 1.
-		<< +1. << +1. << 1. << 1.;
+### "simpletriangle.cpp"
+#include "simpletriangle.hpp"
 
-	glr.vertices( "VA2" ).addAttrib( "verts", 2, 0 );
-	glr.vertices( "VA2" ).addAttrib( "coords", 2, 2 );
+    typedef glm::vec3 V3;
+    typedef glm::mat4 M4;
 
-	glr.program( "PRG1" ).setFrameBuffer( "FB1" );
-	glr.program( "PRG1" ).setShader( "S1" );
-	glr.program( "PRG1" ).addOutTexture( "TX1" );
-	glr.program( "PRG1" ).setVertexArray( "VA1" );
-	glr.program( "PRG1" ).build( );
+    SimpleTriangle::SimpleTriangle( CStr const & p_name, ViewControlData *p_vcd ) :
+    GLProject ( p_name, p_vcd ) {
 
-	glr.program( "PRG2" ).setFrameBuffer( "FB1" );
-	glr.program( "PRG2" ).setShader( "S2" );
-	glr.program( "PRG2" ).addInTexture( "TX1" );
-	glr.program( "PRG2" ).addOutTexture( "TX2" );
-	glr.program( "PRG2" ).setVertexArray( "VA2" );
-	glr.program( "PRG2" ).build( );
+    }
 
-	glr.program( "PRG3" ).setShader( "S3" );
-	glr.program( "PRG3" ).addInTexture( "TX2" );
-	glr.program( "PRG3" ).setVertexArray( "VA2" );
-	glr.program( "PRG3" ).build( );
+    void
+    SimpleTriangle::init( ) {
 
-	glClearColor( 01., 0., 0., 1. );
+	    glClearColor( .0f, .0f, .0f, 1.f );
 
+	    m = glm::mat4( 1. );
 
-### void GL2DWidget::resizeGL( int p_width, int p_height )
+	    glr.vertices( "ST-VERTICES" ).
+		    setUsage( GL_STATIC_DRAW ).
+		    addAttrib( "vertex", 2, 0 ) <<
+		    -1.f << -1.f <<
+		    +1.f << -1.f <<
+		    +0.f << +1.f <<
+		    GLRenderer::VertexArray::Object( 0, 3, GL_TRIANGLES );
 
-	viewControlVars.dims = glm::vec2( p_width, p_height );
+	    glr.shader(
+		    "ST-SHADER",
+		    //Vertex Shader
+		    "#version 330 core\n"
+		    "layout( location = 0 ) in vec2 vertex;\n"
+		    "void main( void ) {\n"
+			    "gl_Position = vec4( vertex, 0., 1. );"
+		    "}\n",
 
-	viewControlVars.mouse.x = viewControlVars.dims.x / 2.;
-	viewControlVars.mouse.y = viewControlVars.dims.y / 2.;
+		    //Fragment Shader
+		    "#version 330 core\n"
+		    "out vec4 fColor;\n"
+		    "void main( void ) {\n"
+			    "fColor = vec4( .8, .7, .3, 1. );\n"
+		    "}\n",
+		    GLRenderer::ShaderCode::FROM_CODE );
 
-	glViewport( 0, 0, viewControlVars.dims.x, viewControlVars.dims.y );
+	    glr.program( "ST-PROGRAM" ).
+		    setVertexArray( "ST-VERTICES" ).
+		    setShader( "ST-SHADER" ).
+		    build( );
+	    }
 
-	glr.tx[ "TX1" ]->resize( viewControlVars.dims.x, viewControlVars.dims.y );
-	glr.tx[ "TX2" ]->resize( viewControlVars.dims.x, viewControlVars.dims.y );
+    void
+    SimpleTriangle::paint( ) {
 
+	    glClear( GL_COLOR_BUFFER_BIT );
 
-### void GL2DWidget::paintGL( )
+	    glr.run( { "ST-PROGRAM" } );
+    }
 
-	updateShaderUniforms( );
+    void
+    SimpleTriangle::resize( int p_width, int p_height ) {
 
-	glDisable( GL_DEPTH_TEST );
-	glEnable( GL_CULL_FACE );
-
-	glClear( GL_COLOR_BUFFER_BIT );
-
-	glr.run( { "PRG1", "PRG2", "PRG3" } );
-
+    }
