@@ -1,6 +1,9 @@
 #include "glprojects/cube/cube.hpp"
 #include "glprojects/funIn2D/funIn2D.hpp"
 #include "glprojects/lighttest/lighttest.hpp"
+#include "glprojects/coordinateSystem/coordinatesystem.hpp"
+#include "glprojects/simpleTriangle/simpletriangle.hpp"
+#include "glprojects/sphere/sphere.hpp"
 #include "widget.hpp"
 #include <QApplication>
 
@@ -14,19 +17,31 @@ main( int argc, char *argv[ ] ) {
 	w;
 
 	FunIn2D
-	* glp = new FunIn2D( "p1" );
+	* glp = new FunIn2D( "FunIn2D" );
 
 	Cube
-	* fwt = new Cube( "p2" );
+	* fwt = new Cube( "Cube" );
 
 	LightTest
-	* lt = new LightTest( "p3" );
+	* lt = new LightTest( "LightTest" );
 
-	w.projects[ "p1" ] = glp;
-	w.projects[ "p2" ] = fwt;
-	w.projects[ "p3" ] = lt;
+	CoordinateSystem
+	* cs = new CoordinateSystem( "CoordinateSystem" );
 
-	w.currentProject = "p3";
+	SimpleTriangle
+	* st = new SimpleTriangle( "SimpleTriangle" );
+
+	Sphere
+	* sp = new Sphere( "Sphere" );
+
+	w.projects[ "FunIn2D" ] = glp;
+	w.projects[ "Cube" ] = fwt;
+	w.projects[ "LightTest" ] = lt;
+	w.projects[ "CoordinateSystem" ] = cs;
+	w.projects[ "SimpleTriangle" ] = st;
+	w.projects[ "Sphere" ] = sp;
+
+	w.currentProject = "Sphere";
 
 	w.show( );
 

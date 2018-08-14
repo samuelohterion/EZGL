@@ -17,7 +17,10 @@ SOURCES += \
 	code/widget.cpp \
 	glprojects/cube/cube.cpp \
 	glprojects/funIn2D/funIn2D.cpp \
-	glprojects/lighttest/lighttest.cpp
+	glprojects/lighttest/lighttest.cpp \
+	glprojects/coordinateSystem/coordinatesystem.cpp \
+	glprojects/simpleTriangle/simpletriangle.cpp \
+	glprojects/sphere/sphere.cpp
 
 HEADERS += \
 	code/widget.hpp \
@@ -25,7 +28,10 @@ HEADERS += \
 	code/glrenderer.hpp \
 	glprojects/cube/cube.hpp \
 	glprojects/funIn2D/funIn2D.hpp \
-	glprojects/lighttest/lighttest.hpp
+	glprojects/lighttest/lighttest.hpp \
+	glprojects/coordinateSystem/coordinatesystem.hpp \
+	glprojects/simpleTriangle/simpletriangle.hpp \
+	glprojects/sphere/sphere.cpp
 
 FORMS += \
 	code/widget.ui
@@ -37,4 +43,3 @@ DISTFILES += \
 	glprojects/cube/wall.fsh \
 	glprojects/funIn2D/fun1.vsh \
 	glprojects/funIn2D/fun1.fsh
-

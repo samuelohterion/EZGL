@@ -1598,4 +1598,3 @@ public Named {
 		paint( ) = 0;
 };
 #endif // GLRENDERER_HPP
-

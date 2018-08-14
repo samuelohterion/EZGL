@@ -15,10 +15,10 @@ LightTest::init( ) {
 	glr.vertices( "QUAD-VERTICES" ).
 		setUsage( GL_DYNAMIC_DRAW ).
 		addAttrib( "vertices", 3, 0 ).	addAttrib( "normals", 3, 3 ).	addAttrib( "colors", 3, 6 ) <<
-		glm::vec3( -1.f, -1.f, 0.f ) <<	glm::vec3( 0.f, 0.f, 1.f ) <<	glm::vec3( 1.f, 0.f, 0.f ) <<
-		glm::vec3( +1.f, -1.f, 0.f ) <<	glm::vec3( 0.f, 0.f, 1.f ) <<	glm::vec3( 0.f, 1.f, 0.f ) <<
-		glm::vec3( -1.f, +1.f, 0.f ) <<	glm::vec3( 0.f, 0.f, 1.f ) <<	glm::vec3( 0.f, 0.f, 1.f ) <<
-		glm::vec3( +1.f, +1.f, 0.f ) <<	glm::vec3( 0.f, 0.f, 1.f ) <<	glm::vec3( 1.f, 1.f, 0.f ) <<
+		glm::vec3( -1.f, -1.f, -1.f ) <<	glm::vec3( 0.f, 0.f, +1.f ) <<	glm::vec3( 1.f, 0.f, 0.f ) <<
+		glm::vec3( +1.f, -1.f, -1.f ) <<	glm::vec3( 0.f, 0.f, +1.f ) <<	glm::vec3( 0.f, 1.f, 0.f ) <<
+		glm::vec3( -1.f, +1.f, -1.f ) <<	glm::vec3( 0.f, 0.f, +1.f ) <<	glm::vec3( 0.f, 0.f, 1.f ) <<
+		glm::vec3( +1.f, +1.f, -1.f ) <<	glm::vec3( 0.f, 0.f, +1.f ) <<	glm::vec3( 1.f, 1.f, 0.f ) <<
 		GLRenderer::VertexArray::Object( 0, 4, GL_TRIANGLE_STRIP );
 
 	glr.shader(
@@ -75,13 +75,14 @@ LightTest::init( ) {
 		"in vec3 normals;\n"
 		"in vec3 colors;\n"
 		"out VS2GS {\n"
-			"vec3 vertices, normals, colors;\n"
+			"vec3 vertices, normals, mvn, colors;\n"
 		"} vs2gsOut;\n"
 		"uniform mat4 p;\n"
 		"uniform mat4 mv;\n"
 		"void main( ) {\n"
 			"vs2gsOut.vertices   = ( p * mv * vec4( vertices, 1. ) ).xyz;\n"
 			"vs2gsOut.normals = normalize( vec3( p * vec4( mat3( transpose( inverse( mv ) ) ) * normals, 0. ) ) );\n"
+			"vs2gsOut.mvn = normalize( vec3( vec4( mat3( transpose( inverse( mv ) ) ) * normals, 0. ) ) );\n"
 			"vs2gsOut.colors  = colors;\n"
 			"gl_Position = p * mv * vec4( vertices, 1. );\n"
 		"}\n",
@@ -94,6 +95,7 @@ LightTest::init( ) {
 		"in VS2GS {\n"
 			"vec3 vertices;\n"
 			"vec3 normals;\n"
+			"vec3 mvn;\n"
 			"vec3 colors;\n"
 		"} vs2gsIn[ ];\n"
 		"out GS2FS {\n"
@@ -102,10 +104,10 @@ LightTest::init( ) {
 		"const float MAGNITUDE = 1.;\n"
 		"void generateLine( int index ) {\n"
 			"gl_Position = gl_in[ index ].gl_Position;\n"
-			"gs2fsOut.colors = max( vec3( 0. ), vs2gsIn[ index ].normals );\n"
+			"gs2fsOut.colors = max( vec3( 0. ), vs2gsIn[ index ].mvn );\n"
 			"EmitVertex( );\n"
 			"gl_Position = gl_in[ index ].gl_Position + vec4( vs2gsIn[ index ].normals, 0. ) * MAGNITUDE;\n"
-			"gs2fsOut.colors = max( vec3( 0. ), vs2gsIn[ index ].normals );\n"
+			"gs2fsOut.colors = max( vec3( 0. ), vs2gsIn[ index ].mvn );\n"
 			"EmitVertex( );\n"
 			"EndPrimitive( );\n"
 		"}\n"
@@ -144,21 +146,31 @@ LightTest::paint( ) {
 	//light = glm::vec3( cos( 10. * angle ), 0., 1.5 + sin( 10. * angle ) );
 	light = glm::vec3( 0.f, 0.f, -2.f + sinf( 10.f * angle ) );
 
+//	v = glm::lookAt(
+//		glm::vec3(4,3,3), // Camera is at (4,3,3), in World Space
+//		glm::vec3(0,0,0), // and looks at the origin
+//		glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
+//	);
+
 	v = glm::rotate(
 			glm::translate(
 				glm::mat4( 1. ),
 				glm::vec3( 0.f, 0.f, -4.f + sinf( 2.2f * angle ) ) ),
-			angle,
+			1.f * angle,
 			glm::vec3( sin( .3 * angle ), 1.f, 0.f ) );
 
 	mv = v * m;
 
 	light = glm::vec3( inverse( mv ) * glm::vec4( light, 1. ) );
 
-	glr.vertices( "QUAD-VERTICES" ).arr[  0 ] = -1.f + powf( sinf( 5.f * angle ), 4.f );
-	glr.vertices( "QUAD-VERTICES" ).arr[  9 ] = +1.f + powf( sinf( 1.6f + 5.f * angle ), 4.f );
-	glr.vertices( "QUAD-VERTICES" ).arr[ 18 ] = -1.f + powf( sinf( 4.8f + 5.f * angle ), 4.f );
-	glr.vertices( "QUAD-VERTICES" ).arr[ 27 ] = +1.f + powf( sinf( 3.2f + 5.f * angle ), 4.f );
+	glr.vertices( "QUAD-VERTICES" ).arr[  0 ] = -1.f + .2f * powf( cosf( 5.f * angle ), 8.f );
+	glr.vertices( "QUAD-VERTICES" ).arr[  1 ] = -1.f + .2f * powf( sinf( 5.f * angle ), 8.f );
+	glr.vertices( "QUAD-VERTICES" ).arr[  9 ] = +1.f + .2f * powf( cosf( 3.2f + 5.f * angle ), 8.f );
+	glr.vertices( "QUAD-VERTICES" ).arr[ 10 ] = -1.f + .2f * powf( sinf( 3.2f + 5.f * angle ), 8.f );
+	glr.vertices( "QUAD-VERTICES" ).arr[ 18 ] = -1.f + .2f * powf( cosf( 1.6f + 5.f * angle ), 8.f );
+	glr.vertices( "QUAD-VERTICES" ).arr[ 19 ] = +1.f + .2f * powf( sinf( 1.6f + 5.f * angle ), 8.f );
+	glr.vertices( "QUAD-VERTICES" ).arr[ 27 ] = +1.f + .2f * powf( cosf( 4.8f + 5.f * angle ), 8.f );
+	glr.vertices( "QUAD-VERTICES" ).arr[ 28 ] = +1.f + .2f * powf( sinf( 4.8f + 5.f * angle ), 8.f );
 
 	glEnable( GL_DEPTH_TEST );
 	glEnable( GL_CULL_FACE );
