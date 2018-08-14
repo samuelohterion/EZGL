@@ -4,19 +4,53 @@ typedef glm::vec3 V3;
 typedef glm::mat4 M4;
 
 void
+print( glm::vec2 const & p_vec ) {
+
+	std::cout << p_vec[ 0 ] << " " << p_vec[ 1 ];
+}
+
+void
+print( glm::vec3 const & p_vec ) {
+
+	std::cout << p_vec[ 0 ] << " " << p_vec[ 1 ] << " " << p_vec[ 2 ];
+}
+
+void
 print( glm::vec4 const & p_vec ) {
 
-	std::cout << p_vec[ 0 ] << " " << p_vec[ 1 ] << " " << p_vec[ 2 ] << " " << p_vec[ 3 ] << std::endl;
+	std::cout << p_vec[ 0 ] << " " << p_vec[ 1 ] << " " << p_vec[ 2 ] << " " << p_vec[ 3 ];
+}
+
+void
+print( glm::mat2 const & p_mat ) {
+
+	print( p_mat[ 0 ] );
+	std::cout <<  std::endl;
+	print( p_mat[ 1 ] );
+}
+
+void
+print( glm::mat3 const & p_mat ) {
+
+	print( p_mat[ 0 ] );
+	std::cout <<  std::endl;
+	print( p_mat[ 1 ] );
+	std::cout <<  std::endl;
+	print( p_mat[ 2 ] );
 }
 
 void
 print( glm::mat4 const & p_mat ) {
 
-	std::cout << p_mat[ 0 ][ 0 ] << " " << p_mat[ 0 ][ 1 ] << " " << p_mat[ 0 ][ 2 ] << " " << p_mat[ 0 ][ 3 ] << std::endl;
-	std::cout << p_mat[ 1 ][ 0 ] << " " << p_mat[ 1 ][ 1 ] << " " << p_mat[ 1 ][ 2 ] << " " << p_mat[ 1 ][ 3 ] << std::endl;
-	std::cout << p_mat[ 2 ][ 0 ] << " " << p_mat[ 2 ][ 1 ] << " " << p_mat[ 2 ][ 2 ] << " " << p_mat[ 2 ][ 3 ] << std::endl;
-	std::cout << p_mat[ 3 ][ 0 ] << " " << p_mat[ 3 ][ 1 ] << " " << p_mat[ 3 ][ 2 ] << " " << p_mat[ 3 ][ 3 ] << std::endl;
+	print( p_mat[ 0 ] );
+	std::cout <<  std::endl;
+	print( p_mat[ 1 ] );
+	std::cout <<  std::endl;
+	print( p_mat[ 2 ] );
+	std::cout <<  std::endl;
+	print( p_mat[ 3 ] );
 }
+
 
 CoordinateSystem::CoordinateSystem( CStr const & p_name, ViewControlData *p_vcd ) :
 GLProject ( p_name, p_vcd ) {
@@ -51,8 +85,8 @@ CoordinateSystem::init( ) {
 		"out VS2GS { vec4 vertex, mvv; } vs2gs;\n"
 		"void main( void ) {\n"
 			"vec4 v = mv * vec4( vertex, 1. );"
-			"vs2gs.vertex = v;\n"
-			"vs2gs.mvv = p * v;\n"
+			"vs2gs.mvv = v;\n"
+			"vs2gs.vertex = p * v;\n"
 			"gl_Position = p * v;\n"
 		"}\n",
 
@@ -106,7 +140,7 @@ CoordinateSystem::paint( ) {
 				glm::mat4( 1. ),
 				glm::vec3( 0.f, 0.f, -4.f ) ),
 			angle,
-			glm::vec3( sin( .3 * angle ), 1.f, 0.f ) );
+			glm::vec3( .5 * sin( .2 * angle ), 1.f, 0.f ) );
 
 	mv = v * m;
 
@@ -116,6 +150,10 @@ CoordinateSystem::paint( ) {
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	glr.run( { "CS-PROGRAM" } );
+
+	print( mv * glm::vec4( 0., 0., 1., 1. ) );
+
+	std::cout << std::endl;
 }
 
 void
@@ -125,6 +163,4 @@ CoordinateSystem::resize( int p_width, int p_height ) {
 	ratio = ( 1.f * p_width / p_height );
 
 	p = glm::perspective( 45.0f, ratio, 1.0f, 100.f );
-
-	print( p );
 }
