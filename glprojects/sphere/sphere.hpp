@@ -15,6 +15,9 @@ public GLProject {
 		m,v,p,
 		mv;
 
+		glm::mat3
+		nrm;
+
 	public:
 
 		void

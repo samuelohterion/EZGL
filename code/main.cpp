@@ -41,7 +41,7 @@ main( int argc, char *argv[ ] ) {
 	w.projects[ "SimpleTriangle" ] = st;
 	w.projects[ "Sphere" ] = sp;
 
-	w.currentProject = "CoordinateSystem";
+	w.currentProject = "Sphere";
 
 	w.show( );
 
