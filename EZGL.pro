@@ -20,7 +20,9 @@ SOURCES += \
 	glprojects/lighttest/lighttest.cpp \
 	glprojects/coordinateSystem/coordinatesystem.cpp \
 	glprojects/simpleTriangle/simpletriangle.cpp \
-	glprojects/sphere/sphere.cpp
+	glprojects/sphere/sphere.cpp \
+	glprojects/spheredynamicsurface/spheredynamicsurface.cpp \
+	glprojects/simplecoloredtriangle/simplecoloredtriangle.cpp
 
 HEADERS += \
 	code/widget.hpp \
@@ -31,7 +33,9 @@ HEADERS += \
 	glprojects/lighttest/lighttest.hpp \
 	glprojects/coordinateSystem/coordinatesystem.hpp \
 	glprojects/simpleTriangle/simpletriangle.hpp \
-	glprojects/sphere/sphere.cpp
+	glprojects/sphere/sphere.hpp \
+	glprojects/spheredynamicsurface/spheredynamicsurface.hpp \
+	glprojects/simplecoloredtriangle/simplecoloredtriangle.hpp
 
 FORMS += \
 	code/widget.ui

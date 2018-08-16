@@ -4,6 +4,8 @@
 #include "glprojects/coordinateSystem/coordinatesystem.hpp"
 #include "glprojects/simpleTriangle/simpletriangle.hpp"
 #include "glprojects/sphere/sphere.hpp"
+//#include "glprojects/spheredynamicsurface/spheredynamicsurface.hpp"
+#include "glprojects/simplecoloredtriangle/simplecoloredtriangle.hpp"
 #include "widget.hpp"
 #include <QApplication>
 
@@ -34,12 +36,16 @@ main( int argc, char *argv[ ] ) {
 	Sphere
 	* sp = new Sphere( "Sphere" );
 
+	SimpleColoredTriangle
+	* sct = new SimpleColoredTriangle( "SimpleColoredTriangle" );
+
 	w.projects[ "FunIn2D" ] = glp;
 	w.projects[ "Cube" ] = fwt;
 	w.projects[ "LightTest" ] = lt;
 	w.projects[ "CoordinateSystem" ] = cs;
 	w.projects[ "SimpleTriangle" ] = st;
 	w.projects[ "Sphere" ] = sp;
+	w.projects[ "SimpleColoredTriangle" ] = sct;
 
 	w.currentProject = "Sphere";
 

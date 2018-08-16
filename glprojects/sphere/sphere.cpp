@@ -39,8 +39,8 @@ Sphere::init( ) {
 	++ vertexSiz;
 
 	int
-	sizeLong = 18,
-	sizeLat  = 18;
+	sizeLong = 16,
+	sizeLat  = 8;
 
 	float
 	factorLong = 2.f * 3.14159265f / ( sizeLong - 0 ),
@@ -239,13 +239,37 @@ Sphere::paint( ) {
 			angle,
 			glm::vec3( sin( .3 * angle ), sin( .23 * angle ), sin( .13 * angle ) ) );
 
-	mv = m * v;
-
-	nrm = transpose( inverse( mv ) );
-
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	for( int i = 0; i < 5; ++ i ){
 
-	glr.run( { "SPHERE-PROGRAM", "NORMALS-PROGRAM" } );
+		for( int j = 0; j < 5; ++ j ){
+
+			m = glm::translate( glm::mat4( 1.f ), glm::vec3( 5.f * sinf( 3.14 * i / 5. * angle ), 5.f * sinf( j * angle ), -5.f ) );
+
+			mv = m * v;
+
+			nrm = transpose( inverse( mv ) );
+
+			glr.run( { "SPHERE-PROGRAM" } );
+		}
+	}
+
+//	m = glm::translate( glm::mat4( 1.f ), glm::vec3( cosf( angle ), 0.f, 0.f ) );
+
+//	mv = m * v;
+
+//	nrm = transpose( inverse( mv ) );
+
+
+//	glr.run( { "SPHERE-PROGRAM", "NORMALS-PROGRAM" } );
+
+//	m = glm::translate( glm::mat4( 1.f ), glm::vec3( sinf( angle ), 0.f, 0.f ) );
+
+//	mv = m * v;
+
+//	nrm = transpose( inverse( mv ) );
+
+//	glr.run( { "SPHERE-PROGRAM", "NORMALS-PROGRAM" } );
 }
 
 void
