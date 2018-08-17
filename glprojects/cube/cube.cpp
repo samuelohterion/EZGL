@@ -51,7 +51,7 @@ Cube::init( ) {
 		GLRenderer::VertexArray::Object( 0, 8, GL_TRIANGLE_FAN ) <<
 
 		p7 << p3 << p2 << p6 << p4 << p5 << p1 << p3 <<
-		GLRenderer::VertexArray::Object( 8, 16, GL_TRIANGLE_FAN );
+		GLRenderer::VertexArray::Object( 8, 8, GL_TRIANGLE_FAN );
 
 	glr.shader(
 		"SHADER-CUBE",
