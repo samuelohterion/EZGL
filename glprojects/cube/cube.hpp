@@ -17,8 +17,7 @@ public GLProject {
 		projection,
 		model,
 		view,
-		mvp,
-		norm;
+		modelView;
 
 		GLfloat
 		angle;

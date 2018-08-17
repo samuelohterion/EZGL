@@ -4,7 +4,7 @@
 #include "glprojects/coordinateSystem/coordinatesystem.hpp"
 #include "glprojects/simpleTriangle/simpletriangle.hpp"
 #include "glprojects/sphere/sphere.hpp"
-//#include "glprojects/spheredynamicsurface/spheredynamicsurface.hpp"
+#include "glprojects/spheredynamicsurface/spheredynamicsurface.hpp"
 #include "glprojects/simplecoloredtriangle/simplecoloredtriangle.hpp"
 #include "widget.hpp"
 #include <QApplication>
@@ -39,6 +39,9 @@ main( int argc, char *argv[ ] ) {
 	SimpleColoredTriangle
 	* sct = new SimpleColoredTriangle( "SimpleColoredTriangle" );
 
+	SphereDynamicalSurface
+	* sds = new SphereDynamicalSurface( "SphereDynamicalSurface" );
+
 	w.projects[ "FunIn2D" ] = glp;
 	w.projects[ "Cube" ] = fwt;
 	w.projects[ "LightTest" ] = lt;
@@ -46,8 +49,9 @@ main( int argc, char *argv[ ] ) {
 	w.projects[ "SimpleTriangle" ] = st;
 	w.projects[ "Sphere" ] = sp;
 	w.projects[ "SimpleColoredTriangle" ] = sct;
+	w.projects[ "SphereDynamicalSurface" ] = sds;
 
-	w.currentProject = "Sphere";
+	w.currentProject = "Cube";
 
 	w.show( );
 

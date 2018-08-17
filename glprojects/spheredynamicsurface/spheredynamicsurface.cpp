@@ -13,7 +13,7 @@ SphereDynamicalSurface::init( ) {
 
 	glClearColor( .0f, .0f, .0f, 1.f );
 
-	glEnable( GL_DEPTH_TEST );
+	glDisable( GL_DEPTH_TEST );
 	glDisable( GL_CULL_FACE );
 	glDepthFunc( GL_LESS );
 
@@ -32,17 +32,17 @@ SphereDynamicalSurface::init( ) {
 		"SDS-SHADER",
 		//Vertex Shader
 		"#version 330 core\n"
-		"layout( location = 0 ) in vec3 vertex;\n"
+		"in vec3 vertex;\n"
 		"uniform mat4 mvp;\n"
 		"void main( void ) {\n"
-			"gl_Position  = mvp * vec4( vertex, 1. );\n"
+			"gl_Position  = vec4( vertex.x, vertex.y, 0., 1. );\n"
 		"}\n",
 
 		//Fragment Shader
 		"#version 330 core\n"
 		"out vec4 fColor;\n"
 		"void main( void ) {\n"
-//			"fColor = vec4( 1., 1., 1., 1. );\n"
+			"fColor = vec4( 1., 1., 1., 1. );\n"
 		"}\n",
 		GLRenderer::ShaderCode::FROM_CODE ).
 			addUniform( "mvp", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & mvp );
@@ -56,55 +56,53 @@ SphereDynamicalSurface::init( ) {
 void
 SphereDynamicalSurface::simulate( ) {
 
+	float
+	dt = .01f;
+
 	GLRenderer::VertexArray
 	va = glr.vertices( "SDS-VERTICES" );
+
+	std::vector< float >
+	& v = va.arr;
 
 	for( int i = 0; i < va.vertexCount( ); ++ i ) {
 
 		glm::vec3
-		a( va.arr[ 3 * i + 0 ], va.arr[ 3 * i + 1 ], va.arr[ 3 * i + 2 ] );
+		a( v[ 3 * i + 0 ], v[ 3 * i + 1 ], v[ 3 * i + 2 ] );
 
 		for( int j = i + 1; j < va.vertexCount( ); ++ j ) {
 
 			glm::vec3
-			b( va.arr[ 3 * j + 0 ], va.arr[ 3 * j + 1 ], va.arr[ 3 * j + 2 ] ),
+			b( v[ 3 * j + 0 ], v[ 3 * j + 1 ], v[ 3 * j + 2 ] ),
 			c = b - a,
 			cn = glm::normalize( c );
 
 			float
-			d2= glm::dot( c, c );
+			d2 = glm::dot( c, c );
 
 			acc[ i ] = acc[ i ] - cn / d2;
 			acc[ j ] = acc[ j ] + cn / d2;
 		}
 	}
 
-	float
-	dt = .1f;
-
-	std::vector< float >
-	& v = va.arr;
-
 	for( std::size_t i = 0; i < va.vertexCount( ); ++ i ) {
 
 		glm::vec3
-		p( v[ 3 * i + 0 ], v[ 3 * i + 1 ], v[ 3 * i + 2 ] );
+		r( v[ 3 * i + 0 ], v[ 3 * i + 1 ], v[ 3 * i + 2 ] );
 
-		p = p + vel[ i ] * dt;
+		r = r + vel[ i ] * dt;
 
-		if( 1. < glm::dot( p.z, p.z ) )
+		r = glm::normalize( r );
 
-			p = glm::normalize( p );
+		v[ 3 * i + 0 ] = r.x;
+		v[ 3 * i + 1 ] = r.y;
+		v[ 3 * i + 2 ] = r.z;
 
-		v[ 3 * i + 0 ] = p.x;
-		v[ 3 * i + 1 ] = p.y;
-		v[ 3 * i + 2 ] = p.z;
+		vel[ i ] = vel[ i ] + acc[ i ] * dt;
 
-		vel[ i ] = vel[ i ] + acc[ i ] + dt;
 		acc[ i ] = glm::vec3( 0.f );
 	}
 }
-
 
 void
 SphereDynamicalSurface::paint( ) {
@@ -125,7 +123,7 @@ SphereDynamicalSurface::paint( ) {
 			angle,
 			glm::vec3( sin( .3 * angle ), sin( .23 * angle ), sin( .13 * angle ) ) );
 
-	mvp = p * m * v;
+	mvp = glm::mat4( 1.f );//p * v * m;
 
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
@@ -134,18 +132,26 @@ SphereDynamicalSurface::paint( ) {
 	GLRenderer::VertexArray
 	& va = glr.vertices( "SDS-VERTICES" );
 
-	if( vcd->time < 10 ) {
+	if( vcd->time < 1000 ) {
 
 		if( va.vertexCount( ) < vcd->time ) {
 
-			va << 0.f << 0.f << 0.f;
+			va << glm::fract( 1.f * rand( ) / RAND_MAX - .5f )  << glm::fract( 1.f * rand( ) / RAND_MAX - .5f ) << glm::fract( 1.f * rand( ) / RAND_MAX - .5f );
 
 			vel.push_back( glm::vec3( 0.f, 0.f, 0.f ) );
 			acc.push_back( glm::vec3( 0.f, 0.f, 0.f ) );
+
+			va.obj[ 0 ].size = va.vertexCount( );
 		}
 	}
 
 	simulate( );
+
+	for( auto i : va.arr )
+
+		std::cout << i << "  ";
+
+	std::cout << std::endl;
 }
 
 void
@@ -154,5 +160,5 @@ SphereDynamicalSurface::resize( int p_width, int p_height ) {
 	float
 	ratio = ( 1.f * p_width / p_height );
 
-	p = glm::perspective( 45.0f, ratio, 1.0f, 10.f );
+	p = glm::perspective( 45.0f, ratio, 0.1f, 10.f );
 }
