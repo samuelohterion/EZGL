@@ -15,13 +15,9 @@ Cube::init( ) {
 
 	angle = vcd->time;
 
-	light = glm::vec3( 1.f, 2.f, 0.f );
+	light = glm::vec3( 0.f, 0.f, -3.f );
 
-	projection = view = model = glm::mat4( 1. );
-
-	view = glm::translate( view, glm::vec3( 0.f, 0.f, -4.f ) );
-	view = glm::rotate( view, angle, glm::vec3( 0.f, 1.f, 0.f ) );
-
+	model = glm::mat4( 1. );
 /*
 *    2----3
 *   /|   /|
@@ -137,8 +133,6 @@ void
 Cube::paint( ) {
 
 	angle = 3.15f * vcd->time;
-
-	light = glm::vec3( 0., 0., -3. );
 
 	view = glm::translate( glm::mat4( 1. ), glm::vec3( 0.f, 0.f, -5.f ) );
 	view = glm::rotate( view, angle, glm::vec3( sin( .1 * angle ), sin( .12 * angle ), sin( .13 * angle ) ) );
