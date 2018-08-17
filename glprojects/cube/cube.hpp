@@ -16,8 +16,7 @@ public GLProject {
 		glm::mat4
 		projection,
 		model,
-		view,
-		modelView;
+		view;
 
 		GLfloat
 		angle;
