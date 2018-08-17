@@ -19,7 +19,6 @@ Cube::init( ) {
 
 	projection = view = model = glm::mat4( 1. );
 
-	// Apply model view transformations
 	view = glm::translate( view, glm::vec3( 0.f, 0.f, -4.f ) );
 	view = glm::rotate( view, angle, glm::vec3( 0.f, 1.f, 0.f ) );
 
@@ -45,15 +44,14 @@ Cube::init( ) {
 	p6 = -px +py +pz,
 	p7 = +px +py +pz;
 
-	glr.vertices( "VERTICES-CUBE" ) <<
+	glr.vertices( "VERTICES-CUBE" ).
+	addAttrib( "vertex", 3, 0 ) <<
 	//
 		p0 << p1 << p5 << p4 << p6 << p2 << p3 << p1 <<
 		GLRenderer::VertexArray::Object( 0, 8, GL_TRIANGLE_FAN ) <<
 
 		p7 << p3 << p2 << p6 << p4 << p5 << p1 << p3 <<
 		GLRenderer::VertexArray::Object( 8, 16, GL_TRIANGLE_FAN );
-
-	glr.vertices( "VERTICES-CUBE" ).addAttrib( "vertex", 3, 0 );
 
 	glr.shader(
 		"SHADER-CUBE",
