@@ -143,6 +143,7 @@ Cube::init( ) {
 		"uniform mat4 projection;\n"
 		"uniform vec3 lightPos[ 7 ];\n"
 		"uniform vec3 lightCol[ 7 ];\n"
+		"uniform float time;\n"
 		"out vec4 fColor;\n"
 		"void main( void ) {\n"
 			"vec3  d = ( vec4( 0., 0., +1., 0. ) ).xyz;\n"
@@ -155,12 +156,13 @@ Cube::init( ) {
 				"a = 10. * normalize( dot( gs2fs.normal, d ) );\n"
 				"f += vec4( ( clamp( a / dot( d, d ), 0, 1 ) ) * ( ( 1. + lightCol[ i ] ) * ( 3. + gs2fs.color ) * .125 ), 1.f );\n"
 			"}\n"
-			"float b =\n"
-				"( .9 > abs( gs2fs.frame.x ) && ( .9 > abs( gs2fs.frame.y ) ) ) ||\n"
-				"( .9 > abs( gs2fs.frame.y ) && ( .9 > abs( gs2fs.frame.z ) ) ) ||\n"
-				"( .9 > abs( gs2fs.frame.z ) && ( .9 > abs( gs2fs.frame.x ) ) )\n"
+			"float\n"
+			"c = .5 + .01 * sin( time ) * ( dot( gs2fs.vertex * gs2fs.vertex, gs2fs.frame ) ),\n"
+			"b = ( c > abs( gs2fs.frame.x ) && ( c > abs( gs2fs.frame.y ) ) ) ||\n"
+				"( c > abs( gs2fs.frame.y ) && ( c > abs( gs2fs.frame.z ) ) ) ||\n"
+				"( c > abs( gs2fs.frame.z ) && ( c > abs( gs2fs.frame.x ) ) )\n"
 					"? 1.f\n"
-					": 2.5f;\n"
+					": 3.f + 2.5 * sin( .4 * time );\n"
 
 			"fColor = vec4( b * clamp( f.xyz / f.a, vec3( 0 ), vec3( 1 ) ), 1. );\n"
 //			"fColor.rgb /= fColor.a;\n"
@@ -182,7 +184,8 @@ Cube::init( ) {
 		addUniform( "lightCol[3]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightColors[ 3 ] ).
 		addUniform( "lightCol[4]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightColors[ 4 ] ).
 		addUniform( "lightCol[5]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightColors[ 5 ] ).
-		addUniform( "lightCol[6]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightColors[ 6 ] );
+		addUniform( "lightCol[6]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightColors[ 6 ] ).
+		addUniform( "time",        GLRenderer::Shader::FLOAT, GLRenderer::Shader::SCALAR, & vcd->time );
 
 	glr.program( "PROGRAM-CUBE" ).
 		setShader( "SHADER-CUBE" ).
