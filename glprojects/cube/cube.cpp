@@ -145,15 +145,22 @@ Cube::init( ) {
 		"uniform vec3 lightCol[ 7 ];\n"
 		"uniform float time;\n"
 		"out vec4 fColor;\n"
+		"float random ( in vec2 st) {\n"
+			"return 1000. * fract( .001 * sin( dot( st.xy, vec2(12.9898,78.233))) * 43758.5453123);\n"
+		"}\n"
 		"void main( void ) {\n"
-			"vec3  d = ( vec4( 0., 0., +1., 0. ) ).xyz;\n"
-			"float a = dot( gs2fs.normal, d );\n"
+			"vec3\n"
+			"d = vec3( 0., 0., +1. ),\n"
+			"n = vec3( "
+				"random( gs2fs.frame.xy )* gs2fs.normal.x,\n"
+				"random( gs2fs.frame.xx )* gs2fs.normal.y,\n"
+				"random( gs2fs.frame.yy )* gs2fs.normal.y );\n"
+			"float a = dot( n, d );\n"
 			"vec4 f = .25 * vec4( clamp( a, 0, 1 ) * ( 3. + gs2fs.color ), 1.f );\n"
 			"int i = 0;\n"
 			"for( i = i; i < 7; ++ i ) {"
-
 				"d = lightPos[ i ] - gs2fs.vertex;\n"
-				"a = 10. * normalize( dot( gs2fs.normal, d ) );\n"
+				"a = 10. * normalize( dot( n, d ) );\n"
 				"f += vec4( ( clamp( a / dot( d, d ), 0, 1 ) ) * ( ( 1. + lightCol[ i ] ) * ( 3. + gs2fs.color ) * .125 ), 1.f );\n"
 			"}\n"
 			"float\n"
@@ -262,7 +269,7 @@ Cube::paint( ) {
 	angle = vcd->time;
 
 	model = glm::mat4( 1. );
-	view = glm::translate( glm::mat4( 1. ), glm::vec3( 0.f, 0.f, -40.f ) );
+	view = glm::translate( glm::mat4( 1. ), glm::vec3( 0.f, 0.f, -50.f ) );
 	view = glm::rotate( view, .123f * angle, glm::vec3( sinf( .1f * angle ), sinf( .21f * angle ), sinf( .31f * angle ) ) );
 
 	GLRenderer::VertexArray
@@ -291,11 +298,11 @@ Cube::paint( ) {
 	glDisable( GL_VERTEX_ATTRIB_ARRAY_NORMALIZED );
 
 
-	for( int z = -9; z <= 9; ++ z ) {
+	for( int z = -18; z <= 18; ++ z ) {
 
-		for( int y = -4; y <= 4; ++ y ) {
+		for( int y = -8; y <= 8; ++ y ) {
 
-			for( int x = -1; x <= 1; ++ x ) {
+			for( int x = -2; x <= 2; ++ x ) {
 
 				float
 				f = cosf( 3.14f * sinf( .1f * vcd->time ) );

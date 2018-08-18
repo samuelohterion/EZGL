@@ -51,7 +51,7 @@ main( int argc, char *argv[ ] ) {
 	w.projects[ "SimpleColoredTriangle" ] = sct;
 	w.projects[ "SphereDynamicalSurface" ] = sds;
 
-	w.currentProject = "Cube";
+	w.currentProject = "Sphere";
 
 	w.show( );
 

@@ -155,7 +155,7 @@ LightTest::paint( ) {
 	v = glm::rotate(
 			glm::translate(
 				glm::mat4( 1. ),
-				glm::vec3( 0.f, 0.f, -4.f + sinf( 2.2f * angle ) ) ),
+				glm::vec3( 0.f, 0.f, -4.f ) ),
 			1.f * angle,
 			glm::vec3( sin( .3 * angle ), 1.f, 0.f ) );
 
@@ -163,14 +163,14 @@ LightTest::paint( ) {
 
 	light = glm::vec3( inverse( mv ) * glm::vec4( light, 1. ) );
 
-	glr.vertices( "QUAD-VERTICES" ).arr[  0 ] = -1.f + .2f * powf( cosf( 5.f * angle ), 8.f );
-	glr.vertices( "QUAD-VERTICES" ).arr[  1 ] = -1.f + .2f * powf( sinf( 5.f * angle ), 8.f );
-	glr.vertices( "QUAD-VERTICES" ).arr[  9 ] = +1.f + .2f * powf( cosf( 3.2f + 5.f * angle ), 8.f );
-	glr.vertices( "QUAD-VERTICES" ).arr[ 10 ] = -1.f + .2f * powf( sinf( 3.2f + 5.f * angle ), 8.f );
-	glr.vertices( "QUAD-VERTICES" ).arr[ 18 ] = -1.f + .2f * powf( cosf( 1.6f + 5.f * angle ), 8.f );
-	glr.vertices( "QUAD-VERTICES" ).arr[ 19 ] = +1.f + .2f * powf( sinf( 1.6f + 5.f * angle ), 8.f );
-	glr.vertices( "QUAD-VERTICES" ).arr[ 27 ] = +1.f + .2f * powf( cosf( 4.8f + 5.f * angle ), 8.f );
-	glr.vertices( "QUAD-VERTICES" ).arr[ 28 ] = +1.f + .2f * powf( sinf( 4.8f + 5.f * angle ), 8.f );
+//	glr.vertices( "QUAD-VERTICES" ).arr[  0 ] = -1.f + .2f * powf( cosf( 5.f * angle ), 8.f );
+//	glr.vertices( "QUAD-VERTICES" ).arr[  1 ] = -1.f + .2f * powf( sinf( 5.f * angle ), 8.f );
+//	glr.vertices( "QUAD-VERTICES" ).arr[  9 ] = +1.f + .2f * powf( cosf( 3.2f + 5.f * angle ), 8.f );
+//	glr.vertices( "QUAD-VERTICES" ).arr[ 10 ] = -1.f + .2f * powf( sinf( 3.2f + 5.f * angle ), 8.f );
+//	glr.vertices( "QUAD-VERTICES" ).arr[ 18 ] = -1.f + .2f * powf( cosf( 1.6f + 5.f * angle ), 8.f );
+//	glr.vertices( "QUAD-VERTICES" ).arr[ 19 ] = +1.f + .2f * powf( sinf( 1.6f + 5.f * angle ), 8.f );
+//	glr.vertices( "QUAD-VERTICES" ).arr[ 27 ] = +1.f + .2f * powf( cosf( 4.8f + 5.f * angle ), 8.f );
+//	glr.vertices( "QUAD-VERTICES" ).arr[ 28 ] = +1.f + .2f * powf( sinf( 4.8f + 5.f * angle ), 8.f );
 
 	glEnable( GL_DEPTH_TEST );
 	glEnable( GL_CULL_FACE );

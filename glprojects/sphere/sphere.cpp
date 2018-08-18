@@ -26,7 +26,7 @@ Sphere::init( ) {
 		addAttrib( "vertex", 3, 0 ).addAttrib( "normal", 3, 3 );
 
 	GLRenderer::VertexArray
-	&va = glr.vertices( "SPHERE-VERTICES" );
+	& va = glr.vertices( "SPHERE-VERTICES" );
 
 	glm::vec3
 	normal = glm::vec3( 1., 0., 0. );
@@ -39,8 +39,8 @@ Sphere::init( ) {
 	++ vertexSiz;
 
 	int
-	sizeLong = 16,
-	sizeLat  = 8;
+	sizeLong = 64,
+	sizeLat  = 32;
 
 	float
 	factorLong = 2.f * 3.14159265f / ( sizeLong - 0 ),
@@ -52,8 +52,8 @@ Sphere::init( ) {
 	for( ; latitude < 2; ++ latitude ) {
 
 		float
-		clat = cos( factorLat * latitude ),
-		slat = sin( factorLat * latitude );
+		clat = cosf( factorLat * latitude ),
+		slat = sinf( factorLat * latitude );
 
 		for( int longitude = 0; longitude <= sizeLong + 1; ++ longitude ) {
 
@@ -235,14 +235,14 @@ Sphere::paint( ) {
 	v = glm::rotate(
 			glm::translate(
 				glm::mat4( 1. ),
-				glm::vec3( 0.f, 0.f, -4.f ) ),
+				glm::vec3( 0.f, 0.f, -0.f ) ),
 			angle,
 			glm::vec3( sin( .3 * angle ), sin( .23 * angle ), sin( .13 * angle ) ) );
 
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-	for( int i = 0; i < 5; ++ i ){
+	for( int i = 0; i < 1; ++ i ){
 
-		for( int j = 0; j < 5; ++ j ){
+		for( int j = 0; j < 1; ++ j ){
 
 			m = glm::translate( glm::mat4( 1.f ), glm::vec3( 5.f * sinf( 3.14 * i / 5. * angle ), 5.f * sinf( j * angle ), -5.f ) );
 
@@ -250,7 +250,7 @@ Sphere::paint( ) {
 
 			nrm = transpose( inverse( mv ) );
 
-			glr.run( { "SPHERE-PROGRAM" } );
+			glr.run( { "SPHERE-PROGRAM", "NORMALS-PROGRAM" } );
 		}
 	}
 

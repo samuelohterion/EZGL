@@ -32,6 +32,6 @@ main( void ) {
 
 	fCol = vec4( col2d.x, col2d.x + col2d.y, col2d.x * col2d.y, 1. );
 	fCol = abs( v.x ) < .707 && abs( v.y ) < .707 ? fCol : 1. - fCol;
-
-	fCol /= fCol.a;
+//	fCol = vec4( .5 + .5 * vVerts, 0, 1 );
+//	fCol /= fCol.a;
 }
