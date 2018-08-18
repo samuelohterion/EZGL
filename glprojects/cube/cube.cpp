@@ -157,7 +157,7 @@ Cube::init( ) {
 				"f += vec4( ( clamp( a / dot( d, d ), 0, 1 ) ) * ( ( 1. + lightCol[ i ] ) * ( 3. + gs2fs.color ) * .125 ), 1.f );\n"
 			"}\n"
 			"float\n"
-			"c = .5 + .01 * sin( time ) * ( dot( gs2fs.vertex * gs2fs.vertex, gs2fs.frame ) ),\n"
+			"c = .5 + .01 * sin( time ) * ( dot( gs2fs.vertex, gs2fs.frame ) ),\n"
 			"b = ( c > abs( gs2fs.frame.x ) && ( c > abs( gs2fs.frame.y ) ) ) ||\n"
 				"( c > abs( gs2fs.frame.y ) && ( c > abs( gs2fs.frame.z ) ) ) ||\n"
 				"( c > abs( gs2fs.frame.z ) && ( c > abs( gs2fs.frame.x ) ) )\n"
