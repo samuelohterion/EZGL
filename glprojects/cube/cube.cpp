@@ -43,14 +43,12 @@ Cube::init( ) {
 	glr.vertices( "VERTICES-CUBE" ).
 	addAttrib( "vertex", 3, 0 ).	addAttrib( "color", 3, 3 ) <<
 
-		p0 << px <<
-		p1 << px << p5 << px << p4 << px <<
+		p0 << px << p1 << px << p5 << px << p4 << px <<
 		p6 << py << p2 << py <<
 		p3 << pz << p1 << pz <<
 		GLRenderer::VertexArray::Object( 0, 8, GL_TRIANGLE_FAN ) <<
 
-		p7 << ( py + pz ) <<
-		p3 << ( py + pz ) << p2 << ( py + pz ) << p6 << ( py + pz ) <<
+		p7 << ( py + pz ) << p3 << ( py + pz ) << p2 << ( py + pz ) << p6 << ( py + pz ) <<
 		p4 << ( px + py ) << p5 << ( px + py ) <<
 		p1 << ( px + pz ) << p3 << ( px + pz ) <<
 		GLRenderer::VertexArray::Object( 8, 8, GL_TRIANGLE_FAN );
