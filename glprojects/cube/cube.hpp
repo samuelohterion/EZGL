@@ -21,8 +21,9 @@ public GLProject {
 		GLfloat
 		angle;
 
-		glm::vec3
-		light;
+		glm::vec4
+		light,
+		light2;
 
 		void
 		init( );
