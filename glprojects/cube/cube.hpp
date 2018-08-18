@@ -22,12 +22,12 @@ public GLProject {
 		angle;
 
 		glm::vec4
-		lightModelSpace[ 6 ],
-		lightCameraSpace[ 6 ];
+		lightModelSpace[ 7 ],
+		lightCameraSpace[ 7 ];
 
 
 		glm::vec3
-		lightColors[ 6 ];
+		lightColors[ 7 ];
 
 		void
 		init( );

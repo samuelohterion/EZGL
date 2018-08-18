@@ -41,9 +41,10 @@ Cube::init( ) {
 	lightColors[ 0 ] = px;
 	lightColors[ 1 ] = py;
 	lightColors[ 2 ] = pz;
-	lightColors[ 3 ] = ( py + pz );
-	lightColors[ 4 ] = ( pz + px );
-	lightColors[ 5 ] = ( px + py );
+	lightColors[ 3 ] = px + py;
+	lightColors[ 4 ] = py + pz;
+	lightColors[ 5 ] = pz + px;
+	lightColors[ 6 ] = px + py + pz;
 
 	glr.vertices( "VERTICES-LIGHTS" ).
 	setUsage( GL_DYNAMIC_DRAW ).
@@ -56,7 +57,8 @@ Cube::init( ) {
 		.0f << .0f << .0f << lightColors[ 3 ] <<
 		.0f << .0f << .0f << lightColors[ 4 ] <<
 		.0f << .0f << .0f << lightColors[ 5 ] <<
-		GLRenderer::VertexArray::Object( 0, 6, GL_POINTS );
+		.0f << .0f << .0f << lightColors[ 6 ] <<
+		GLRenderer::VertexArray::Object( 0, 7, GL_POINTS );
 
 	glr.vertices( "VERTICES-CUBE" ).
 	addAttrib( "vertex", 3, 0 ).	addAttrib( "color", 3, 3 ) <<
@@ -132,35 +134,23 @@ Cube::init( ) {
 			"normal;\n"
 		"} gs2fs;\n"
 		"uniform mat4 model;\n"
-		"uniform vec3 lightPos[ 6 ];\n"
-		"uniform vec3 lightCol[ 6 ];\n"
+		"uniform mat4 view;\n"
+		"uniform mat4 projection;\n"
+		"uniform vec3 lightPos[ 7 ];\n"
+		"uniform vec3 lightCol[ 7 ];\n"
 		"out vec4 fColor;\n"
 		"void main( void ) {\n"
-			"vec3  d = lightPos[ 0 ] - gs2fs.vertex;\n"
-			"float a = 5. * normalize( dot( gs2fs.normal, d ) );\n"
-			"vec4 f = vec4( ( clamp( 3. * a / dot( d, d ), .1, 1 ) ) * ( ( .1 + lightCol[ 0 ] ) * gs2fs.color ), 1.f );\n"
+			"vec3  d = ( vec4( 0., 0., +1., 0. ) ).xyz;\n"
+			"float a = dot( gs2fs.normal, d );\n"
+			"vec4 f = .25 * vec4( clamp( a, 0, 1 ) * ( 3. + gs2fs.color ), 1.f );\n"
+			"int i = 0;\n"
+			"for( i = i; i < 7; ++ i ) {"
 
-			"d = lightPos[ 1 ] - gs2fs.vertex;\n"
-			"a = 5. * normalize( dot( gs2fs.normal, d ) );\n"
-			"f += vec4( ( clamp( 3. * a / dot( d, d ), .1, 1 ) ) * ( ( .1 + lightCol[ 1 ] ) * gs2fs.color ), 1.f );\n"
-
-			"d = lightPos[ 2 ] - gs2fs.vertex;\n"
-			"a = 5. * normalize( dot( gs2fs.normal, d ) );\n"
-			"f += vec4( ( clamp( 3. * a / dot( d, d ), .1, 1 ) ) * ( ( .1 + lightCol[ 2 ] ) * gs2fs.color ), 1.f );\n"
-
-			"d = lightPos[ 3 ] - gs2fs.vertex;\n"
-			"a = 5. * normalize( dot( gs2fs.normal, d ) );\n"
-			"f += vec4( ( clamp( 3. * a / dot( d, d ), .1, 1 ) ) * ( ( .1 + lightCol[ 3 ] ) * gs2fs.color ), 1.f );\n"
-
-			"d = lightPos[ 4 ] - gs2fs.vertex;\n"
-			"a = 5. * normalize( dot( gs2fs.normal, d ) );\n"
-			"f += vec4( ( clamp( 3. * a / dot( d, d ), .1, 1 ) ) * ( ( .1 + lightCol[ 4 ] ) * gs2fs.color ), 1.f );\n"
-
-			"d = lightPos[ 5 ] - gs2fs.vertex;\n"
-			"a = 5. * normalize( dot( gs2fs.normal, d ) );\n"
-			"f += vec4( ( clamp( 3. * a / dot( d, d ), .1, 1 ) ) * ( ( .1 + lightCol[ 5 ] ) * gs2fs.color ), 1.f );\n"
-
-			"fColor = vec4( f.xyz / f.a, 1. );\n"
+				"d = lightPos[ i ] - gs2fs.vertex;\n"
+				"a = 50. * normalize( dot( gs2fs.normal, d ) );\n"
+				"f += vec4( ( clamp( a / dot( d, d ), 0, 1 ) ) * ( ( lightCol[ i ] ) * ( 3. + gs2fs.color ) * .25 ), 1.f );\n"
+			"}\n"
+			"fColor = vec4( clamp( f.xyz / f.a, vec3( 0 ), vec3( 1 ) ), 1. );\n"
 //			"fColor.rgb /= fColor.a;\n"
 		"}\n",
 		GLRenderer::ShaderCode::FROM_CODE ).
@@ -173,12 +163,14 @@ Cube::init( ) {
 		addUniform( "lightPos[3]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightCameraSpace[ 3 ] ).
 		addUniform( "lightPos[4]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightCameraSpace[ 4 ] ).
 		addUniform( "lightPos[5]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightCameraSpace[ 5 ] ).
+		addUniform( "lightPos[6]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightCameraSpace[ 6 ] ).
 		addUniform( "lightCol[0]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightColors[ 0 ] ).
 		addUniform( "lightCol[1]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightColors[ 1 ] ).
 		addUniform( "lightCol[2]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightColors[ 2 ] ).
 		addUniform( "lightCol[3]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightColors[ 3 ] ).
 		addUniform( "lightCol[4]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightColors[ 4 ] ).
-		addUniform( "lightCol[5]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightColors[ 5 ] );
+		addUniform( "lightCol[5]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightColors[ 5 ] ).
+		addUniform( "lightCol[6]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightColors[ 6 ] );
 
 	glr.program( "PROGRAM-CUBE" ).
 		setShader( "SHADER-CUBE" ).
@@ -203,7 +195,7 @@ Cube::init( ) {
 			"vec4 v = projection * view * model * vec4( vertex, 1 );\n"
 			"vs2fs.vertex = v.xyz;\n"
 			"vs2fs.color  = color;\n"
-			"gl_PointSize = 20.- .25 * v.z;\n"
+			"gl_PointSize = 40.- .5 * v.z;\n"
 			"gl_Position  = v;\n"
 		"}\n",
 
@@ -214,10 +206,11 @@ Cube::init( ) {
 		"} vs2fs;\n"
 		"out vec4 fColor;\n"
 		"void main( void ) {\n"
-			"vec2 v = -1. + 2. * gl_PointCoord.xy;"
+			"vec2  v = 2. * gl_PointCoord.xy - 1.;"
 			"float s = dot( v, v );"
-			"if( s > .999 ) discard;"
-			"fColor = clamp( ( 1. - 1. * sqrt( .01 * s ) ), .1, 1. ) * vec4( vs2fs.color, 0. );\n"
+			"if( s > .999 )"
+				"discard;"
+			"fColor = clamp( 1. * ( 1. - .5 * s ), .1, 1 ) * vec4( vec3( 1. ) + vs2fs.color, 2. );\n"
 //			"fColor = vec4( 1., 1., 1., 1. );\n"
 		"}\n",
 		GLRenderer::ShaderCode::FROM_CODE ).
@@ -237,12 +230,12 @@ Cube::resize( int p_width, int p_height ) {
 	float
 	ratio = 1.f * p_width / p_height;
 
-	projection = glm::perspective( 45.0f, ratio, 1.0f, 200.f );
+	projection = glm::perspective( 30.0f, ratio, 1.0f, 200.f );
 }
 
-	#ifndef GL_VERTEX_PROGRAM_POINT_SIZE
-	#define GL_VERTEX_PROGRAM_POINT_SIZE      0x8642
-	#endif
+#ifndef GL_VERTEX_PROGRAM_POINT_SIZE
+#define GL_VERTEX_PROGRAM_POINT_SIZE      0x8642
+#endif
 //	#ifndef GL_VERTEX_ATTRIB_ARRAY_NORMALIZED
 //	#define GL_VERTEX_ATTRIB_ARRAY_NORMALIZED 0x886A
 //	#endif
@@ -251,21 +244,23 @@ Cube::paint( ) {
 
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-	angle = .65f * vcd->time;
+	angle = vcd->time;
 
 	model = glm::mat4( 1. );
 	view = glm::translate( glm::mat4( 1. ), glm::vec3( 0.f, 0.f, -50.f ) );
-	view = glm::rotate( view, angle, glm::vec3( sinf( .1f * angle ), sinf( .12f * angle ), sinf( .13f * angle ) ) );
+	view = glm::rotate( view, .4f * angle, glm::vec3( sinf( .1f * angle ), sinf( .21f * angle ), sinf( .31f * angle ) ) );
 
 	GLRenderer::VertexArray
 	& va = glr.vertices( "VERTICES-LIGHTS" );
 
-//	glEnable( GL_VERTEX_ATTRIB_ARRAY_NORMALIZED );
+	glEnable( GL_VERTEX_ATTRIB_ARRAY_NORMALIZED );
 	glEnable( GL_VERTEX_PROGRAM_POINT_SIZE );
 
-	for( std::size_t i = 0; i < 6; ++ i ) {
+	float
+	phase = 3.14159f * sinf( .01f * angle );
+	for( std::size_t i = 0; i < 7; ++ i ) {
 
-		lightModelSpace[ i ] = glm::vec4( 15.f * cosf( .5f * i + vcd->time ), 15.f * sinf( .5f * i + 1.2f * vcd->time ), 15.f * sinf( .5f * i + vcd->time ), 1.f );
+		lightModelSpace[ i ] = glm::vec4( 20.f * cosf( phase * i + angle ), 20.f * sinf( phase * i + 1.2f * angle ), 20.f * sinf( phase * i + angle ), 1.f );
 
 		lightCameraSpace[ i ] = view * model * lightModelSpace[ i ];
 
@@ -273,24 +268,22 @@ Cube::paint( ) {
 		va.arr[ 6 * i + 1 ] = lightModelSpace[ i ].y;
 		va.arr[ 6 * i + 2 ] = lightModelSpace[ i ].z;
 	}
-//	glDisable( GL_VERTEX_PROGRAM_POINT_SIZE );
 
-
-//	model = glm::translate( glm::mat4( 1. ), glm::vec3( -2.5f ) );
 	glr.run( { "PROGRAM-LIGHTS" } );
 
-	for( int z = -4; z <= 4; ++ z ) {
+	glDisable( GL_VERTEX_PROGRAM_POINT_SIZE );
+	glDisable( GL_VERTEX_ATTRIB_ARRAY_NORMALIZED );
 
-		for( int y = -6; y <= 6; ++ y ) {
 
-			for( int x = -8; x <= 8; ++ x ) {
+	for( int z = -9; z <= 9; ++ z ) {
+
+		for( int y = -4; y <= 4; ++ y ) {
+
+			for( int x = -1; x <= 1; ++ x ) {
 
 				float
-				f = cosf( 3.14 * sinf( .1 * vcd->time ) );
+				f = cosf( 3.14f * sinf( .1f * vcd->time ) );
 
-				f = f * f;
-				f = f * f;
-				f = f * f;
 				f = f * f;
 				f = f * f;
 				f = f * f;
