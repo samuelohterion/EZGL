@@ -160,7 +160,7 @@ Cube::init( ) {
 				"( .9 > abs( gs2fs.frame.y ) && ( .9 > abs( gs2fs.frame.z ) ) ) ||\n"
 				"( .9 > abs( gs2fs.frame.z ) && ( .9 > abs( gs2fs.frame.x ) ) )\n"
 					"? 1.f\n"
-					": 0.5f;\n"
+					": 2.5f;\n"
 
 			"fColor = vec4( b * clamp( f.xyz / f.a, vec3( 0 ), vec3( 1 ) ), 1. );\n"
 //			"fColor.rgb /= fColor.a;\n"
