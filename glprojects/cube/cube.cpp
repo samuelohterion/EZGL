@@ -41,12 +41,18 @@ Cube::init( ) {
 	p7 = +px +py +pz;
 
 	glr.vertices( "VERTICES-CUBE" ).
-	addAttrib( "vertex", 3, 0 ).	addAttrib( "color", 3, 0 ) <<
+	addAttrib( "vertex", 3, 0 ).	addAttrib( "color", 3, 3 ) <<
 
-		p0 << px << p1 << px << p5 << px << p4 << px << p6 << py << p2 << py << p3 << pz << p1 << pz <<
+		p0 << px <<
+		p1 << px << p5 << px << p4 << px <<
+		p6 << py << p2 << py <<
+		p3 << pz << p1 << pz <<
 		GLRenderer::VertexArray::Object( 0, 8, GL_TRIANGLE_FAN ) <<
 
-		p7 << px << p3 << px << p2 << px << p6 << px << p4 << py << p5 << py << p1 << pz << p3 << pz <<
+		p7 << ( py + pz ) <<
+		p3 << ( py + pz ) << p2 << ( py + pz ) << p6 << ( py + pz ) <<
+		p4 << ( px + py ) << p5 << ( px + py ) <<
+		p1 << ( px + pz ) << p3 << ( px + pz ) <<
 		GLRenderer::VertexArray::Object( 8, 8, GL_TRIANGLE_FAN );
 
 	glr.shader(
@@ -84,13 +90,13 @@ Cube::init( ) {
 			"gl_Position = gl_in[ 0 ].gl_Position;\n"
 			"gs2fs.vertex = vs2gs[ 0 ].vertex;\n"
 			"gs2fs.normal = n;\n"
-			"gs2fs.color  = vs2gs[ 0 ].color;\n"
+			"gs2fs.color  = vs2gs[ 2 ].color;\n"
 			"EmitVertex( );\n"
 
 			"gl_Position = gl_in[ 1 ].gl_Position;\n"
 			"gs2fs.vertex = vs2gs[ 1 ].vertex;\n"
 			"gs2fs.normal = n;\n"
-			"gs2fs.color  = vs2gs[ 1 ].color;\n"
+			"gs2fs.color  = vs2gs[ 2 ].color;\n"
 			"EmitVertex( );\n"
 
 			"gl_Position = gl_in[ 2 ].gl_Position;\n"
@@ -115,7 +121,7 @@ Cube::init( ) {
 		"void main( void ) {\n"
 			"vec3 d = ( model * vec4( light, 1. ) ).xyz - gs2fs.vertex;\n"
 			"float a = 1. * normalize( dot( gs2fs.normal, d ) );\n"
-			"fColor = vec4( clamp( pow( a / dot( d, d ), 2. ), .1, 1. ) * ( .5 + .5 * gs2fs.color ), 1.f );\n"
+			"fColor = vec4( clamp( pow( a / dot( d, d ), 2. ), .1, 1. ) * gs2fs.color, 1.f );\n"
 		"}\n",
 		GLRenderer::ShaderCode::FROM_CODE ).
 		addUniform( "model", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
