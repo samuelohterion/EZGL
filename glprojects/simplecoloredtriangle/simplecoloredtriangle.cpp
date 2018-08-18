@@ -21,9 +21,8 @@ SimpleColoredTriangle::init( ) {
 		addAttrib( "vertex", 3, 0 ).	addAttrib( "color", 3, 3 ) <<
 		-1.f << -1.f << +0. <<			1.f << 0.f << 0.f <<
 		+1.f << -1.f << +0. <<			0.f << 1.f << 0.f <<
-		+1.f << +1.f << +0. <<			0.f << 0.f << 1.f <<
-		-1.f << +1.f << +0. <<			0.f << 0.f << 1.f <<
-		GLRenderer::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
+		+0.f << +1.f << +0. <<			0.f << 0.f << 1.f <<
+		GLRenderer::VertexArray::Object( 0, 3, GL_TRIANGLE_FAN );
 
 	glr.shader(
 		"SCT-SHADER",
