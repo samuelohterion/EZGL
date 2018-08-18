@@ -80,12 +80,13 @@ Cube::init( ) {
 		"in vec3 vertex;\n"
 		"in vec3 color;\n"
 		"out VS2GS {\n"
-			"vec3 vertex, color;\n"
+			"vec3 vertex, color, frame;\n"
 		"} vs2gs;\n"
 		"uniform mat4 model;\n"
 		"uniform mat4 view;\n"
 		"uniform mat4 projection;\n"
 		"void main( ) {\n"
+			"vs2gs.frame = vertex;\n"
 			"vec4\n"
 			"v = view * model * vec4( vertex, 1. );\n"
 			"vs2gs.vertex = v.xyz;\n"
@@ -97,27 +98,30 @@ Cube::init( ) {
 		"layout ( triangles ) in;\n"
 		"layout ( triangle_strip, max_vertices = 3 ) out;\n"
 		"in VS2GS {\n"
-			"vec3 vertex, color;\n"
+			"vec3 vertex, color, frame;\n"
 		"} vs2gs[ ];\n"
 		"out GS2FS {\n"
-			"vec3 vertex, color, normal;\n"
+			"vec3 vertex, color, normal, frame;\n"
 		"} gs2fs;\n"
 		"void main( ) {\n"
 			"vec3 n = normalize( cross( vs2gs[ 1 ].vertex - vs2gs[ 0 ].vertex, vs2gs[ 2 ].vertex - vs2gs[ 0 ].vertex ) );\n"
 
 			"gl_Position = gl_in[ 0 ].gl_Position;\n"
+			"gs2fs.frame = vs2gs[ 0 ].frame;\n"
 			"gs2fs.vertex = vs2gs[ 0 ].vertex;\n"
 			"gs2fs.normal = n;\n"
 			"gs2fs.color  = vs2gs[ 2 ].color;\n"
 			"EmitVertex( );\n"
 
 			"gl_Position = gl_in[ 1 ].gl_Position;\n"
+			"gs2fs.frame = vs2gs[ 1 ].frame;\n"
 			"gs2fs.vertex = vs2gs[ 1 ].vertex;\n"
 			"gs2fs.normal = n;\n"
 			"gs2fs.color  = vs2gs[ 2 ].color;\n"
 			"EmitVertex( );\n"
 
 			"gl_Position = gl_in[ 2 ].gl_Position;\n"
+			"gs2fs.frame = vs2gs[ 2 ].frame;\n"
 			"gs2fs.vertex = vs2gs[ 2 ].vertex;\n"
 			"gs2fs.normal = n;\n"
 			"gs2fs.color  = vs2gs[ 2 ].color;\n"
@@ -131,7 +135,8 @@ Cube::init( ) {
 			"vec3\n"
 			"vertex,\n"
 			"color,\n"
-			"normal;\n"
+			"normal,\n"
+			"frame;\n"
 		"} gs2fs;\n"
 		"uniform mat4 model;\n"
 		"uniform mat4 view;\n"
@@ -147,10 +152,17 @@ Cube::init( ) {
 			"for( i = i; i < 7; ++ i ) {"
 
 				"d = lightPos[ i ] - gs2fs.vertex;\n"
-				"a = 50. * normalize( dot( gs2fs.normal, d ) );\n"
-				"f += vec4( ( clamp( a / dot( d, d ), 0, 1 ) ) * ( ( lightCol[ i ] ) * ( 3. + gs2fs.color ) * .25 ), 1.f );\n"
+				"a = 10. * normalize( dot( gs2fs.normal, d ) );\n"
+				"f += vec4( ( clamp( a / dot( d, d ), 0, 1 ) ) * ( ( 1. + lightCol[ i ] ) * ( 3. + gs2fs.color ) * .125 ), 1.f );\n"
 			"}\n"
-			"fColor = vec4( clamp( f.xyz / f.a, vec3( 0 ), vec3( 1 ) ), 1. );\n"
+			"float b =\n"
+				"( .9 > abs( gs2fs.frame.x ) && ( .9 > abs( gs2fs.frame.y ) ) ) ||\n"
+				"( .9 > abs( gs2fs.frame.y ) && ( .9 > abs( gs2fs.frame.z ) ) ) ||\n"
+				"( .9 > abs( gs2fs.frame.z ) && ( .9 > abs( gs2fs.frame.x ) ) )\n"
+					"? 1.f\n"
+					": 0.5f;\n"
+
+			"fColor = vec4( b * clamp( f.xyz / f.a, vec3( 0 ), vec3( 1 ) ), 1. );\n"
 //			"fColor.rgb /= fColor.a;\n"
 		"}\n",
 		GLRenderer::ShaderCode::FROM_CODE ).
@@ -195,7 +207,7 @@ Cube::init( ) {
 			"vec4 v = projection * view * model * vec4( vertex, 1 );\n"
 			"vs2fs.vertex = v.xyz;\n"
 			"vs2fs.color  = color;\n"
-			"gl_PointSize = 40.- .5 * v.z;\n"
+			"gl_PointSize = 20.- .25 * v.z;\n"
 			"gl_Position  = v;\n"
 		"}\n",
 
@@ -247,8 +259,8 @@ Cube::paint( ) {
 	angle = vcd->time;
 
 	model = glm::mat4( 1. );
-	view = glm::translate( glm::mat4( 1. ), glm::vec3( 0.f, 0.f, -50.f ) );
-	view = glm::rotate( view, .4f * angle, glm::vec3( sinf( .1f * angle ), sinf( .21f * angle ), sinf( .31f * angle ) ) );
+	view = glm::translate( glm::mat4( 1. ), glm::vec3( 0.f, 0.f, -40.f ) );
+	view = glm::rotate( view, .123f * angle, glm::vec3( sinf( .1f * angle ), sinf( .21f * angle ), sinf( .31f * angle ) ) );
 
 	GLRenderer::VertexArray
 	& va = glr.vertices( "VERTICES-LIGHTS" );
@@ -257,10 +269,11 @@ Cube::paint( ) {
 	glEnable( GL_VERTEX_PROGRAM_POINT_SIZE );
 
 	float
-	phase = 3.14159f * sinf( .01f * angle );
+	phase = 3.14159f * sinf( .023f * angle );
+
 	for( std::size_t i = 0; i < 7; ++ i ) {
 
-		lightModelSpace[ i ] = glm::vec4( 20.f * cosf( phase * i + angle ), 20.f * sinf( phase * i + 1.2f * angle ), 20.f * sinf( phase * i + angle ), 1.f );
+		lightModelSpace[ i ] = glm::vec4( 5.f * cosf( phase * i + angle ), 11.f * sinf( phase * i + 1.2f * angle ), 21.f * sinf( phase * i + angle ), 1.f );
 
 		lightCameraSpace[ i ] = view * model * lightModelSpace[ i ];
 
@@ -288,7 +301,7 @@ Cube::paint( ) {
 				f = f * f;
 				f = f * f;
 				f = 1.f - f;
-				model = glm::translate( glm::mat4( 1. ), ( 4.f - 2.f * f ) * glm::vec3( x, y, z ) );
+				model = glm::translate( glm::mat4( 1. ), ( 6.f - 4.f * f ) * glm::vec3( x, y, z ) );
 
 				glr.run( { "PROGRAM-CUBE" } );
 			}
