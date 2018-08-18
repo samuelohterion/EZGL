@@ -44,7 +44,7 @@ Cube::init( ) {
 	addAttrib( "color", 3, 3 ) <<
 
 		0.f   <<  0.f  << 0.f   <<
-		.983f << .892f << .998f <<
+		.993f << .992f << .998f <<
 		GLRenderer::VertexArray::Object( 0, 1, GL_POINTS );
 
 	glr.vertices( "VERTICES-CUBE" ).
@@ -153,7 +153,7 @@ Cube::init( ) {
 			"vec4 v = projection * view * model * vec4( vertex, 1 );\n"
 			"vs2fs.vertex = ( projection * view * model * vec4( light, 1. ) ).xyz;\n"
 			"vs2fs.color  = color;\n"
-			"gl_PointSize = 200.- 3. * v.z;\n"
+			"gl_PointSize = 90.- .5 * v.z;\n"
 			"gl_Position  = v;\n"
 		"}\n",
 
@@ -168,7 +168,7 @@ Cube::init( ) {
 			"vec2 v = -1. + 2. * gl_PointCoord.xy;"
 			"float s = dot( v, v );"
 			"if( s > .999 ) discard;"
-			"fColor = clamp( 10. * ( 1. - 1. * sqrt( s ) ), .1, 1. ) * vec4( vs2fs.color, 0. );\n"
+			"fColor = clamp( ( 1. - 1. * sqrt( .01 * s ) ), .1, 1. ) * vec4( vs2fs.color, 0. );\n"
 //			"fColor = vec4( 1., 1., 1., 1. );\n"
 		"}\n",
 		GLRenderer::ShaderCode::FROM_CODE ).
@@ -194,7 +194,7 @@ Cube::resize( int p_width, int p_height ) {
 	float
 	ratio = 1.f * p_width / p_height;
 
-	projection = glm::perspective( 45.0f, ratio, 1.0f, 100.f );
+	projection = glm::perspective( 45.0f, ratio, 1.0f, 200.f );
 }
 
 void
@@ -206,9 +206,9 @@ Cube::paint( ) {
 
 	model = glm::mat4( 1. );
 	view = glm::translate( glm::mat4( 1. ), glm::vec3( 0.f, 0.f, -50.f ) );
-	view = glm::rotate( view, angle, glm::vec3( sin( .1 * angle ), sin( .12 * angle ), sin( .13 * angle ) ) );
+	view = glm::rotate( view, angle, glm::vec3( sinf( .1f * angle ), sinf( .12f * angle ), sinf( .13f * angle ) ) );
 
-	light2 = glm::vec4( 25.f * cosf( .2 * vcd->time ) * cosf( vcd->time ), 25.f * cosf( .21f * vcd->time ) * sinf( 1.2f * vcd->time ), 25.f * cosf( .24 * vcd->time ) * sinf( vcd->time ), 1.f );
+	light2 = glm::vec4( 20.f * cosf( .2 * vcd->time ) * cosf( vcd->time ), 20.f * cosf( .21f * vcd->time ) * sinf( 1.2f * vcd->time ), 25.f * cosf( .24 * vcd->time ) * sinf( vcd->time ), 1.f );
 
 	light = view * model * light2;
 
@@ -232,13 +232,13 @@ Cube::paint( ) {
 //	model = glm::translate( glm::mat4( 1. ), glm::vec3( -2.5f ) );
 	glr.run( { "PROGRAM-LIGHTS" } );
 
-	for( int z = -5; z <= 5; ++ z ) {
+	for( int z = -4; z <= 4; ++ z ) {
 
-		for( int y = -5; y <= 5; ++ y ) {
+		for( int y = -6; y <= 6; ++ y ) {
 
-			for( int x = -5; x <= 5; ++ x ) {
+			for( int x = -8; x <= 8; ++ x ) {
 
-				model = glm::translate( glm::mat4( 1. ), ( 4.f - 2.f * cosf( .1 * vcd->time  ) ) * glm::vec3( x, y, z ) );
+				model = glm::translate( glm::mat4( 1. ), ( 4.f - 2.f * cosf( 3.14 * sinf( .1 * vcd->time ) ) ) * glm::vec3( x, y, z ) );
 
 				glr.run( { "PROGRAM-CUBE" } );
 			}
