@@ -24,12 +24,12 @@ main( void ) {
 	if(abs(vVertsNormed.x) >1 || abs(vVertsNormed.y) >1)
 		discard;
 
-	vScaled = cos(time)*vScaled;
+	vScaled = ( .5 + .1 * cos(time) )*vScaled;
 	fColor = vec4( vec3( ( int(8 * vScaled.x ) + int(8 * vScaled.y ) ) % 2 ),1);
-	vec3 norm = vec3(random(vScaled)/cos(time)*0.1,0,1);
+	vec3 norm = vec3(random(vScaled)*cos(time)*0.01,random(vScaled)*sin(time)*0.001,1);
 	vec3 src =  vec3(sin(sin(time)),1. - cos(sin(time)),1.);
 	vec3 dir = src-vec3(vVertsNormed,0.);
-	float a = dot(dir, norm)/pow(dot(dir,dir),6)+.2;
-	vec3 red =vec3(1,.5,-1);
+	float a = clamp( dot(dir, norm)*pow(dot(dir,dir),-6)+.2, 0, 1 );
+	vec3 red =vec3(1,.5,0.);
 	fColor = vec4(a*(red*fColor.xyz),1);
 }
