@@ -94,8 +94,8 @@ GLRenderer {
 					GLint p_wrap_s = GL_CLAMP_TO_EDGE,
 					GLenum p_format = GL_RGBA,
 					GLenum p_type = GL_FLOAT,
-					GLsizei p_width = 64,
-					GLsizei p_height = 64 ) :
+					GLsizei p_width = 32,
+					GLsizei p_height = 32 ) :
 					Named( p_name ),
 					target( p_target ),
 					level( p_level ),
@@ -149,7 +149,7 @@ GLRenderer {
 
 					glBindTexture( target, id );
 
-					//glTexStorage2D( target, 0, GL_RG32F, simWidth, simHeight );
+					//glTexStorage2D( target, 0, GL_RG32F, width, height );
 					glTexImage2D( target, level, internal_format, width, height, 0, format, type, nullptr );
 
 					glBindTexture( GL_TEXTURE_2D, 0 );
@@ -1161,7 +1161,8 @@ GLRenderer {
 
 				Program( CStr &p_name, GLRenderer * p_glr ) :
 				Named( p_name ),
-				glr( p_glr ) {
+				glr( p_glr ),
+				fixSize( false ) {
 
 				}
 
@@ -1183,6 +1184,15 @@ GLRenderer {
 
 				Str
 				shader;
+
+				GLsizei
+				fixViewPortWidth,
+				fixViewPortHeight,
+				viewPortWidth,
+				viewPortHeight;
+
+				bool
+				fixSize;
 
 			public :
 
@@ -1224,6 +1234,35 @@ GLRenderer {
 					shader = p_shaderName;
 
 					return *this;
+				}
+
+				Program
+				&setFixSize( std::size_t const & p_width, std::size_t  const & p_height ) {
+
+					fixSize = true;
+
+					fixViewPortWidth  = p_width;
+					fixViewPortHeight = p_height;
+
+					viewPortWidth  = p_width;
+					viewPortHeight = p_height;
+
+					return *this;
+				}
+
+				void
+				resize( GLsizei p_width = 0, GLsizei p_height = 0 ) {
+
+					viewPortWidth = p_width;
+					viewPortHeight = p_height;
+
+					if( ! fixSize ) {
+
+						for( auto & ot : this->outTextures ) {
+
+							glr->tx[ ot ]->resize( viewPortWidth, viewPortHeight );
+						}
+					}
 				}
 
 				void
@@ -1279,6 +1318,15 @@ GLRenderer {
 
 				void
 				run( ) {
+
+					if( fixSize ) {
+
+						glViewport( 0, 0, fixViewPortWidth, fixViewPortHeight );
+					}
+					else {
+
+						glViewport( 0, 0, viewPortWidth, viewPortHeight );
+					}
 
 					if( 0 < frameBuffer.length( ) ) {
 
@@ -1395,6 +1443,10 @@ GLRenderer {
 
 		Program
 		*currentProgram;
+
+		std::size_t
+		currentViewportWidth,
+		currentViewportHeight;
 
 	public :
 
@@ -1594,6 +1646,15 @@ public Named {
 
 		virtual void
 		resize( int p_width, int p_height ) = 0;
+
+		void
+		resizeViewport( int p_width, int p_height ) {
+
+			for( auto & p : glr.pr ) {
+
+				p.second->resize( p_width, p_height );
+			}
+		}
 
 		virtual void
 		paint( ) = 0;

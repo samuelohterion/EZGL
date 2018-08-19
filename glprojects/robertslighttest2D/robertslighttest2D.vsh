@@ -4,7 +4,7 @@ precision highp float;
 precision highp int;
 
 in vec2
-verts;
+vertex;
 
 out vec2
 vVerts,
@@ -20,8 +20,8 @@ main( void ) {
 	vec2
 	ratio = vec2( width, height ) / ( width < height ? width : height );
 
-	vVerts = verts;
-	vVertsNormed = ratio * verts;
+	vVerts = vertex;
+	vVertsNormed = ratio * vertex;
 
-	gl_Position = vec4( verts, 0, 1 );
+	gl_Position = vec4( vertex, 0, 1 );
 }

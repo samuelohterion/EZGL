@@ -25,9 +25,15 @@ public GLProject {
 		lightModelSpace[ 7 ],
 		lightCameraSpace[ 7 ];
 
-
 		glm::vec3
 		lightColors[ 7 ];
+
+		bool
+		textureBuilt;
+
+		int
+		textureWidth,
+		textureHeight;
 
 		void
 		init( );
