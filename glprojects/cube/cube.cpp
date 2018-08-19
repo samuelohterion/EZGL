@@ -187,10 +187,6 @@ Cube::init( ) {
 		build( );
 
 
-
-
-
-
 	model = glm::mat4( 1. );
 /*
 *    2----3
@@ -302,7 +298,7 @@ Cube::init( ) {
 		"	int i = 0;\n"
 		"	for( i = i; i < 7; ++ i ) {"
 		"		d = lightPos[ i ] - gs2fs.vertex;\n"
-		"		a = 20. * normalize( dot( n, d ) );\n"
+		"		a = 10. * normalize( dot( n, d ) );\n"
 		"		f += vec4( clamp( a / dot( d, d ), 0, 1 ) * lightCol[ i ] * col.xyz, 1.f );\n"
 		"	}\n"
 		"	fColor = vec4( clamp( 2. * f.xyz / f.a, vec3( 0 ), vec3( 1 ) ), 1. );\n"

@@ -20,46 +20,46 @@ main( int argc, char *argv[ ] ) {
 	GLWidget
 	w;
 
-//	FunIn2D
-//	* glp = new FunIn2D( "FunIn2D" );
+	FunIn2D
+	* glp = new FunIn2D( "FunIn2D" );
 
 	Cube
 	* fwt = new Cube( "Cube" );
 
-//	LightTest
-//	* lt = new LightTest( "LightTest" );
+	LightTest
+	* lt = new LightTest( "LightTest" );
 
-//	CoordinateSystem
-//	* cs = new CoordinateSystem( "CoordinateSystem" );
+	CoordinateSystem
+	* cs = new CoordinateSystem( "CoordinateSystem" );
 
-//	SimpleTriangle
-//	* st = new SimpleTriangle( "SimpleTriangle" );
+	SimpleTriangle
+	* st = new SimpleTriangle( "SimpleTriangle" );
 
-//	Sphere
-//	* sp = new Sphere( "Sphere" );
+	Sphere
+	* sp = new Sphere( "Sphere" );
 
-//	SimpleColoredTriangle
-//	* sct = new SimpleColoredTriangle( "SimpleColoredTriangle" );
+	SimpleColoredTriangle
+	* sct = new SimpleColoredTriangle( "SimpleColoredTriangle" );
 
-//	SphereDynamicalSurface
-//	* sds = new SphereDynamicalSurface( "SphereDynamicalSurface" );
+	SphereDynamicalSurface
+	* sds = new SphereDynamicalSurface( "SphereDynamicalSurface" );
 
 	RobertsLightTest2D
 	* rlt = new RobertsLightTest2D( "RobertsLightTest2D" );
 
-//	BallAndLight
-//	* bal = new BallAndLight( "BallAndLight" );
+	BallAndLight
+	* bal = new BallAndLight( "BallAndLight" );
 
-//	w.projects[ "FunIn2D" ] = glp;
-	w.projects[ "Cube" ] = fwt;
-//	w.projects[ "LightTest" ] = lt;
-//	w.projects[ "CoordinateSystem" ] = cs;
-//	w.projects[ "SimpleTriangle" ] = st;
-//	w.projects[ "Sphere" ] = sp;
-//	w.projects[ "SimpleColoredTriangle" ] = sct;
-//	w.projects[ "SphereDynamicalSurface" ] = sds;
+	w.projects[ "FunIn2D" ] = glp;
+	w.projects[ "LightTest" ] = lt;
+	w.projects[ "CoordinateSystem" ] = cs;
+	w.projects[ "SimpleTriangle" ] = st;
+	w.projects[ "Sphere" ] = sp;
+	w.projects[ "SimpleColoredTriangle" ] = sct;
+	w.projects[ "SphereDynamicalSurface" ] = sds;
 	w.projects[ "RobertsLightTest2D" ] = rlt;
-//	w.projects[ "BallAndLight" ] = bal;
+	w.projects[ "BallAndLight" ] = bal;
+	w.projects[ "Cube" ] = fwt;
 
 	w.currentProject = "Cube";
 
