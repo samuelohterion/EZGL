@@ -6,6 +6,7 @@
 #include "glprojects/sphere/sphere.hpp"
 #include "glprojects/spheredynamicsurface/spheredynamicsurface.hpp"
 #include "glprojects/simplecoloredtriangle/simplecoloredtriangle.hpp"
+#include "glprojects/robertslighttest2D/robertslighttest2D.hpp"
 #include "widget.hpp"
 #include <QApplication>
 
@@ -42,6 +43,9 @@ main( int argc, char *argv[ ] ) {
 	SphereDynamicalSurface
 	* sds = new SphereDynamicalSurface( "SphereDynamicalSurface" );
 
+	RobertsLightTest2D
+	* rlt = new RobertsLightTest2D( "RobertsLightTest2D" );
+
 	w.projects[ "FunIn2D" ] = glp;
 	w.projects[ "Cube" ] = fwt;
 	w.projects[ "LightTest" ] = lt;
@@ -50,8 +54,9 @@ main( int argc, char *argv[ ] ) {
 	w.projects[ "Sphere" ] = sp;
 	w.projects[ "SimpleColoredTriangle" ] = sct;
 	w.projects[ "SphereDynamicalSurface" ] = sds;
+	w.projects[ "RobertsLightTest2D" ] = rlt;
 
-	w.currentProject = "Sphere";
+	w.currentProject = "RobertsLightTest2D";
 
 	w.show( );
 

@@ -22,7 +22,8 @@ SOURCES += \
 	glprojects/simpleTriangle/simpletriangle.cpp \
 	glprojects/sphere/sphere.cpp \
 	glprojects/spheredynamicsurface/spheredynamicsurface.cpp \
-	glprojects/simplecoloredtriangle/simplecoloredtriangle.cpp
+	glprojects/simplecoloredtriangle/simplecoloredtriangle.cpp \
+	glprojects/robertslighttest2D/robertslighttest2D.cpp
 
 HEADERS += \
 	code/widget.hpp \
@@ -35,7 +36,8 @@ HEADERS += \
 	glprojects/simpleTriangle/simpletriangle.hpp \
 	glprojects/sphere/sphere.hpp \
 	glprojects/spheredynamicsurface/spheredynamicsurface.hpp \
-	glprojects/simplecoloredtriangle/simplecoloredtriangle.hpp
+	glprojects/simplecoloredtriangle/simplecoloredtriangle.hpp \
+	glprojects/robertslighttest2D/robertslighttest2D.hpp
 
 FORMS += \
 	code/widget.ui
@@ -46,4 +48,7 @@ DISTFILES += \
 	glprojects/cube/wall.vsh \
 	glprojects/cube/wall.fsh \
 	glprojects/funIn2D/fun1.vsh \
-	glprojects/funIn2D/fun1.fsh
+	glprojects/funIn2D/fun1.fsh \
+	glprojects/robertslighttest2D/fun1.vsh \
+	glprojects/robertslighttest2D/fun1.fsh
+
