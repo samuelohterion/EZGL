@@ -38,7 +38,7 @@ Cube::init( ) {
 	lightColors[ 6 ] = px + py + pz;
 
 
-	textureWidth = textureHeight = 64;
+	textureWidth = textureHeight = 128;
 
 	glr.frameBuffer( "FRAMEBUFFER-SOME-NICE-TEXTURE" );
 
@@ -82,7 +82,7 @@ Cube::init( ) {
 		"}\n"
 		"void main( ) {\n"
 		"	fColor = ( ( ( int( 8. * vCoords.x ) + int( 8. * vCoords.y ) ) % 2 ) < 1 ) ? vec4( .7, .7, .7, 1. ) : vec4( 0,.0,.0, 1. );\n"
-		"	fColor.xyz += vec3( .3 * random( vCoords ), .3 * random( vCoords.xy + 3. ), .3 * random( vCoords.xy + 5. ) );\n"
+		"	fColor.xyz += vec3( .3 * random( vCoords ) );\n"
 		"}\n",
 		GLRenderer::ShaderCode::FROM_CODE );
 
@@ -105,7 +105,7 @@ Cube::init( ) {
 			GL_NEAREST, GL_NEAREST,
 			GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE,
 			GL_RGBA, GL_FLOAT,
-			64, 64 ) );
+			textureWidth, textureHeight ) );
 
 	glr.shader(
 		"SHADER-SOME-NICE-TEXTURE-ROBERTS-LIGHT-TEST",
