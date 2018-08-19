@@ -173,7 +173,7 @@ Cube::init( ) {
 			"float s = dot( v, v );"
 			"if( s > .999 )"
 				"discard;"
-			"fColor = clamp( 1. * ( 1. - .25 * s ), .1, 1 ) * vec4( vec3( 1. ) + vs2fs.color, 2. );\n"
+			"fColor = clamp( 1. * ( 1. - .5 * s ), .1, 1 ) * vec4( vec3( 1. ) + vs2fs.color, 2. );\n"
 //			"fColor = vec4( 1., 1., 1., 1. );\n"
 		"}\n",
 		GLRenderer::ShaderCode::FROM_CODE ).
@@ -289,7 +289,7 @@ Cube::init( ) {
 		"uniform sampler2D TX2;\n"
 		"out vec4 fColor;\n"
 		"void main( void ) {\n"
-		"	vec4 col = vec4( .3 * gs2fs.color + pow( .5 + .5 * sin( .1 * time ), 5. ) * texture( TX1, gs2fs.coord ).xyz + pow( .5 - .5 * sin( .1 * time ), 5. ) * texture( TX2, gs2fs.coord ).xyz, 1 );\n"
+		"	vec4 col = vec4( .3 * gs2fs.color + pow( .5 + .5 * sin( .05 * time ), 5. ) * texture( TX1, gs2fs.coord ).xyz + pow( .5 - .5 * sin( .05 * time ), 5. ) * texture( TX2, gs2fs.coord ).xyz, 1 );\n"
 		"	vec3\n"
 		"	d = vec3( 0., 0., +1. ),\n"
 		"	n = gs2fs.normal;\n"
@@ -400,8 +400,11 @@ Cube::paint( ) {
 			for( int x = -2; x <= 2; ++ x ) {
 
 				float
-				f = cosf( 3.14f * sinf( .1f * vcd->time ) );
+				f = cosf( 3.14f * sinf( .05f * vcd->time ) );
 
+				f = f * f;
+				f = f * f;
+				f = f * f;
 				f = f * f;
 				f = f * f;
 				f = f * f;
