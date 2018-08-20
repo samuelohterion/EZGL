@@ -1,5 +1,5 @@
-#ifndef BALLANDLIGHT_HPP
-#define BALLANDLIGHT_HPP
+#ifndef BAllANDLIGHT_HPP
+#define BAllANDLIGHT_HPP
 #include "code/glrenderer.hpp"
 
 class BallAndLight :
@@ -15,8 +15,17 @@ public GLProject {
 		m,v,p,
 		mv;
 
+		glm::vec3
+		light,
+		vel,
+		acc;
+
 		glm::mat3
 		nrm;
+
+		float
+		lastT,
+		g;
 
 	public:
 
@@ -28,5 +37,11 @@ public GLProject {
 
 		void
 		resize( int p_width, int p_height );
+
 };
-#endif // BALLANDLIGHT_HPP
+void
+print( glm::vec4 const & p_vec );
+
+void
+print( glm::mat4 const & p_mat );
+#endif // SPHERE_HPP

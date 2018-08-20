@@ -4,6 +4,8 @@ typedef glm::vec3 V3;
 typedef glm::mat4 M4;
 BallAndLight::BallAndLight( CStr const & p_name, ViewControlData *p_vcd ) :
 GLProject ( p_name, p_vcd ) {
+	lastT = 0;
+	g = 9.81;
 }
 void
 BallAndLight::init( ) {
@@ -11,16 +13,18 @@ BallAndLight::init( ) {
 	glEnable( GL_DEPTH_TEST );
 	glDisable( GL_CULL_FACE );
 	glDepthFunc( GL_LESS );
+
 	m = v = p = glm::mat4( 1. );
 	nrm = glm::mat3( 1. );
+
 	glr.vertices( "VERTICES-BALLANDLIGHT" ).
 		setUsage( GL_STATIC_DRAW ).
 		addAttrib( "vertex", 3, 0 ).addAttrib( "color", 3, 3 );
+
 	GLRenderer::VertexArray
 	& va = glr.vertices( "VERTICES-BALLANDLIGHT" );
-	glm::vec3
-	normal = glm::vec3( 1.f, 0.f, 0.f ),
-	color = glm::vec3( .5, .2, .5);
+
+
 	int
 	longS = 32,
 	latS = 16,
@@ -31,11 +35,16 @@ BallAndLight::init( ) {
 	factLong = 2.f*3.14159265f/longS,
 	factLat = 3.14159265f/latS,
 	x,y,z;
+
+	glm::vec3
+	normal = glm::vec3( rad*1.f, 0.f, 0.f ),
+	color = glm::vec3( .8, .5, .2);
 	va << normal << color;
+
 	float
 	cl = cosf(latd*factLat),
 	sl = sinf(latd*factLat);
-	// HIER bei 0 anfangen
+
 	for(int longid = 0; longid <= longS; ++longid){
 		x = rad * cl;
 		y = rad* sl*sinf(factLong*longid);
@@ -45,37 +54,77 @@ BallAndLight::init( ) {
 	}
 	va << GLRenderer::VertexArray::Object( 0, vxCount, GL_TRIANGLE_FAN );
 	int off = vxCount;
-	for (latd; latd< latS-1; latd++){
 
-	}
+	for (latd; latd < latS; latd++){
+
+		float
+		sa = sinf((latd-1)*factLat),
+		ca = cosf((latd-1)*factLat),
+		sb = sinf((latd-0)*factLat),
+		cb = cosf((latd-0)*factLat);
+
+		for(int longid = 0; longid <=longS; ++longid){
+			float
+			xA = rad*ca,
+			yA = rad*sa*sinf(factLong*longid),
+			zA = rad*sa*cosf(factLong*longid),
+			xB = rad*cb,
+			yB = rad*sb*sinf(factLong*longid),
+			zB = rad*sb*cosf(factLong*longid);
+
+			va << xA << yA << zA << color << xB << yB << zB << color;
+			vxCount +=2;
+		}
+	 }
+	 va << GLRenderer::VertexArray::Object( off, vxCount, GL_TRIANGLE_STRIP );
+
+	 off = vxCount;
+
+	 va << -normal.x << normal.y << normal.z <<color;
+
+	 ++vxCount;
+	 ++latd;
+	 cl = cosf(latd*factLat);
+	 sl = sinf(latd*factLat);
+
+		for(int longid = 0; longid <= longS; ++longid){
+			x = rad * cl;
+			y = rad* sl*sinf(factLong*longid);
+			z = rad* sl*cosf(factLong*longid);
+			va << x << y << z << color;
+		   ++vxCount;
+
+		}
+
+	va << GLRenderer::VertexArray::Object( off, vxCount, GL_TRIANGLE_FAN );
+
 	glr.shader(
 		"SHADER-BALLANDLIGHT",
 		//Vertex Shader
 		"#version 330 core\n"
 		"layout( location = 0 ) in vec3 vertex;\n"
 		"layout( location = 1 ) in vec3 color;\n"
-		"uniform float time;\n"
 		"uniform mat4 mv; \n"
 		"uniform mat4 p;\n"
 		"out vec3 vColor;\n"
-		"out float t;\n"
+		"out vec4 vVectorInWorldSpace;\n"
+		" \n"
 		"void main( void ) {\n"
-			   "vColor = color;\n"
-			   "t = time;\n"
-			   "gl_Position = p*mv * vec4( vertex, 1. );"
+		"	vColor = color;\n"
+		"	vVectorInWorldSpace  = vec4( vertex, 1. );\n"
+		"	gl_Position          = p * mv * vVectorInWorldSpace;\n"
 		"}\n",
 		//Fragment Shader
 		"#version 330 core\n"
 		"in vec3 vColor;\n"
-		"in float t;"
+		"in vec4 vVectorInWorldSpace;\n"
 		"out vec4 fColor;\n"
 		"void main( void ) {\n"
-		"	fColor = vec4(1,1,1,1);"
+		"	fColor = vec4( vColor.rgb * ( .2 + .8 * max( 0., dot( vVectorInWorldSpace.xyz, vec3( 0,.71,.71 ) ) ) ), 1 );\n"
 		"}\n",
 		GLRenderer::ShaderCode::FROM_CODE ).
 			addUniform( "mv", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & mv ).
-			addUniform( "p", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & p ).
-			addUniform( "time", GLRenderer::Shader::FLOAT, GLRenderer::Shader::SCALAR, & vcd->time );
+			addUniform( "p",  GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & p );
 
 	glr.program( "PROGRAM-BALLANDLIGHT" ).
 		setVertexArray( "VERTICES-BALLANDLIGHT" ).
@@ -86,14 +135,12 @@ void
 BallAndLight::paint( ) {
 	float
 	angle = 2.15f * vcd->time;
-//    light = glm::vec3( 5.f * sin( vcd->time ), 0.f, 0.f );
-	//light = glm::vec3( 2.f, 2.f, 2.f );
+
 	v = glm::mat4( 1. );
-	v = glm::translate( glm::mat4( 1. ), glm::vec3( 0.f, 0.f, -2.f ) );
-	//v = glm::rotate( v, angle, glm::vec3( sin( .1 * angle ), sin( .12 * angle ), sin( .13 * angle ) ) );
-	v = glm::rotate( v, angle, glm::vec3( 0.f, 0.f, 1.f ) );
-	mv = v * m;  // Calculate final MVP matrix
-//    norm = glm::transpose( glm::inverse( mvp ) );
+	v = glm::translate( glm::mat4( 1. ), glm::vec3( 0.f, 0.f, -5.f ) );
+
+	v = glm::rotate( v, angle, glm::vec3( 0.f, 1.f, 0.f ) );
+	mv = v * m;
 
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	glr.run( { "PROGRAM-BALLANDLIGHT" } );
