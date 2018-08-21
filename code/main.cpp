@@ -61,7 +61,7 @@ main( int argc, char *argv[ ] ) {
 	w.projects[ "BallAndLight" ] = bal;
 	w.projects[ "Cube" ] = fwt;
 
-	w.currentProject = "BallAndLight";
+	w.currentProject = "LightTest";
 
 	w.show( );
 

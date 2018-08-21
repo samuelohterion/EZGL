@@ -342,12 +342,6 @@ Cube::resize( int p_width, int p_height ) {
 //	glr.tx[ "TX1" ]->resize( p_width, p_height );
 }
 
-#ifndef GL_VERTEX_PROGRAM_POINT_SIZE
-#define GL_VERTEX_PROGRAM_POINT_SIZE      0x8642
-#endif
-//	#ifndef GL_VERTEX_ATTRIB_ARRAY_NORMALIZED
-//	#define GL_VERTEX_ATTRIB_ARRAY_NORMALIZED 0x886A
-//	#endif
 void
 Cube::paint( ) {
 

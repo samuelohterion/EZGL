@@ -13,11 +13,15 @@ public GLProject {
 	public:
 
 		glm::mat4
-		m,v,p,
-		mv;
+		model,
+		view,
+		projection;
 
 		glm::vec3
-		light;
+		light1InModelSpacePosition,
+		light2InCameraSpacePosition,
+		light1InModelSpaceColor,
+		light2InCameraSpaceColor;
 
 	public:
 
