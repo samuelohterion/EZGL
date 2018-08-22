@@ -305,7 +305,7 @@ LightTest::init( ) {
 			"	float s = dot( v, v );\n"
 			"	if( s > .999 )\n"
 			"		discard;\n"
-			"	fColor = vec4( clamp( 1. * ( 1. - .95 * s ), .1, 1 ) * ( vec3( .75 ) + vs2fs.color.xyz ), 1. );\n"
+			"	fColor = vec4( clamp( 2. * ( 1. - s ), .1, 1 ) * ( vec3( 1. ) + vs2fs.color.xyz ), 1. );\n"
 			"}\n",
 			GLRenderer::ShaderCode::FROM_CODE ).
 			addUniform( "model",               GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
@@ -392,7 +392,7 @@ LightTest::init( ) {
 			"	float s = dot( v, v );\n"
 			"	if( s > .999 )\n"
 			"		discard;\n"
-			"	fColor = vec4( clamp( 1. * ( 1. - .95 * s ), .1, 1 ) * ( vec3( .75 ) + vs2fs.color.xyz ), 1. );\n"
+			"	fColor = vec4( clamp( 2. * ( 1. - s ), .1, 1 ) * ( vec3( 1. ) + vs2fs.color.xyz ), 1. );\n"
 			"}\n",
 			GLRenderer::ShaderCode::FROM_CODE ).
 			addUniform( "model",               GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
@@ -441,10 +441,10 @@ LightTest::paint( ) {
 	// let the lights dance a little
 
 	// screw in model space
-	light1InModelSpacePosition  = glm::vec3( model * glm::vec4( .9f * cosf( 8.f * .665f * vcd->time ), 1.f + .9f * sinf( .665f * vcd->time ), .9f * sinf( 8.f * .665f * vcd->time ), 1.f ) );
+	light1InModelSpacePosition  = glm::vec3( model * glm::vec4( .9f * cosf( 2.7f * vcd->time ), 1.f + .9f * sinf( .5f *  vcd->time ), .9f * sinf( 2.7f * vcd->time ), 1.f ) );
 
 	// swing in front of the camera
-	light2InCameraSpacePosition = glm::vec3( view * model * glm::vec4( 1.5f * sinf( sinf( 2.2f * vcd->time ) ), 2.0f - 1.5f * cosf( sinf( 2.2f * vcd->time ) ), +1.f, 1.f ) );
+	light2InCameraSpacePosition = glm::vec3( view * model * glm::vec4( 1.f * sinf( .5f * sinf( 3.f * vcd->time ) ), 1.f - 1.f * cosf( .5f * sinf( 3.f * vcd->time ) ), +1.f, 1.f ) );
 
 	// rotate the whole model in time and by mouse-x
 	model = glm::rotate( model, .01f * ( vcd->mousex - 100.f * vcd->time ), glm::vec3( 0., 1., 0. ) );
