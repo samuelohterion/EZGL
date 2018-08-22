@@ -23,8 +23,7 @@ SOURCES += \
 	glprojects/sphere/sphere.cpp \
 	glprojects/spheredynamicsurface/spheredynamicsurface.cpp \
 	glprojects/simplecoloredtriangle/simplecoloredtriangle.cpp \
-	glprojects/robertslighttest2D/robertslighttest2D.cpp \
-	glprojects/ballandlight/ballandlight.cpp
+	glprojects/robertslighttest2D/robertslighttest2D.cpp
 
 HEADERS += \
 	code/widget.hpp \
@@ -38,8 +37,7 @@ HEADERS += \
 	glprojects/sphere/sphere.hpp \
 	glprojects/spheredynamicsurface/spheredynamicsurface.hpp \
 	glprojects/simplecoloredtriangle/simplecoloredtriangle.hpp \
-	glprojects/robertslighttest2D/robertslighttest2D.hpp \
-	glprojects/ballandlight/ballandlight.hpp
+	glprojects/robertslighttest2D/robertslighttest2D.hpp
 
 FORMS += \
 	code/widget.ui
