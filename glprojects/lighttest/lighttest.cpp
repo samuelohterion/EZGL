@@ -124,14 +124,14 @@ LightTest::init( ) {
 		"	d2 = light2InCameraSpacePosition - vs2fs.vertexInCameraSpace.xyz;\n"
 
 		"	float\n"
-		"	a1 = max( 0, dot( d1, vs2fs.normalVectorInModelSpace.xyz )  * inversesqrt( dot( d1, d1 ) ) ),\n"
-		"	a2 = max( 0, dot( d2, vs2fs.normalVectorInCameraSpace.xyz ) * inversesqrt( dot( d2, d2 ) ) );\n"
+		"	a1 = max( 0, .5 * dot( d1, vs2fs.normalVectorInModelSpace.xyz )  / dot( d1, d1 ) ),\n"
+		"	a2 = max( 0, .5 * dot( d2, vs2fs.normalVectorInCameraSpace.xyz ) / dot( d2, d2 ) );\n"
 
 		"	fColor = ( ( int( vs2fs.squareCoordsInWorldSpace.x ) + int( vs2fs.squareCoordsInWorldSpace.y ) ) % 2 == 0 )\n"
 		"		? vec4( .7, .7, .7, 1. )\n"
-		"		: vec4( .0, .0, .0, 1. );\n"
-		"	fColor.xyz *= ( .5 + pow( a1, 4. ) * d1 + pow( a2, 4. ) * d2 );\n"
+		"		: vec4( .3, .3, .3, 1. );\n"
 		"	fColor.xyz += vec3( .3 * random( vs2fs.squareCoordsInWorldSpace ) );\n"
+		"	fColor.xyz = fColor.xyz * ( pow( a1, 1. ) * light1InModelSpaceColor + pow( a2, 4. ) * light2InCameraSpaceColor );\n"
 		"}\n",
 		GLRenderer::ShaderCode::FROM_CODE ).
 		addUniform( "model",               GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
@@ -227,7 +227,7 @@ LightTest::init( ) {
 	glr.vertices( "VERTICES-LIGHTED-CHECKERBOARD-LIGHT-IN-MODEL-SPACE" ).
 		setUsage( GL_STATIC_DRAW ).
 		addAttrib( "color", 3, 0 ) <<
-		1.f << .8f << 0.f <<
+		0.f << 0.f << 0.f <<
 		GLRenderer::VertexArray::Object( 0, 1, GL_POINTS );
 
 	glr.shader(
@@ -290,7 +290,7 @@ LightTest::init( ) {
 		"	float s = dot( v, v );\n"
 		"	if( s > .999 )\n"
 		"		discard;\n"
-		"	fColor = vec4( clamp( 1. * ( 1. - 1. * s ), .1, 1 ) * ( vec3( .5 ) + vs2fs.color.xyz ), 1. );\n"
+		"	fColor = vec4( clamp( 1. * ( 1. - .95 * s ), .1, 1 ) * ( vec3( 1. ) + vs2fs.color.xyz ), 1. );\n"
 		"}\n",
 		GLRenderer::ShaderCode::FROM_CODE ).
 		addUniform( "model",               GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
@@ -311,7 +311,7 @@ LightTest::init( ) {
 	glr.vertices( "VERTICES-LIGHTED-CHECKERBOARD-LIGHT-IN-CAMERA-SPACE" ).
 		setUsage( GL_STATIC_DRAW ).
 		addAttrib( "color", 3, 0 ) <<
-		.1f << .3f << 1.f <<
+		0.f << 0.f << 0.f <<
 		GLRenderer::VertexArray::Object( 0, 1, GL_POINTS );
 
 	glr.shader(
@@ -469,53 +469,55 @@ LightTest::paint( ) {
 
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-	// move the model not the camera!
+//	look from a certain point
+	view =
+		glm::lookAt(
+			glm::vec3( 0, 3, 3 ), // Camera is at (4,3,3), in World Space
+			glm::vec3( 0, 0, 0 ), // and looks at the origin
+			glm::vec3( 0, 1, 0 )  // Head is up (set to 0,-1,0 to look upside-down)
+	);
 
-	float
-	t = sinf( .3 * vcd->time );
+	model = glm::mat4( 1. );
 
-	model =
-		glm::translate(
-			glm::rotate(
-				glm::mat4( 1. ),
-				3.1415f * t,
-				glm::vec3( 0, 1, 0 ) ),
-				glm::vec3( 0.f, -1. - 1.f * sinf( 3.1415f * t ), 0.f ) );
+	model = glm::rotate( model, .1f * vcd->time, glm::vec3( 0., 1., 0. ) );
 
-	// look from a certain point
-//	view =
-//		glm::lookAt(
-//			glm::vec3( 0, 3, 4 ), // Camera is at (4,3,3), in World Space
-//			glm::vec3( 0, 0, 0 ), // and looks at the origin
-//			glm::vec3( 0, 1, 0 )  // Head is up (set to 0,-1,0 to look upside-down)
-//	);
+	glr.run( { "PROGRAM-LIGHTED-CHECKERBOARD-CHECKERBOARD" } );
 
-	view = glm::rotate(
-			glm::translate(
-				glm::mat4( 1. ),
-				glm::vec3( 0.f, 0.f, -5.f ) ),
-			0.f * sinf( vcd->time ),
-			glm::vec3( 0., 1.f, 0.f ) );
+	model = glm::rotate( model, .5f * 3.1415f, glm::vec3( 1., 0., 0. ) );
+	model = glm::translate( model, glm::vec3( 0., -1., -1. ) );
 
-	light1InModelSpaceColor  = glm::vec3( 1.f, 3.f, 0.f );
-	light2InCameraSpaceColor = glm::vec3( 0.f, .3f, 1.f );
+	glr.run( { "PROGRAM-LIGHTED-CHECKERBOARD-CHECKERBOARD" } );
 
-	light1InModelSpacePosition  = glm::vec3( model * glm::vec4( 1.f, 1.f + sinf( 1.33 * vcd->time ), 1.f, 1.f ) );
-	light2InCameraSpacePosition = glm::vec3( view * glm::vec4( 0.f, 1.f, 2.f, 1.f ) );
+	model = glm::rotate( model, .5f * 3.1415f, glm::vec3( 0., 0., 1. ) );
+	model = glm::translate( model, glm::vec3( +1., -1., 0. ) );
 
+	glr.run( { "PROGRAM-LIGHTED-CHECKERBOARD-CHECKERBOARD" } );
+
+//	view = glm::rotate(
+//			glm::translate(
+//				glm::mat4( 1. ),
+//				glm::vec3( 0.f, 0.f, -5.f ) ),
+//			0.f * sinf( vcd->time ),
+//			glm::vec3( 0., 1.f, 0.f ) );
 
 	glr.run( {
 		"PROGRAM-LIGHTED-CHECKERBOARD-CHECKERBOARD" } );
+
+	light1InModelSpaceColor  = glm::vec3( 1.0f, .50f, .25f );
+	light2InCameraSpaceColor = glm::vec3( .25f, .50f, 1.0f );
+
+	model = glm::mat4( 1. );
+
+	light1InModelSpacePosition  = glm::vec3( model * glm::vec4( .9f * cosf( 8.f * .665f * vcd->time ), 1.f + .9f * sinf( .665f * vcd->time ), .9f * sinf( 8.f * .665f * vcd->time ), 1.f ) );
+	light2InCameraSpacePosition = glm::vec3( view * model * glm::vec4( .5f * sinf( sinf( vcd->time ) ), 2.f - .5f * cosf( sinf( vcd->time ) ), 1.f, 1.f ) );
 
 	glEnable( GL_VERTEX_ATTRIB_ARRAY_NORMALIZED );
 	glEnable( GL_VERTEX_PROGRAM_POINT_SIZE );
 
 	glr.run( {
-		"PROGRAM-LIGHTED-CHECKERBOARD-LIGHT-IN-MODEL-SPACE"
-		 } );
-	glr.run( {
+		"PROGRAM-LIGHTED-CHECKERBOARD-LIGHT-IN-MODEL-SPACE",
 		"PROGRAM-LIGHTED-CHECKERBOARD-LIGHT-IN-CAMERA-SPACE"
-		 } );
+	} );
 
 	glDisable( GL_VERTEX_ATTRIB_ARRAY_NORMALIZED );
 	glDisable( GL_VERTEX_PROGRAM_POINT_SIZE );
