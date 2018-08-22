@@ -8,23 +8,23 @@ public GLProject {
 
 	public:
 
-        BallAndLight( CStr const & p_name, ViewControlData *p_vcd = nullptr );
+		BallAndLight( CStr const & p_name, ViewControlData *p_vcd = nullptr );
 
 	public:
 
 		glm::mat4
 		m,v,p,
 		mv;
-    
-    glm::vec3
-    light;
 
-    glm::mat3
+	glm::vec3
+	light;
+
+	glm::mat3
 		nrm;
 
-    Interaction*
-    ballintr;
-  
+	Interaction*
+	ballintr;
+
 	public:
 
 		void
@@ -36,3 +36,4 @@ public GLProject {
 		void
 		resize( int p_width, int p_height );
 };
+#endif
