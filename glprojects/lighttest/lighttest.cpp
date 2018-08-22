@@ -73,10 +73,10 @@ LightTest::init( ) {
 
 		//	make some trafos
 		"	vs2fs.vertexInModelSpace          = model * v4;\n"
-		"	vs2fs.vertexInCameraSpace         = view  * model * vs2fs.vertexInModelSpace;\n"
-		"	vs2fs.vertexInProjectionSpace     = projection * vs2fs.vertexInCameraSpace;\n"
+		"	vs2fs.vertexInCameraSpace         = view  * v4;\n"
+		"	vs2fs.vertexInProjectionSpace     = projection * view * model * v4;\n"
 		"	vs2fs.normalVectorInModelSpace    = vec4( 0, 1, 0, 0 ) * inverse( model );\n"
-		"	vs2fs.normalVectorInCameraSpace   = vec4( 0, 1, 0, 0 ) * inverse( view * model );\n"
+		"	vs2fs.normalVectorInCameraSpace   = vec4( 0, 1, 0, 0 ) * inverse( view );\n"
 
 		// position of course has to be transformed into projection space
 		"	gl_Position = projection * view * model * v4;\n"
@@ -113,7 +113,7 @@ LightTest::init( ) {
 		"out vec4 fColor;\n"
 
 		// 2d random
-		"float random ( in vec2 st) {\n"
+		"float random ( in vec2 st ) {\n"
 			"return fract( sin( dot( st.xy, vec2( 12.9898, 78.233 ) ) ) * 43758.5453123 );\n"
 		"}\n"
 
@@ -259,7 +259,10 @@ LightTest::init( ) {
 		//	now the main part (O;
 		"void main( ) {\n"
 
-		"	gl_PointSize = 20;\n"
+		"	vec4\n"
+		"		v = projection * view * vec4( light1InModelSpacePosition, 1 );"
+
+		"	gl_PointSize = 20 - v.z;\n"
 
 		//	make some trafos
 		"	vs2fs.color  = vec4( light1InModelSpaceColor, 1 );\n"
@@ -343,13 +346,16 @@ LightTest::init( ) {
 		//	now the main part (O;
 		"void main( ) {\n"
 
-		"	gl_PointSize = 20;\n"
+		"	vec4\n"
+		"	v = projection * vec4( light2InCameraSpacePosition, 1 );\n"
+
+		"	gl_PointSize = 20 - v.z;\n"
 
 		//	make some trafos
 		"	vs2fs.color  = vec4( light2InCameraSpaceColor, 1 );\n"
 
 		// position of course has to be transformed into projection space
-		"	gl_Position = projection * vec4( light2InCameraSpacePosition, 1 );\n"
+		"	gl_Position = v;\n"
 		"}\n",
 
 		// FRAGMENT SHADER
@@ -374,7 +380,7 @@ LightTest::init( ) {
 		"	float s = dot( v, v );\n"
 		"	if( s > .999 )\n"
 		"		discard;\n"
-		"	fColor = vec4( clamp( 1. * ( 1. - 1. * s ), .1, 1 ) * ( vec3( .5 ) + vs2fs.color.xyz ), 1. );\n"
+		"	fColor = vec4( clamp( 1. * ( 1. - 1. * s ), .1, 1 ) * ( vec3( 1. ) + vs2fs.color.xyz ), 1. );\n"
 		"}\n",
 		GLRenderer::ShaderCode::FROM_CODE ).
 		addUniform( "model",               GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
@@ -469,15 +475,21 @@ LightTest::paint( ) {
 
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
+	light1InModelSpaceColor  = glm::vec3( 1.0f, .50f, .25f );
+	light2InCameraSpaceColor = glm::vec3( .25f, .50f, 1.0f );
+
 //	look from a certain point
 	view =
 		glm::lookAt(
-			glm::vec3( 0, 3, 3 ), // Camera is at (4,3,3), in World Space
+			glm::vec3( 0, 3, 4 ), // Camera is at (4,3,3), in World Space
 			glm::vec3( 0, 0, 0 ), // and looks at the origin
 			glm::vec3( 0, 1, 0 )  // Head is up (set to 0,-1,0 to look upside-down)
 	);
 
 	model = glm::mat4( 1. );
+
+	light1InModelSpacePosition  = glm::vec3( model * glm::vec4( .9f * cosf( 8.f * .665f * vcd->time ), 1.f + .9f * sinf( .665f * vcd->time ), .9f * sinf( 8.f * .665f * vcd->time ), 1.f ) );
+	light2InCameraSpacePosition = glm::vec3( view * glm::vec4( .5f * sinf( sinf( vcd->time ) ), 1.0f - 1.f * cosf( sinf( vcd->time ) ), +1.f, 1.f ) );
 
 	model = glm::rotate( model, .1f * vcd->time, glm::vec3( 0., 1., 0. ) );
 
@@ -503,13 +515,7 @@ LightTest::paint( ) {
 	glr.run( {
 		"PROGRAM-LIGHTED-CHECKERBOARD-CHECKERBOARD" } );
 
-	light1InModelSpaceColor  = glm::vec3( 1.0f, .50f, .25f );
-	light2InCameraSpaceColor = glm::vec3( .25f, .50f, 1.0f );
-
 	model = glm::mat4( 1. );
-
-	light1InModelSpacePosition  = glm::vec3( model * glm::vec4( .9f * cosf( 8.f * .665f * vcd->time ), 1.f + .9f * sinf( .665f * vcd->time ), .9f * sinf( 8.f * .665f * vcd->time ), 1.f ) );
-	light2InCameraSpacePosition = glm::vec3( view * model * glm::vec4( .5f * sinf( sinf( vcd->time ) ), 2.f - .5f * cosf( sinf( vcd->time ) ), 1.f, 1.f ) );
 
 	glEnable( GL_VERTEX_ATTRIB_ARRAY_NORMALIZED );
 	glEnable( GL_VERTEX_PROGRAM_POINT_SIZE );
