@@ -62,7 +62,6 @@ main( int argc, char *argv[ ] ) {
 	w.projects[ "Cube" ] = fwt;
 
 	w.currentProject = "LightTest";
-
 	w.show( );
 
 	return a.exec( );
