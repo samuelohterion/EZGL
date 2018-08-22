@@ -73,10 +73,10 @@ LightTest::init( ) {
 
 		//	make some trafos
 		"	vs2fs.vertexInModelSpace          = model * v4;\n"
-		"	vs2fs.vertexInCameraSpace         = view  * v4;\n"
+		"	vs2fs.vertexInCameraSpace         = view  * model * v4;\n"
 		"	vs2fs.vertexInProjectionSpace     = projection * view * model * v4;\n"
 		"	vs2fs.normalVectorInModelSpace    = vec4( 0, 1, 0, 0 ) * inverse( model );\n"
-		"	vs2fs.normalVectorInCameraSpace   = vec4( 0, 1, 0, 0 ) * inverse( view );\n"
+		"	vs2fs.normalVectorInCameraSpace   = vec4( 0, 1, 0, 0 ) * inverse( view * model );\n"
 
 		// position of course has to be transformed into projection space
 		"	gl_Position = projection * view * model * v4;\n"
@@ -125,13 +125,18 @@ LightTest::init( ) {
 
 		"	float\n"
 		"	a1 = max( 0, .5 * dot( d1, vs2fs.normalVectorInModelSpace.xyz )  / dot( d1, d1 ) ),\n"
-		"	a2 = max( 0, .5 * dot( d2, vs2fs.normalVectorInCameraSpace.xyz ) / dot( d2, d2 ) );\n"
+		"	a2 = max( 0, .5 * dot( d2, vs2fs.normalVectorInCameraSpace.xyz ) / dot( d2, d2 ) ),\n"
+		// global light
+		"	a3 = max( 0, .5 * dot( vec3( 0, 0, 1 ), vs2fs.normalVectorInCameraSpace.xyz ) );\n"
 
+		// checkerboard color
 		"	fColor = ( ( int( vs2fs.squareCoordsInWorldSpace.x ) + int( vs2fs.squareCoordsInWorldSpace.y ) ) % 2 == 0 )\n"
 		"		? vec4( .7, .7, .7, 1. )\n"
 		"		: vec4( .3, .3, .3, 1. );\n"
+		// some noise
 		"	fColor.xyz += vec3( .3 * random( vs2fs.squareCoordsInWorldSpace ) );\n"
-		"	fColor.xyz = fColor.xyz * ( pow( a1, 1. ) * light1InModelSpaceColor + pow( a2, 4. ) * light2InCameraSpaceColor );\n"
+		// and now the lighting
+		"	fColor.xyz = fColor.xyz * ( pow( a1, 2. ) * light1InModelSpaceColor + pow( a2, 2. ) * light2InCameraSpaceColor + a3 * vec3( 1 ) );\n"
 		"}\n",
 		GLRenderer::ShaderCode::FROM_CODE ).
 		addUniform( "model",               GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
@@ -293,7 +298,7 @@ LightTest::init( ) {
 		"	float s = dot( v, v );\n"
 		"	if( s > .999 )\n"
 		"		discard;\n"
-		"	fColor = vec4( clamp( 1. * ( 1. - .95 * s ), .1, 1 ) * ( vec3( 1. ) + vs2fs.color.xyz ), 1. );\n"
+		"	fColor = vec4( clamp( 1. * ( 1. - .95 * s ), .1, 1 ) * ( vec3( .75 ) + vs2fs.color.xyz ), 1. );\n"
 		"}\n",
 		GLRenderer::ShaderCode::FROM_CODE ).
 		addUniform( "model",               GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
@@ -339,7 +344,7 @@ LightTest::init( ) {
 		"out VS2FS {\n"
 
 		//	tranformed vectors
-		"	vec4\n"
+		"vec4\n"
 		"		color;\n"
 		"} vs2fs;\n"
 
@@ -368,7 +373,7 @@ LightTest::init( ) {
 
 		//	tranformed vectors
 		"vec4\n"
-		"		color;\n"
+		"	color;\n"
 		"} vs2fs;\n"
 
 		// output color
@@ -380,7 +385,7 @@ LightTest::init( ) {
 		"	float s = dot( v, v );\n"
 		"	if( s > .999 )\n"
 		"		discard;\n"
-		"	fColor = vec4( clamp( 1. * ( 1. - 1. * s ), .1, 1 ) * ( vec3( 1. ) + vs2fs.color.xyz ), 1. );\n"
+		"	fColor = vec4( clamp( 1. * ( 1. - .95 * s ), .1, 1 ) * ( vec3( .75 ) + vs2fs.color.xyz ), 1. );\n"
 		"}\n",
 		GLRenderer::ShaderCode::FROM_CODE ).
 		addUniform( "model",               GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
@@ -481,17 +486,20 @@ LightTest::paint( ) {
 //	look from a certain point
 	view =
 		glm::lookAt(
-			glm::vec3( 0, 3, 4 ), // Camera is at (4,3,3), in World Space
-			glm::vec3( 0, 0, 0 ), // and looks at the origin
+			glm::vec3( 0, 2, 4 ), // Camera is at ( 0, 2, 4 ), in World Space
+			glm::vec3( 0, 1, 0 ), // and looks at the origin
 			glm::vec3( 0, 1, 0 )  // Head is up (set to 0,-1,0 to look upside-down)
 	);
 
-	model = glm::mat4( 1. );
+	model = glm::mat4( 1.f );
 
 	light1InModelSpacePosition  = glm::vec3( model * glm::vec4( .9f * cosf( 8.f * .665f * vcd->time ), 1.f + .9f * sinf( .665f * vcd->time ), .9f * sinf( 8.f * .665f * vcd->time ), 1.f ) );
-	light2InCameraSpacePosition = glm::vec3( view * glm::vec4( .5f * sinf( sinf( vcd->time ) ), 1.0f - 1.f * cosf( sinf( vcd->time ) ), +1.f, 1.f ) );
+	light2InCameraSpacePosition = glm::vec3( view * glm::vec4( .5f * sinf( sinf( vcd->time ) ), 1.1f - 1.f * cosf( sinf( vcd->time ) ), +1.f, 1.f ) );
 
-	model = glm::rotate( model, .1f * vcd->time, glm::vec3( 0., 1., 0. ) );
+	model = glm::rotate( model, .01f * ( vcd->mousex - 100.f * vcd->time ), glm::vec3( 0., 1., 0. ) );
+	model = glm::translate( model, glm::vec3( 0., -1.f + .005f * vcd->mousey, 0. ) );
+
+	light1InModelSpacePosition = model * glm::vec4( light1InModelSpacePosition, 1.f );
 
 	glr.run( { "PROGRAM-LIGHTED-CHECKERBOARD-CHECKERBOARD" } );
 
