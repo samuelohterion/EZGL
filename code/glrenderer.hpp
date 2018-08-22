@@ -1,5 +1,11 @@
 #ifndef GLRENDERER_HPP
 #define GLRENDERER_HPP
+#ifndef GL_VERTEX_PROGRAM_POINT_SIZE
+#define GL_VERTEX_PROGRAM_POINT_SIZE      0x8642
+#endif
+//	#ifndef GL_VERTEX_ATTRIB_ARRAY_NORMALIZED
+//	#define GL_VERTEX_ATTRIB_ARRAY_NORMALIZED 0x886A
+//	#endif
 
 #include <initializer_list>
 #include <fstream>
@@ -240,11 +246,31 @@ GLRenderer {
 				}
 
 				VertexArray
+				&operator << ( glm::vec2 const & p_value ) {
+
+					arr.push_back( p_value.x );
+					arr.push_back( p_value.y );
+
+					return *this;
+				}
+
+				VertexArray
 				&operator << ( glm::vec3 const & p_value ) {
 
 					arr.push_back( p_value.x );
 					arr.push_back( p_value.y );
 					arr.push_back( p_value.z );
+
+					return *this;
+				}
+
+				VertexArray
+				&operator << ( glm::vec4 const & p_value ) {
+
+					arr.push_back( p_value.r );
+					arr.push_back( p_value.g );
+					arr.push_back( p_value.b );
+					arr.push_back( p_value.a );
 
 					return *this;
 				}
@@ -449,7 +475,8 @@ GLRenderer {
 
 		class
 		Shader :
-		public Named {
+			public
+			Named {
 
 			public :
 
@@ -1113,8 +1140,10 @@ GLRenderer {
 				}
 		};
 
-		class FrameBuffer :
-		public Named {
+		class
+		FrameBuffer :
+			public
+			Named {
 
 			public :
 
@@ -1150,7 +1179,8 @@ GLRenderer {
 
 		class
 		Program :
-		public Named {
+			public
+			Named {
 
 			private :
 

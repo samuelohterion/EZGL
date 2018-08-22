@@ -4,9 +4,7 @@ typedef glm::vec3 V3;
 typedef glm::mat4 M4;
 BallAndLight::BallAndLight( CStr const & p_name, ViewControlData *p_vcd ) :
 GLProject ( p_name, p_vcd ) {
-
    ballintr = new Interaction(glm::vec3(0,0,0), glm::vec3(0,0,0), glm::vec3(0,3,-4), glm::vec3(0,-2.981,0));
-
 }
 void
 BallAndLight::init( ) {
