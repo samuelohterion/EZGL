@@ -23,11 +23,13 @@ SOURCES += \
 	glprojects/sphere/sphere.cpp \
 	glprojects/spheredynamicsurface/spheredynamicsurface.cpp \
 	glprojects/simplecoloredtriangle/simplecoloredtriangle.cpp \
-	glprojects/robertslighttest2D/robertslighttest2D.cpp
+	glprojects/robertslighttest2D/robertslighttest2D.cpp \
+	glprojects/ballandlight/ballandlight.cpp \
+	glprojects/ballandlight/interaction.cpp
 
 HEADERS += \
 	code/widget.hpp \
-	code/clock.hpp  \
+	code/clock.hpp \
 	code/glrenderer.hpp \
 	glprojects/cube/cube.hpp \
 	glprojects/funIn2D/funIn2D.hpp \
@@ -37,7 +39,9 @@ HEADERS += \
 	glprojects/sphere/sphere.hpp \
 	glprojects/spheredynamicsurface/spheredynamicsurface.hpp \
 	glprojects/simplecoloredtriangle/simplecoloredtriangle.hpp \
-	glprojects/robertslighttest2D/robertslighttest2D.hpp
+	glprojects/robertslighttest2D/robertslighttest2D.hpp \
+	glprojects/ballandlight/ballandlight.hpp \
+	glprojects/ballandlight/interaction.h
 
 FORMS += \
 	code/widget.ui
