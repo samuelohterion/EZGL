@@ -7,7 +7,7 @@
 #include "glprojects/spheredynamicsurface/spheredynamicsurface.hpp"
 #include "glprojects/simplecoloredtriangle/simplecoloredtriangle.hpp"
 #include "glprojects/robertslighttest2D/robertslighttest2D.hpp"
-//#include "glprojects/ballandlight/ballandlight.hpp"
+#include "glprojects/ballandlight/ballandlight.hpp"
 #include "widget.hpp"
 #include <QApplication>
 
@@ -47,8 +47,8 @@ main( int argc, char *argv[ ] ) {
 	RobertsLightTest2D
 	* rlt = new RobertsLightTest2D( "RobertsLightTest2D" );
 
-//	BallAndLight
-//	* bal = new BallAndLight( "BallAndLight" );
+	BallAndLight
+	* bal = new BallAndLight( "BallAndLight" );
 
 	w.projects[ "FunIn2D" ] = glp;
 	w.projects[ "LightTest" ] = lt;
@@ -58,10 +58,10 @@ main( int argc, char *argv[ ] ) {
 	w.projects[ "SimpleColoredTriangle" ] = sct;
 	w.projects[ "SphereDynamicalSurface" ] = sds;
 	w.projects[ "RobertsLightTest2D" ] = rlt;
-	//w.projects[ "BallAndLight" ] = bal;
+	w.projects[ "BallAndLight" ] = bal;
 	w.projects[ "Cube" ] = fwt;
 
-	w.currentProject = "LightTest";
+	w.currentProject = "BallAndLight";
 	w.show( );
 
 	return a.exec( );
