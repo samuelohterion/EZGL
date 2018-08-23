@@ -138,11 +138,11 @@ LightTest::init( ) {
 
 			// checkerboard color
 			"	fColor = ( ( int( vs2fs.squareCoordsInWorldSpace.x ) + int( vs2fs.squareCoordsInWorldSpace.y ) ) % 2 == 0 )\n"
-			"		? vec4( .7, .7, .7, 1. )\n"
-			"		: vec4( .3, .3, .3, 1. );\n"
+			"		? vec4( .5, .5, .5, 1. )\n"
+			"		: vec4( .0, .0, .0, 1. );\n"
 
 			// add some noise
-			"	fColor.xyz += vec3( .3 * random( vs2fs.squareCoordsInWorldSpace ) );\n"
+			"	fColor.xyz += vec3( .5 * random( vs2fs.squareCoordsInWorldSpace ) );\n"
 
 			// and now compute 2nd step of simple lighting
 			"	fColor.xyz = fColor.xyz * ( pow( a1, 2. ) * light1InModelSpaceColor + pow( a2, 2. ) * light2InCameraSpaceColor + a3 * vec3( 1 ) );\n"
@@ -487,7 +487,7 @@ LightTest::paint( ) {
 	glr.run( { "PROGRAM-LIGHTED-CHECKERBOARD-CHECKERBOARD", "PROGRAM-LIGHTED-CHECKERBOARD-NORMALS" } );
 
 	// now go back to ground zero
-	model = glm::mat4( 1. );
+	//model = glm::mat4( 1. );
 
 	// enable point sizing
 	glEnable( GL_VERTEX_ATTRIB_ARRAY_NORMALIZED );
