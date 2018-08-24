@@ -9,7 +9,7 @@ public GLProject {
 
 	public:
 
-		RobertsLightTest2D( CStr const & p_name, ViewControlData * p_vcd = nullptr );
+		RobertsLightTest2D( CStr const & p_name = "RobertsLightTest2D", ViewControlData * p_vcd = nullptr );
 
 		void
 		init( );

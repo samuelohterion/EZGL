@@ -7,7 +7,7 @@ public GLProject {
 
 	public:
 
-		SimpleTriangle( CStr const & p_name, ViewControlData *p_vcd = nullptr );
+		SimpleTriangle( CStr const & p_name = "SimpleTriangle", ViewControlData *p_vcd = nullptr );
 
 	public:
 

@@ -1,17 +1,64 @@
-#include "lighttest.hpp"
+#include "texturetest.hpp"
 
-LightedCheckerboardCave::LightedCheckerboardCave( const CStr &p_name, ViewControlData *p_vcd ) :
+TextureTest::TextureTest( const CStr &p_name, ViewControlData *p_vcd ) :
 GLProject ( p_name, p_vcd ) {
 
 }
 
 void
-LightedCheckerboardCave::init( ) {
+TextureTest::init( ) {
 
 	glClearColor( .12f, .11f, .10f, 1. );
 
 	projection = view = model = glm::mat4( 1. );
 
+	// -------------------------------------------------------------------------------------
+	// texture test
+	{
+		glr.vertices( "VERTICES-LIGHTED-CHECKERBOARD-BACKGROUND" ).
+		addAttrib( "vertex", 3, 0 ) <<
+		-1.f << -1.f << +0.f <<
+		+1.f << -1.f << +0.f <<
+		+1.f << +1.f << +0.f <<
+		-1.f << +1.f << +0.f <<
+		GLRenderer::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
+
+		glr.shader(
+			"SHADER-LIGHTED-CHECKERBOARD-BACKGROUND",
+
+			"#version 330 core\n"
+			//	all matrices one needs
+			"in vec3 vertex;\n"
+			"out VS2FS {\n"
+			"	vec2 texCoord;\n"
+			"} vs2fs;\n"
+			"void main( ) {\n"
+			"	vs2fs.texCoord = .5 + .5 * vertex.xy;\n"
+			"	gl_Position = vec4( vertex, 1 );\n"
+			"}\n",
+
+			"#version 330 core\n"
+			"uniform sampler2D txIn0;\n"
+			"in VS2FS {\n"
+			"	vec2 texCoord;\n"
+			"} vs2fs;\n"
+			"out vec4 fColor;\n"
+			"void main( ) {\n"
+			"	fColor = vec4( .3 - .2 * texture( txIn0, vs2fs.texCoord ).rgb, 1 );\n"
+			"}\n",
+
+			GLRenderer::ShaderCode::FROM_CODE );
+
+			glr.texture(
+				"TEXTURE-LIGHTED-CHECKERBOARD-BACKGROUND",
+				new GLRenderer::Texture( "txIn0", "../EZGL/glprojects/texturetest/pix/Schubler.png" ) );
+
+			glr.program( "PROGRAM-LIGHTED-CHECKERBOARD-BACKGROUND" ).
+				setVertexArray( "VERTICES-LIGHTED-CHECKERBOARD-BACKGROUND" ).
+				setShader( "SHADER-LIGHTED-CHECKERBOARD-BACKGROUND" ).
+				addInTexture( "TEXTURE-LIGHTED-CHECKERBOARD-BACKGROUND" ).
+				build( );
+	}
 	// -------------------------------------------------------------------------------------
 	// checkerboard
 	{
@@ -24,6 +71,10 @@ LightedCheckerboardCave::init( ) {
 			+1.f << +1.f <<
 			-1.f << +1.f <<
 			GLRenderer::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
+
+		glr.texture(
+			"TEXTURE-LIGHTED-CHECKERBOARD-CHECKERBOARD-TX-IN-1",
+			new GLRenderer::Texture( "txIn1", "../EZGL/glprojects/texturetest/pix/Schubler.png" ) );
 
 		// create a shader for the checkerboard
 		glr.shader(
@@ -70,7 +121,7 @@ LightedCheckerboardCave::init( ) {
 			"	vs2fs.squareCoordsInWorldSpace = 4. + 4. * vertex.xy;\n"
 
 			// create a 4d vector out of the 2d input
-			"	vec4 v4 = vec4( vertex.y, 0, vertex.x, 1 );\n"
+			"	vec4 v4 = vec4( vertex.x, 0, - vertex.y, 1 );\n"
 
 			//	make some trafos
 			"	vs2fs.vertexInModelSpace          = model * v4;\n"
@@ -93,6 +144,8 @@ LightedCheckerboardCave::init( ) {
 			"uniform vec3 light2InCameraSpacePosition;\n"
 			"uniform vec3 light1InModelSpaceColor;\n"
 			"uniform vec3 light2InCameraSpaceColor;\n"
+			"uniform int  faceIndex;\n"
+			"uniform sampler2D txIn1;\n"
 
 			// Vertex To Fragment
 			"in VS2FS {\n"
@@ -136,29 +189,50 @@ LightedCheckerboardCave::init( ) {
 			// 3rd: global light
 			"	a3 = max( 0, .5 * dot( vec3( 0, 0, 1 ), vs2fs.normalVectorInCameraSpace.xyz ) );\n"
 
+			"	fColor = vec4( "
+			"		( faceIndex < 4 )\n"
+			"			? ( faceIndex < 2 )\n"
+			"				? ( faceIndex < 1 )\n"
+			"					? vec3( 1,0,0 )\n"
+			"					: vec3( 0,1,0 )\n"
+			"				: ( faceIndex < 3 )"
+			"					? vec3( 1,1,0 )\n"
+			"					: vec3( 0,0,1 )\n"
+			"			: ( faceIndex < 6 )\n"
+			"				? vec3( 1,0,1 )\n"
+			"				: vec3( 1,1,0 ), 1 );\n"
+
 			// checkerboard color
-			"	fColor = ( ( int( vs2fs.squareCoordsInWorldSpace.x ) + int( vs2fs.squareCoordsInWorldSpace.y ) ) % 2 == 0 )\n"
-			"		? vec4( .5, .5, .5, 1. )\n"
-			"		: vec4( .0, .0, .0, 1. );\n"
+			"	fColor += ( ( int( vs2fs.squareCoordsInWorldSpace.x ) + int( vs2fs.squareCoordsInWorldSpace.y ) ) % 2 == 0 )\n"
+			"		? vec4( .5, .5, .5, 0. )\n"
+			"		: vec4( .0, .0, .0, 0. );\n"
+
+			//
+			"	fColor.xyz = clamp( fColor.xyz + .5 * random( vs2fs.squareCoordsInWorldSpace ), vec3( 0 ), vec3( 1 ) ) *\n"
+			"		( ( faceIndex % 2 == 0 )"
+			"			? ( texture( txIn1, .125 * vs2fs.squareCoordsInWorldSpace ) ).xyz"
+			"			: ( 1. - ( texture( txIn1, .125 * vs2fs.squareCoordsInWorldSpace ) ).xyz ) );\n"
+			"	fColor.xyz = max( vec3( 0 ), fColor.xyz );\n"
 
 			// add some noise
-			"	fColor.xyz += vec3( .5 * random( vs2fs.squareCoordsInWorldSpace ) );\n"
 
 			// and now compute 2nd step of simple lighting
 			"	fColor.xyz = fColor.xyz * ( pow( a1, 2. ) * light1InModelSpaceColor + pow( a2, 2. ) * light2InCameraSpaceColor + a3 * vec3( 1 ) );\n"
 			"}\n",
 			GLRenderer::ShaderCode::FROM_CODE ).
-			addUniform( "model",               GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
-			addUniform( "view",                GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & view ).
-			addUniform( "projection",          GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & projection ).
+			addUniform( "model",      GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
+			addUniform( "view",       GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & view ).
+			addUniform( "projection", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & projection ).
 			addUniform( "light1InModelSpacePosition",  GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & light1InModelSpacePosition ).
 			addUniform( "light2InCameraSpacePosition", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & light2InCameraSpacePosition ).
 			addUniform( "light1InModelSpaceColor",  GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & light1InModelSpaceColor ).
-			addUniform( "light2InCameraSpaceColor", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & light2InCameraSpaceColor );
+			addUniform( "light2InCameraSpaceColor", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & light2InCameraSpaceColor ).
+			addUniform( "faceIndex", GLRenderer::Shader::INT, GLRenderer::Shader::SCALAR, & faceIndex );
 
 		glr.program( "PROGRAM-LIGHTED-CHECKERBOARD-CHECKERBOARD" ).
 			setVertexArray( "VERTICES-LIGHTED-CHECKERBOARD-CHECKERBOARD" ).
 			setShader( "SHADER-LIGHTED-CHECKERBOARD-CHECKERBOARD" ).
+			addInTexture( "TEXTURE-LIGHTED-CHECKERBOARD-CHECKERBOARD-TX-IN-1" ).
 			build( );
 	}
 	// -------------------------------------------------------------------------------------
@@ -305,7 +379,7 @@ LightedCheckerboardCave::init( ) {
 			"	float s = dot( v, v );\n"
 			"	if( s > .999 )\n"
 			"		discard;\n"
-			"	fColor = vec4( clamp( 2. * ( 1. - s ), .1, 1 ) * ( vec3( 1. ) + vs2fs.color.xyz ), 1. );\n"
+			"	fColor = vec4( clamp( 1.5 * ( 1. - .75 * s ), .1, 1 ) * ( .75 + vs2fs.color.xyz ), 1. );\n"
 			"}\n",
 			GLRenderer::ShaderCode::FROM_CODE ).
 			addUniform( "model",               GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
@@ -392,7 +466,7 @@ LightedCheckerboardCave::init( ) {
 			"	float s = dot( v, v );\n"
 			"	if( s > .999 )\n"
 			"		discard;\n"
-			"	fColor = vec4( clamp( 2. * ( 1. - s ), .1, 1 ) * ( vec3( 1. ) + vs2fs.color.xyz ), 1. );\n"
+			"	fColor = vec4( clamp( 1.5 * ( 1. - .75 * s ), .1, 1 ) * ( .75 + vs2fs.color.xyz ), 1. );\n"
 			"}\n",
 			GLRenderer::ShaderCode::FROM_CODE ).
 			addUniform( "model",               GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
@@ -409,13 +483,13 @@ LightedCheckerboardCave::init( ) {
 }
 
 void
-LightedCheckerboardCave::paint( ) {
+TextureTest::paint( ) {
 
 	// do the usual stuff
 	{
 
-		glEnable( GL_DEPTH_TEST );
-		glEnable( GL_CULL_FACE );
+		glDisable( GL_DEPTH_TEST );
+		glDisable( GL_CULL_FACE );
 
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	}
@@ -430,10 +504,15 @@ LightedCheckerboardCave::paint( ) {
 	{
 		view =
 		glm::lookAt(
-			glm::vec3( 0, 2, 4 ), // Camera is at ( 0, 2, 4 ), in World Space
-			glm::vec3( 0, 1, 0 ), // and looks at the origin
-			glm::vec3( sinf( .2f * sinf( 3.f * vcd->time ) ), cosf( .2f * sinf( 3.f * vcd->time ) ), 0.f ) ); // Head is up (set to 0,-1,0 to look upside-down)
+			glm::vec3( 0, 0, 3 ), // Camera is at ( 0, 0, 3 ), in World Space
+			glm::vec3( 0, 0, 0 ), // and looks at the origin
+			glm::vec3( .0, 1., 0. ) ); // Head is up (set to 0,-1,0 to look upside-down)
 	}
+
+	glr.run( { "PROGRAM-LIGHTED-CHECKERBOARD-BACKGROUND" } );
+
+	glEnable( GL_DEPTH_TEST );
+	glEnable( GL_CULL_FACE );
 
 	// construct model an start in center
 	model = glm::mat4( 1.f );
@@ -444,50 +523,66 @@ LightedCheckerboardCave::paint( ) {
 	light1InModelSpacePosition  = glm::vec3( model * glm::vec4( .9f * cosf( 2.7f * vcd->time ), 1.f + .9f * sinf( .5f *  vcd->time ), .9f * sinf( 2.7f * vcd->time ), 1.f ) );
 
 	// swing in front of the camera
-	light2InCameraSpacePosition = glm::vec3( view * model * glm::vec4( 1.f * sinf( .5f * sinf( 3.f * vcd->time ) ), 1.f - 1.f * cosf( .5f * sinf( 3.f * vcd->time ) ), +1.f, 1.f ) );
+	light2InCameraSpacePosition = glm::vec3( view * model * glm::vec4( 2.f * sinf( .5f * sinf( 3.f * vcd->time ) ), 1.25f - 2.f * cosf( .5f * sinf( 3.f * vcd->time ) ), 0.f, 1.f ) );
 
 	// rotate the whole model in time and by mouse-x
-	model = glm::rotate( model, .01f * ( vcd->mousex - 100.f * vcd->time ), glm::vec3( 0., 1., 0. ) );
+	model = glm::rotate( model, .01f * ( vcd->mousex - 0.f * vcd->time ), glm::vec3( 0., 1., 0. ) );
 
 	// move the model up and down by mouse-y
-	model = glm::translate( model, glm::vec3( 0., -1.f + .005f * vcd->mousey, 0. ) );
+	model = glm::translate( model, glm::vec3( 0., .01f * vcd->mousey - 5.0f, 0. ) );
 
 	// now set the light in model space
 	light1InModelSpacePosition = model * glm::vec4( light1InModelSpacePosition, 1.f );
 
+
 	// paint there a checkerboard and its normal vectors
-	glr.run( { "PROGRAM-LIGHTED-CHECKERBOARD-CHECKERBOARD", "PROGRAM-LIGHTED-CHECKERBOARD-NORMALS" } );
+	faceIndex = 0;
+	glr.run( {
+		"PROGRAM-LIGHTED-CHECKERBOARD-CHECKERBOARD",
+		"PROGRAM-LIGHTED-CHECKERBOARD-NORMALS" } );
 
 	// rotate the checkerboard and move it
+	model = glm::translate( model, glm::vec3( +0., +1., -1. ) );
 	model = glm::rotate( model, .5f  * 3.1415f, glm::vec3( 1., 0., 0. ) );
-	model = glm::translate( model, glm::vec3( 0., -1., -1. ) );
 
 	// paint another checkerboard and its normal vectors
-	glr.run( { "PROGRAM-LIGHTED-CHECKERBOARD-CHECKERBOARD", "PROGRAM-LIGHTED-CHECKERBOARD-NORMALS" } );
+	++ faceIndex;
+	glr.run( {
+		"PROGRAM-LIGHTED-CHECKERBOARD-CHECKERBOARD",
+		"PROGRAM-LIGHTED-CHECKERBOARD-NORMALS" } );
 
-	// and so on
+//	// and so on
+	model = glm::translate( model, glm::vec3( +1., +1., 0. ) );
 	model = glm::rotate( model, .5f * 3.1415f, glm::vec3( 0., 0., 1. ) );
-	model = glm::translate( model, glm::vec3( +1., -1., 0. ) );
 
-	glr.run( { "PROGRAM-LIGHTED-CHECKERBOARD-CHECKERBOARD", "PROGRAM-LIGHTED-CHECKERBOARD-NORMALS" } );
+	++ faceIndex;
+	glr.run( {
+		"PROGRAM-LIGHTED-CHECKERBOARD-CHECKERBOARD",
+		"PROGRAM-LIGHTED-CHECKERBOARD-NORMALS" } );
 
+	model = glm::translate( model, glm::vec3( +1., +1., 0. ) );
 	model = glm::rotate( model, .5f * 3.1415f, glm::vec3( 0., 0., 1. ) );
-	model = glm::translate( model, glm::vec3( +1., -1., 0. ) );
 
-	glr.run( { "PROGRAM-LIGHTED-CHECKERBOARD-CHECKERBOARD", "PROGRAM-LIGHTED-CHECKERBOARD-NORMALS" } );
+	++ faceIndex;
+	glr.run( {
+		"PROGRAM-LIGHTED-CHECKERBOARD-CHECKERBOARD",
+		"PROGRAM-LIGHTED-CHECKERBOARD-NORMALS" } );
 
+	model = glm::translate( model, glm::vec3( +1., +1., +0. ) );
 	model = glm::rotate( model, .5f * 3.1415f, glm::vec3( 0., 0., 1. ) );
-	model = glm::translate( model, glm::vec3( +1., -1., 0. ) );
 
-	glr.run( { "PROGRAM-LIGHTED-CHECKERBOARD-CHECKERBOARD", "PROGRAM-LIGHTED-CHECKERBOARD-NORMALS" } );
+	++ faceIndex;
+	glr.run( {
+		"PROGRAM-LIGHTED-CHECKERBOARD-CHECKERBOARD",
+		"PROGRAM-LIGHTED-CHECKERBOARD-NORMALS" } );
 
+	model = glm::translate( model, glm::vec3( 0., +1., -1. ) );
 	model = glm::rotate( model, .5f * 3.1415f, glm::vec3( 1., 0., 0. ) );
-	model = glm::translate( model, glm::vec3( +0., -1., -1. ) );
 
-	glr.run( { "PROGRAM-LIGHTED-CHECKERBOARD-CHECKERBOARD", "PROGRAM-LIGHTED-CHECKERBOARD-NORMALS" } );
-
-	// now go back to ground zero
-	//model = glm::mat4( 1. );
+	++ faceIndex;
+	glr.run( {
+		"PROGRAM-LIGHTED-CHECKERBOARD-CHECKERBOARD",
+		"PROGRAM-LIGHTED-CHECKERBOARD-NORMALS" } );
 
 	// enable point sizing
 	glEnable( GL_VERTEX_ATTRIB_ARRAY_NORMALIZED );
@@ -496,8 +591,7 @@ LightedCheckerboardCave::paint( ) {
 	// paint the lights
 	glr.run( {
 		"PROGRAM-LIGHTED-CHECKERBOARD-LIGHT-IN-MODEL-SPACE",
-		"PROGRAM-LIGHTED-CHECKERBOARD-LIGHT-IN-CAMERA-SPACE"
-	} );
+		"PROGRAM-LIGHTED-CHECKERBOARD-LIGHT-IN-CAMERA-SPACE" } );
 
 	// disable point sizing
 	glDisable( GL_VERTEX_ATTRIB_ARRAY_NORMALIZED );
@@ -505,7 +599,7 @@ LightedCheckerboardCave::paint( ) {
 }
 
 void
-LightedCheckerboardCave::resize( int p_width, int p_height ) {
+TextureTest::resize( int p_width, int p_height ) {
 
 	// get aspect ratio
 	float

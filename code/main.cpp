@@ -8,6 +8,7 @@
 #include "glprojects/simplecoloredtriangle/simplecoloredtriangle.hpp"
 #include "glprojects/robertslighttest2D/robertslighttest2D.hpp"
 #include "glprojects/ballandlight/ballandlight.hpp"
+#include "glprojects/texturetest/texturetest.hpp"
 #include "widget.hpp"
 #include <QApplication>
 
@@ -21,47 +22,51 @@ main( int argc, char *argv[ ] ) {
 	w;
 
 	FunIn2D
-	* glp = new FunIn2D( "FunIn2D" );
+	* funIn2D = new FunIn2D( "FunIn2D" );
 
 	Cube
-	* fwt = new Cube( "Cube" );
+	* cube = new Cube( "Cube" );
 
-	LightTest
-	* lt = new LightTest( "LightTest" );
+	LightedCheckerboardCave
+	* lightedCheckerboardCave = new LightedCheckerboardCave( "LightedCheckerboardCave" );
 
 	CoordinateSystem
-	* cs = new CoordinateSystem( "CoordinateSystem" );
+	* coordinateSystem = new CoordinateSystem( "CoordinateSystem" );
 
 	SimpleTriangle
-	* st = new SimpleTriangle( "SimpleTriangle" );
+	* simpleTriangle = new SimpleTriangle( "SimpleTriangle" );
 
 	Sphere
-	* sp = new Sphere( "Sphere" );
+	* sphere = new Sphere( "Sphere" );
 
 	SimpleColoredTriangle
-	* sct = new SimpleColoredTriangle( "SimpleColoredTriangle" );
+	* simpleColoredTriangle = new SimpleColoredTriangle( "SimpleColoredTriangle" );
 
 	SphereDynamicalSurface
-	* sds = new SphereDynamicalSurface( "SphereDynamicalSurface" );
+	* sphereDynamicalSurface = new SphereDynamicalSurface( "SphereDynamicalSurface" );
 
 	RobertsLightTest2D
-	* rlt = new RobertsLightTest2D( "RobertsLightTest2D" );
+	* robertsLightTest2D = new RobertsLightTest2D( "RobertsLightTest2D" );
 
 	BallAndLight
-	* bal = new BallAndLight( "BallAndLight" );
+	* ballAndLight = new BallAndLight( "BallAndLight" );
 
-	w.projects[ "FunIn2D" ] = glp;
-	w.projects[ "LightTest" ] = lt;
-	w.projects[ "CoordinateSystem" ] = cs;
-	w.projects[ "SimpleTriangle" ] = st;
-	w.projects[ "Sphere" ] = sp;
-	w.projects[ "SimpleColoredTriangle" ] = sct;
-	w.projects[ "SphereDynamicalSurface" ] = sds;
-	w.projects[ "RobertsLightTest2D" ] = rlt;
-	w.projects[ "BallAndLight" ] = bal;
-	w.projects[ "Cube" ] = fwt;
+	TextureTest
+	* textureTest = new TextureTest( "TextureTest" );
 
-	w.currentProject = "BallAndLight";
+	w.projects[ "FunIn2D" ] = funIn2D;
+	w.projects[ "LightedCheckerboardCave" ] = lightedCheckerboardCave;
+	w.projects[ "CoordinateSystem" ] = coordinateSystem;
+	w.projects[ "SimpleTriangle" ] = simpleTriangle;
+	w.projects[ "Sphere" ] = sphere;
+	w.projects[ "SimpleColoredTriangle" ] = simpleColoredTriangle;
+	w.projects[ "SphereDynamicalSurface" ] = sphereDynamicalSurface;
+	w.projects[ "RobertsLightTest2D" ] = robertsLightTest2D;
+	w.projects[ "BallAndLight" ] = ballAndLight;
+	w.projects[ "Cube" ] = cube;
+	w.projects[ "TextureTest" ] = textureTest;
+
+	w.currentProject = "TextureTest";
 	w.show( );
 
 	return a.exec( );
