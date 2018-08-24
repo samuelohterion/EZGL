@@ -23,6 +23,11 @@
 #include "../../glm/glm/gtc/type_ptr.hpp"
 #include <GLES3/gl32.h>
 #include "clock.hpp"
+#include <QImage>
+#include <QString>
+#include <QGLWidget>
+
+//#include <SOIL.h>
 
 typedef std::string Str;
 //typedef std::__cxx11::string Str;
@@ -126,6 +131,59 @@ GLRenderer {
 					glTexParameteri( target, GL_TEXTURE_WRAP_T, wrap_t );
 
 					glTexImage2D( target, level, internal_format, width, height, 0, format, type, nullptr );
+
+					glBindTexture( GL_TEXTURE_2D, 0 );
+				}
+
+				Texture(
+					CStr p_name, CStr p_filename ) :
+					Named( p_name ),
+					target( GL_TEXTURE_2D ),
+					level( 0 ),
+					internal_format( GL_RGBA32F ),
+					min_filter( GL_NEAREST ),
+					mag_filter( GL_NEAREST ),
+					wrap_s( GL_CLAMP_TO_EDGE ),
+					wrap_t( GL_CLAMP_TO_EDGE ),
+					format( GL_RGBA ),
+					type( GL_FLOAT ),
+					width( 0 ),
+					height( 0 ),
+					id( 0 ) {
+
+					QImage
+					imgFromFile;
+
+					if( ! imgFromFile.load( QString( p_filename.c_str( ) ) ) ) {
+
+						std::cerr << "error loading " << p_filename << std::endl ;
+						exit( 1 );
+					}
+
+					QImage
+					GL_formatted_image;
+
+					GL_formatted_image = QGLWidget::convertToGLFormat( imgFromFile );
+
+					if( GL_formatted_image.isNull( ) ) {
+
+						std::cerr << "error GL_formatted_image" << std::endl ;
+
+						exit( 1 );
+					}
+
+					width  = GL_formatted_image.width( );
+					height = GL_formatted_image.height( );
+
+					glGenTextures( 1, &id );
+					glBindTexture( target, id );
+
+					glTexParameteri( target, GL_TEXTURE_MIN_FILTER, min_filter );
+					glTexParameteri( target, GL_TEXTURE_MAG_FILTER, mag_filter );
+					glTexParameteri( target, GL_TEXTURE_WRAP_S, wrap_s );
+					glTexParameteri( target, GL_TEXTURE_WRAP_T, wrap_t );
+
+					glTexImage2D( target, level, internal_format, width, height, 0, format, GL_UNSIGNED_BYTE, GL_formatted_image.bits( ) );
 
 					glBindTexture( GL_TEXTURE_2D, 0 );
 				}

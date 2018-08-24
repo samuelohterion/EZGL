@@ -8,7 +8,7 @@ public GLProject {
 
 	public:
 
-		BallAndLight( CStr const & p_name, ViewControlData *p_vcd = nullptr );
+		BallAndLight( CStr const & p_name = "BallAndLight", ViewControlData *p_vcd = nullptr );
 
 	public:
 

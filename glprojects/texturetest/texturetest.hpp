@@ -1,14 +1,14 @@
-#ifndef LIGHTTEST_HPP
-#define LIGHTTEST_HPP
+#ifndef TEXTURETEST_HPP
+#define TEXTURETEST_HPP
 
 #include "../../code/glrenderer.hpp"
 
-class LightedCheckerboardCave :
+class TextureTest :
 public GLProject {
 
 	public:
 
-		LightedCheckerboardCave( CStr const & p_name = "FunWithTextures", ViewControlData * p_vcd = nullptr );
+		TextureTest( CStr const & p_name = "TextureTest", ViewControlData * p_vcd = nullptr );
 
 	public:
 
@@ -23,6 +23,9 @@ public GLProject {
 		light1InModelSpaceColor,
 		light2InCameraSpaceColor;
 
+		int
+		faceIndex;
+
 	public:
 
 		void
@@ -35,4 +38,4 @@ public GLProject {
 		resize( int p_width, int p_height );
 };
 
-#endif // LIGHTTEST_HPP
+#endif // TEXTURETEST_HPP

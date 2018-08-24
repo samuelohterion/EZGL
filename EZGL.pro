@@ -5,12 +5,15 @@
 #-------------------------------------------------
 
 QT += core gui opengl
-
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = EZGL
 TEMPLATE = app
 CONFIG += c++11
+
+#INCLUDEPATH += ../soil/src
+#LIBPATH += ../soil/lib
+#LIBS += -L -llibSOIL
 
 SOURCES += \
 	code/main.cpp \
@@ -25,7 +28,8 @@ SOURCES += \
 	glprojects/simplecoloredtriangle/simplecoloredtriangle.cpp \
 	glprojects/robertslighttest2D/robertslighttest2D.cpp \
 	glprojects/ballandlight/ballandlight.cpp \
-	glprojects/ballandlight/interaction.cpp
+	glprojects/ballandlight/interaction.cpp \
+	glprojects/texturetest/texturetest.cpp
 
 HEADERS += \
 	code/widget.hpp \
@@ -41,7 +45,8 @@ HEADERS += \
 	glprojects/simplecoloredtriangle/simplecoloredtriangle.hpp \
 	glprojects/robertslighttest2D/robertslighttest2D.hpp \
 	glprojects/ballandlight/ballandlight.hpp \
-	glprojects/ballandlight/interaction.h
+	glprojects/ballandlight/interaction.h \
+	glprojects/texturetest/texturetest.hpp
 
 FORMS += \
 	code/widget.ui
@@ -55,4 +60,3 @@ DISTFILES += \
 	glprojects/funIn2D/fun1.fsh \
 	glprojects/robertslighttest2D/robertslighttest2D.vsh \
 	glprojects/robertslighttest2D/robertslighttest2D.fsh
-

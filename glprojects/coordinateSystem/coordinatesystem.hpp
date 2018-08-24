@@ -7,7 +7,7 @@ public GLProject {
 
 	public:
 
-		CoordinateSystem( CStr const & p_name, ViewControlData *p_vcd = nullptr );
+		CoordinateSystem( CStr const & p_name = "CoordinateSystem", ViewControlData *p_vcd = nullptr );
 
 	public:
 
