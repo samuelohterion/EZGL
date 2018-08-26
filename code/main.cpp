@@ -66,7 +66,7 @@ main( int argc, char *argv[ ] ) {
 	w.projects[ "Cube" ] = cube;
 	w.projects[ "TextureTest" ] = textureTest;
 
-	w.currentProject = "TextureTest";
+	w.currentProject = "Sphere";
 	w.show( );
 
 	return a.exec( );

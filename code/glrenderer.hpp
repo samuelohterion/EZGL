@@ -234,7 +234,7 @@ GLRenderer {
 				GLenum
 				usage;
 
-				struct Attr{ GLint size, offs; };
+				struct Attr { GLint size, offs; };
 
 				class Object {
 
@@ -533,8 +533,8 @@ GLRenderer {
 
 		class
 		Shader :
-			public
-			Named {
+		public
+		Named {
 
 			public :
 
@@ -1200,8 +1200,8 @@ GLRenderer {
 
 		class
 		FrameBuffer :
-			public
-			Named {
+		public
+		Named {
 
 			public :
 
@@ -1237,8 +1237,8 @@ GLRenderer {
 
 		class
 		Program :
-			public
-			Named {
+		public
+		Named {
 
 			private :
 
