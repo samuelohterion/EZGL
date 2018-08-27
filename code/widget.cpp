@@ -253,8 +253,6 @@ GLWidget::resizeGL( int p_width, int p_height ) {
 	viewControlData.mousex = viewControlData.width >> 1;
 	viewControlData.mousey = viewControlData.height >> 1;
 
-
-
 	if( projects.contains( currentProject ) ) {
 
 		projects[ currentProject ]->resizeViewport( p_width, p_height );

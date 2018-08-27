@@ -9,6 +9,8 @@
 #include "glprojects/robertslighttest2D/robertslighttest2D.hpp"
 #include "glprojects/ballandlight/ballandlight.hpp"
 #include "glprojects/texturetest/texturetest.hpp"
+#include "glprojects/multisampling/multisampling.hpp"
+#include "glprojects/sometext/sometext.hpp"
 #include "widget.hpp"
 #include <QApplication>
 
@@ -54,6 +56,12 @@ main( int argc, char *argv[ ] ) {
 	TextureTest
 	* textureTest = new TextureTest( "TextureTest" );
 
+	MultiSampling
+	* multiSampling = new MultiSampling( "MultiSampling" );
+
+	SomeText
+	* someText = new SomeText( );
+
 	w.projects[ "FunIn2D" ] = funIn2D;
 	w.projects[ "LightedCheckerboardCave" ] = lightedCheckerboardCave;
 	w.projects[ "CoordinateSystem" ] = coordinateSystem;
@@ -65,8 +73,10 @@ main( int argc, char *argv[ ] ) {
 	w.projects[ "BallAndLight" ] = ballAndLight;
 	w.projects[ "Cube" ] = cube;
 	w.projects[ "TextureTest" ] = textureTest;
+	w.projects[ "MultiSampling" ] = multiSampling;
+	w.projects[ "SomeText" ] = someText;
 
-	w.currentProject = "TextureTest";
+	w.currentProject = "SomeText";
 	w.show( );
 
 	return a.exec( );
