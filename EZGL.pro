@@ -30,7 +30,8 @@ SOURCES += \
 	glprojects/ballandlight/ballandlight.cpp \
 	glprojects/ballandlight/interaction.cpp \
 	glprojects/texturetest/texturetest.cpp \
-	glprojects/multisampling/multisampling.cpp
+	glprojects/multisampling/multisampling.cpp \
+	glprojects/sometext/sometext.cpp
 
 HEADERS += \
 	code/widget.hpp \
@@ -48,7 +49,8 @@ HEADERS += \
 	glprojects/ballandlight/ballandlight.hpp \
 	glprojects/ballandlight/interaction.h \
 	glprojects/texturetest/texturetest.hpp \
-	glprojects/multisampling/multisampling.hpp
+	glprojects/multisampling/multisampling.hpp \
+	glprojects/sometext/sometext.hpp
 
 FORMS += \
 	code/widget.ui

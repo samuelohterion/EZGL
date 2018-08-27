@@ -341,7 +341,7 @@ MultiSampling::init( ) {
 				"	vec4\n"
 				"		v = projection * view * vec4( light1InModelSpacePosition, 1 );"
 
-				"	gl_PointSize = 500 - v.z;\n"
+				"	gl_PointSize = 150 - 30. * v.z;\n"
 
 				//	make some trafos
 				"	vs2fs.color  = vec4( light1InModelSpaceColor, 1 );\n"
@@ -503,7 +503,7 @@ MultiSampling::init( ) {
 				"		dy =\n"
 				"			texture( txMS, vec2( vs2fs.texCoord.x, vs2fs.texCoord.y + dPixPos.y ) ).rgb -\n"
 				"			texture( txMS, vec2( vs2fs.texCoord.x, vs2fs.texCoord.y - dPixPos.y ) ).rgb;\n"
-				"	fColor.xyz = fColor.xyz * ( 1. + ( dx + dy ) );\n"
+				"	fColor.xyz = fColor.xyz + ( ( dx + dy ) );\n"
 				"}\n",
 				GLRenderer::ShaderCode::FROM_CODE ).
 				addUniform( "dPixPos",  GLRenderer::Shader::VEC2, GLRenderer::Shader::SCALAR, & dPixPos );

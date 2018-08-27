@@ -221,6 +221,114 @@ GLRenderer {
 		};
 
 		class
+		IndexArray :
+		public Named {
+
+			public :
+
+				GLuint
+				iaoId,
+				iboId,
+				stride;
+
+				GLenum
+				usage;
+
+				class Object {
+
+					public:
+
+						Object( GLint p_offs, GLint p_size, GLenum p_mode ) :
+						offs( p_offs ),
+						size( p_size ),
+						mode( p_mode ) {
+
+						}
+
+					GLint
+					offs,
+					size;
+
+					GLenum
+					mode;
+				};
+
+				std::vector< GLushort >
+				arr;
+
+				std::vector< Object >
+				obj;
+
+			public :
+
+				IndexArray( CStr &p_name ) :
+				Named( p_name ),
+				iaoId( 0 ),
+				iboId( 0 ),
+				stride( 0 ),
+				usage( GL_STATIC_DRAW ) {
+
+					glGenVertexArrays( 1, &iaoId );
+//					glBindVertexArray( vaoId );
+
+					glGenBuffers( 1, &iboId );
+//					glBindBuffer( GL_ARRAY_BUFFER, vboId );
+//					glBufferData( GL_ARRAY_BUFFER, sizeof( float ) * arr.size( ), arr.data( ), GL_STATIC_DRAW );
+
+//					glBindVertexArray( 0 );
+				}
+
+				~IndexArray( ) {
+
+				}
+
+				IndexArray
+				& operator << ( GLushort const & p_value ) {
+
+					arr.push_back( p_value );
+
+					return *this;
+				}
+
+				IndexArray
+				& operator << ( Object const & p_object ) {
+
+					obj.push_back( p_object );
+
+					return *this;
+				}
+
+
+				IndexArray
+				&setUsage( GLenum const & p_usage ) {
+
+					usage = p_usage;
+
+					return *this;
+				}
+
+				int
+				indexCount( ) {
+
+					return arr.size( );
+				}
+
+				void
+				bind( ) {
+
+					glBindVertexArray( iaoId );
+					glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, iboId );
+				}
+
+				void
+				release( ) {
+
+					glBindVertexArray( 0 );
+					glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
+				}
+		};
+
+		class
 		VertexArray :
 		public Named {
 
@@ -1266,6 +1374,9 @@ GLRenderer {
 				Str
 				vertexArray;
 
+				Str
+				indexArray;
+
 				std::vector< Str >
 				inTextures,
 				outTextures;
@@ -1285,7 +1396,7 @@ GLRenderer {
 			public :
 
 				Program
-				&setFrameBuffer( CStr & p_frameBufferName ) {
+				& setFrameBuffer( CStr & p_frameBufferName ) {
 
 					frameBuffer = p_frameBufferName;
 
@@ -1293,7 +1404,7 @@ GLRenderer {
 				}
 
 				Program
-				&setVertexArray( CStr & p_vertexArrayName ) {
+				& setVertexArray( CStr & p_vertexArrayName ) {
 
 					vertexArray = p_vertexArrayName;
 
@@ -1301,7 +1412,15 @@ GLRenderer {
 				}
 
 				Program
-				&addInTexture( CStr & p_textureName ) {
+				& setIndexArray( CStr & p_indexArrayName ) {
+
+					indexArray = p_indexArrayName;
+
+					return *this;
+				}
+
+				Program
+				& addInTexture( CStr & p_textureName ) {
 
 					inTextures.push_back( p_textureName );
 
@@ -1309,7 +1428,7 @@ GLRenderer {
 				}
 
 				Program
-				&addOutTexture( CStr & p_textureName ) {
+				& addOutTexture( CStr & p_textureName ) {
 
 					outTextures.push_back( p_textureName );
 
@@ -1317,7 +1436,7 @@ GLRenderer {
 				}
 
 				Program
-				&setShader( CStr & p_shaderName ) {
+				& setShader( CStr & p_shaderName ) {
 
 					shader = p_shaderName;
 
@@ -1325,7 +1444,7 @@ GLRenderer {
 				}
 
 				Program
-				&setFixSize( std::size_t const & p_width, std::size_t  const & p_height ) {
+				& setFixSize( std::size_t const & p_width, std::size_t  const & p_height ) {
 
 					fixSize = true;
 
@@ -1361,12 +1480,18 @@ GLRenderer {
 
 					vaLoc->bind( );
 
+					IndexArray
+					*iaLoc = glr->ia[ indexArray ];
+
+					iaLoc->bind( );
+
 					Shader
 					*shLoc = glr->sh[ shader ];
 
 					shLoc->bind( );
 
-					glBufferData( GL_ARRAY_BUFFER, sizeof( float ) * vaLoc->arr.size( ), vaLoc->arr.data( ), GL_STATIC_DRAW );
+					glBufferData( GL_ARRAY_BUFFER, sizeof( float ) * vaLoc->arr.size( ), vaLoc->arr.data( ), vaLoc->usage );
+					glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof( GLushort ) * iaLoc->arr.size( ), iaLoc->arr.data( ), iaLoc->usage );
 
 					for( std::map< CStr, VertexArray::Attr >::const_iterator a = vaLoc->attr.cbegin( ); a != vaLoc->attr.cend( ); ++ a ) {
 
@@ -1400,6 +1525,8 @@ GLRenderer {
 					}
 
 					shLoc->release( );
+
+					iaLoc->release( );
 
 					vaLoc->release( );
 				}
@@ -1458,6 +1585,15 @@ GLRenderer {
 
 						glBufferData( GL_ARRAY_BUFFER, sizeof( float ) * va->arr.size( ), va->arr.data( ), va->usage );
 
+					IndexArray
+					*ia = glr->ia[ indexArray ];
+
+					ia->bind( );
+
+					if( ia->usage != GL_STATIC_DRAW )
+
+						glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof( GLushort ) * ia->arr.size( ), ia->arr.data( ), ia->usage );
+
 					Shader
 					*sh = glr->sh[ shader ];
 
@@ -1480,6 +1616,11 @@ GLRenderer {
 
 						glDrawArrays( i.mode, i.offs, i.size );
 
+					for( auto i : ia->obj )
+
+						glDrawElements( i.mode, i.size, GL_UNSIGNED_SHORT, ( GLvoid * ) ( i.offs * sizeof ( GLushort ) ) );
+
+
 //					glDrawArrays( mode, 0, va->vertexCount );
 
 					for( GLuint i = 0; i < inTextures.size( ); ++ i ) {
@@ -1490,6 +1631,8 @@ GLRenderer {
 					sh->release( );
 
 					va->release( );
+
+					ia->release( );
 
 					if( 0 < frameBuffer.size( ) ) {
 
@@ -1511,6 +1654,9 @@ GLRenderer {
 		std::map< CStr, VertexArray * >
 		va;
 
+		std::map< CStr, IndexArray * >
+		ia;
+
 		std::map< CStr, Texture * >
 		tx;
 
@@ -1525,6 +1671,9 @@ GLRenderer {
 
 		VertexArray
 		*currentVertexArray;
+
+		IndexArray
+		*currentIndexArray;
 
 		Shader
 		*currentShader;
@@ -1576,6 +1725,19 @@ GLRenderer {
 			currentVertexArray = va[ p_name ];
 
 			return *currentVertexArray;
+		}
+
+		IndexArray
+		&indices( CStr p_name ) {
+
+			if( ia.find( p_name ) == ia.cend( ) ) {
+
+				ia[ p_name ] = new IndexArray( p_name );
+			}
+
+			currentIndexArray = ia[ p_name ];
+
+			return *currentIndexArray;
 		}
 
 		FrameBuffer
