@@ -29,7 +29,8 @@ SOURCES += \
 	glprojects/robertslighttest2D/robertslighttest2D.cpp \
 	glprojects/ballandlight/ballandlight.cpp \
 	glprojects/ballandlight/interaction.cpp \
-	glprojects/texturetest/texturetest.cpp
+	glprojects/texturetest/texturetest.cpp \
+	glprojects/multisampling/multisampling.cpp
 
 HEADERS += \
 	code/widget.hpp \
@@ -46,7 +47,8 @@ HEADERS += \
 	glprojects/robertslighttest2D/robertslighttest2D.hpp \
 	glprojects/ballandlight/ballandlight.hpp \
 	glprojects/ballandlight/interaction.h \
-	glprojects/texturetest/texturetest.hpp
+	glprojects/texturetest/texturetest.hpp \
+	glprojects/multisampling/multisampling.hpp
 
 FORMS += \
 	code/widget.ui
