@@ -1475,23 +1475,17 @@ GLRenderer {
 				void
 				build( ) {
 
-					VertexArray
-					*vaLoc = glr->va[ vertexArray ];
-
-					vaLoc->bind( );
-
-					IndexArray
-					*iaLoc = glr->ia[ indexArray ];
-
-					iaLoc->bind( );
-
 					Shader
 					*shLoc = glr->sh[ shader ];
 
 					shLoc->bind( );
 
+					VertexArray
+					*vaLoc = glr->va[ vertexArray ];
+
+					vaLoc->bind( );
+
 					glBufferData( GL_ARRAY_BUFFER, sizeof( float ) * vaLoc->arr.size( ), vaLoc->arr.data( ), vaLoc->usage );
-					glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof( GLushort ) * iaLoc->arr.size( ), iaLoc->arr.data( ), iaLoc->usage );
 
 					for( std::map< CStr, VertexArray::Attr >::const_iterator a = vaLoc->attr.cbegin( ); a != vaLoc->attr.cend( ); ++ a ) {
 
@@ -1505,6 +1499,16 @@ GLRenderer {
 
 						shLoc->setVertexAttrib( nm, sz, GL_FLOAT, GL_FALSE, st * sizeof( GLfloat ), ( void* ) ( of * sizeof( GLfloat ) ) );
 //						shLoc->prg->setVertexAttrib( a->first, a->second, GL_FLOAT, GL_FALSE, vaLoc->attrCount * sizeof( GLfloat ), ( void* ) ( vaLoc->attrOffset[ a->first ] * sizeof( GLfloat ) ) );
+					}
+
+					IndexArray
+					*iaLoc = glr->ia[ indexArray ];
+
+					if( iaLoc ) {
+
+						iaLoc->bind( );
+
+						glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof( GLushort ) * iaLoc->arr.size( ), iaLoc->arr.data( ), iaLoc->usage );
 					}
 
 					for( std::size_t i = 0; i < inTextures.size( ); ++ i ) {
@@ -1526,7 +1530,10 @@ GLRenderer {
 
 					shLoc->release( );
 
-					iaLoc->release( );
+					if( iaLoc ) {
+
+						iaLoc->release( );
+					}
 
 					vaLoc->release( );
 				}
@@ -1588,11 +1595,15 @@ GLRenderer {
 					IndexArray
 					*ia = glr->ia[ indexArray ];
 
-					ia->bind( );
+					if( ia ) {
 
-					if( ia->usage != GL_STATIC_DRAW )
+						ia->bind( );
 
-						glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof( GLushort ) * ia->arr.size( ), ia->arr.data( ), ia->usage );
+						if( ia->usage != GL_STATIC_DRAW ) {
+
+							glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof( GLushort ) * ia->arr.size( ), ia->arr.data( ), ia->usage );
+						}
+					}
 
 					Shader
 					*sh = glr->sh[ shader ];
@@ -1616,9 +1627,13 @@ GLRenderer {
 
 						glDrawArrays( i.mode, i.offs, i.size );
 
-					for( auto i : ia->obj )
+					if( ia ) {
 
-						glDrawElements( i.mode, i.size, GL_UNSIGNED_SHORT, ( GLvoid * ) ( i.offs * sizeof ( GLushort ) ) );
+						for( auto i : ia->obj ) {
+
+							glDrawElements( i.mode, i.size, GL_UNSIGNED_SHORT, ( GLvoid * ) ( i.offs * sizeof ( GLushort ) ) );
+						}
+					}
 
 
 //					glDrawArrays( mode, 0, va->vertexCount );
@@ -1632,7 +1647,7 @@ GLRenderer {
 
 					va->release( );
 
-					ia->release( );
+					if( ia ) ia->release( );
 
 					if( 0 < frameBuffer.size( ) ) {
 

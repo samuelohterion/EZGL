@@ -1,40 +1,40 @@
 #ifndef BAllANDLIGHT_HPP
 #define BAllANDLIGHT_HPP
 #include "code/glrenderer.hpp"
-#include "../Interaction/interaction.h"
+#include "interaction.h"
 
 class BallAndLight :
 public GLProject {
 
 	public:
 
-        BallAndLight( CStr const & p_name, ViewControlData *p_vcd = nullptr );
+		BallAndLight( CStr const & p_name, ViewControlData *p_vcd = nullptr );
 
 	public:
 
 		glm::mat4
-        m,v,p,
+		m,v,p,
 		mv;
 
-        glm::vec3
-        light,
-        light2,
-        pos2,
-        pos;
+		glm::vec3
+		light,
+		light2,
+		pos2,
+		pos;
 
-        glm::mat3
+		glm::mat3
 		nrm;
 
-        Interaction*
-        ballintr;
+		Interaction*
+		ballintr;
 
-        int
-        id,
-        tWidth,
-        tHeight;
+		int
+		id,
+		tWidth,
+		tHeight;
 
-        bool
-        tex;
+		bool
+		tex;
 
 	public:
 

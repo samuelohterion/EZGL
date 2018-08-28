@@ -31,7 +31,9 @@ SOURCES += \
 	glprojects/ballandlight/interaction.cpp \
 	glprojects/texturetest/texturetest.cpp \
 	glprojects/multisampling/multisampling.cpp \
-	glprojects/sometext/sometext.cpp
+	glprojects/sometext/sometext.cpp \
+	glprojects/yetanothersphere/yetanothersphere.cpp \
+
 
 HEADERS += \
 	code/widget.hpp \
@@ -51,6 +53,7 @@ HEADERS += \
 	glprojects/texturetest/texturetest.hpp \
 	glprojects/multisampling/multisampling.hpp \
 	glprojects/sometext/sometext.hpp
+	glprojects/yetanothersphere/yetanothersphere.hpp
 
 FORMS += \
 	code/widget.ui

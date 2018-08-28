@@ -29,17 +29,20 @@ SomeText::init( ) {
 				+1.f << -1.f << 0.f <<       +0.f << +0.f << +1.f <<
 				+1.f << +1.f << 0.f <<       +0.f << +0.f << +1.f <<
 				-1.f << +1.f << 0.f <<       +0.f << +0.f << +1.f;// <<
-				//GLRenderer::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
-		}
-		// INDEX-ARRAY-QUAD-3D
-		{
-			glr.indices( "IA-QUAD-3D" ).
-				setUsage( GL_STATIC_DRAW ) <<
-				0 << 1 << 2 << 3 <<
-				GLRenderer::IndexArray::Object( 0, 4, GL_TRIANGLE_FAN );
+				GLRenderer::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
 		}
 	}
+	// index arrays
+	{
 
+		// INDEX-ARRAY-QUAD-3D
+//		{
+//			glr.indices( "IA-QUAD-3D" ).
+//				setUsage( GL_STATIC_DRAW ) <<
+//				0 << 1 << 2 << 3 <<
+//				GLRenderer::IndexArray::Object( 0, 4, GL_TRIANGLE_FAN );
+//		}
+	}
 	// shaders
 	{
 		// SH-CHARACTER
@@ -105,7 +108,7 @@ SomeText::init( ) {
 		{
 			glr.program( "PR-PRINT-A-CHARACTER" ).
 				setVertexArray( "VA-QUAD-3D" ).
-				setIndexArray( "IA-QUAD-3D" ).
+//				setIndexArray( "IA-QUAD-3D" ).
 				setShader( "SH-CHARACTER" ).
 				addInTexture( "TX-CHARACTERS" ).
 				build( );

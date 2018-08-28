@@ -11,6 +11,7 @@
 #include "glprojects/texturetest/texturetest.hpp"
 #include "glprojects/multisampling/multisampling.hpp"
 #include "glprojects/sometext/sometext.hpp"
+#include "glprojects/yetanothersphere/yetanothersphere.hpp"
 #include "widget.hpp"
 #include <QApplication>
 
@@ -62,6 +63,9 @@ main( int argc, char *argv[ ] ) {
 	SomeText
 	* someText = new SomeText( );
 
+	YetAnotherSphere
+	* yetAnotherSphere = new YetAnotherSphere( "YAS " );
+
 	w.projects[ "FunIn2D" ] = funIn2D;
 	w.projects[ "LightedCheckerboardCave" ] = lightedCheckerboardCave;
 	w.projects[ "CoordinateSystem" ] = coordinateSystem;
@@ -75,8 +79,9 @@ main( int argc, char *argv[ ] ) {
 	w.projects[ "TextureTest" ] = textureTest;
 	w.projects[ "MultiSampling" ] = multiSampling;
 	w.projects[ "SomeText" ] = someText;
+	w.projects[ "YAS" ] = yetAnotherSphere;
 
-	w.currentProject = "SomeText";
+	w.currentProject = "BallAndLight";
 	w.show( );
 
 	return a.exec( );
