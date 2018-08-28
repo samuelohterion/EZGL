@@ -115,9 +115,9 @@ CubeWithTexture::init( ) {
 				p4 << +nz << +nz << V2( .25, .25 ) <<
 
 				// FACE 3
-				p7 << +nx << +nz << V2( .50, .50 ) <<
-				p5 << +nx << +nz << V2( .75, .50 ) <<
-				p1 << +nx << +nz << V2( .75, .75 ) <<
+				p7 << +nx << +nx << V2( .50, .50 ) <<
+				p5 << +nx << +nx << V2( .75, .50 ) <<
+				p1 << +nx << +nx << V2( .75, .75 ) <<
 
 				p1 << +nx << +nx << V2( .75, .75 ) <<
 				p3 << +nx << +nx << V2( .50, .75 ) <<
@@ -235,6 +235,7 @@ CubeWithTexture::init( ) {
 				"out vec4 fColor;\n"
 				"void main( ) {\n"
 				"	fColor = texture( txCube, vs2fs.texCoord );\n"
+				"	fColor.xyz *= .5 + .5 * vs2fs.color;\n"
 				"	fColor.xyz *= dot( vs2fs.normalMV, vec3( 0,0,1 ) );\n"
 				"}\n",
 				GLRenderer::ShaderCode::FROM_CODE ).
