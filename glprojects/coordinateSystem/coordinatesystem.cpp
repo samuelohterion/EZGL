@@ -1,7 +1,6 @@
 #include "coordinatesystem.hpp"
 #include "../../code/glmprinter.hpp"
 
-
 CoordinateSystem::CoordinateSystem( CStr const & p_name, ViewControlData *p_vcd ) :
 GLProject ( p_name, p_vcd ) {
 

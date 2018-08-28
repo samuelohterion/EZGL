@@ -33,13 +33,15 @@ SOURCES += \
 	glprojects/multisampling/multisampling.cpp \
 	glprojects/sometext/sometext.cpp \
 	glprojects/yetanothersphere/yetanothersphere.cpp \
-	glprojects/cubewithtexture/cubewithtexture.cpp
+	glprojects/cubewithtexture/cubewithtexture.cpp \
+    code/glmprinter.cpp
 
 
 HEADERS += \
 	code/widget.hpp \
 	code/clock.hpp \
 	code/glrenderer.hpp \
+	code/glmprinter.hpp \
 	glprojects/cube/cube.hpp \
 	glprojects/funIn2D/funIn2D.hpp \
 	glprojects/lighttest/lighttest.hpp \
@@ -55,8 +57,7 @@ HEADERS += \
 	glprojects/multisampling/multisampling.hpp \
 	glprojects/sometext/sometext.hpp \
 	glprojects/yetanothersphere/yetanothersphere.hpp \
-	glprojects/cubewithtexture/cubewithtexture.hpp \
-    code/glmprinter.hpp
+	glprojects/cubewithtexture/cubewithtexture.hpp
 
 FORMS += \
 	code/widget.ui

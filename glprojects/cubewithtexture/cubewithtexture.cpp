@@ -1,4 +1,5 @@
 #include "cubewithtexture.hpp"
+#include "../../code/glmprinter.hpp"
 
 CubeWithTexture::CubeWithTexture( const CStr &p_name, ViewControlData *p_vcd ) :
 GLProject ( p_name, p_vcd ) {
@@ -12,7 +13,7 @@ CubeWithTexture::init( ) {
 
 	projection = view = model = glm::mat4( 1. );
 
-	view = glm::lookAt( glm::vec3( 0., 3., 4. ), glm::vec3( 0., 0., 0. ), glm::vec3( 0., 1., 0. ) );
+	view = glm::lookAt( glm::vec3( 0., 0., 4. ), glm::vec3( 0., 0., 0. ), glm::vec3( 0., 1., 0. ) );
 
 	// frame buffer
 	{
@@ -20,17 +21,35 @@ CubeWithTexture::init( ) {
 
 	// vertex arrays
 	{
-		// VA-CUBE-WITH-TEXTURE
+		// VA-CUBE-WITH-TEXTURE-BACKGROUND
+		{
+
+			glr.vertices( "VA-CUBE-WITH-TEXTURE-BACKGROUND" ).
+				setUsage( GL_STATIC_DRAW ).
+				addAttrib( "vertex", 2, 0 ).
+				addAttrib( "coord",  2, 2 ) <<
+
+				-1.f << -1.f <<  0.f << 0.f <<
+				+1.f << -1.f <<  1.f << 0.f <<
+				+1.f << +1.f <<  1.f << 1.f <<
+				-1.f << +1.f <<  0.f << 1.f <<
+
+				GLRenderer::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
+		}
+		// VA-CUBE-WITH-TEXTURE-CUBE
 		{
 			/*
 			 *
-			*    2----3
-			*   /|   /|
-			*  6-+--7 |
-			*  | 0--+-1
-			*  |/   |/
-			*  4----5
-			*
+			 *
+			 *
+			 *    2----3
+			 *   /|   /|
+			 *  6-+--7 |
+			 *  | 0--+-1
+			 *  |/   |/
+			 *  4----5
+			 *
+			 *
 			*/
 
 			glm::vec3
@@ -46,159 +65,139 @@ CubeWithTexture::init( ) {
 			ny = glm::vec3( +0, +1, +0 ),
 			nz = glm::vec3( +0, +0, +1 );
 
-			glm::vec2
-			c0 = glm::vec2( .25f, .25f );
-
-			glr.vertices( "VA-CUBE-WITH-TEXTURE" ).
-				setUsage( GL_STATIC_DRAW ).
-				addAttrib( "vertex", 3, 0 ). addAttrib( "normal", 3, 3 ). addAttrib( "coord", 3, 9 );
-		}
-		// VA-YET-ANOTHER-SPHERE
-		{
 			GLRenderer::VertexArray
 			& va =
-				glr.vertices( "VA-YET-ANOTHER-SPHERE" ).
+				glr.vertices( "VA-CUBE-WITH-TEXTURE-CUBE" ).
 					setUsage( GL_STATIC_DRAW ).
 					addAttrib( "vertex", 3, 0 ).
-					addAttrib( "color", 3, 3 );
+					addAttrib( "normal", 3, 3 ).
+					addAttrib( "color",  3, 6 ).
+					addAttrib( "coord",  2, 9 );
 
-			float
-			a = sqrtf( 1.f / 24.f ),
-			b = sqrtf( 2.f / 24.f ),
-			c = sqrtf( 1.f / 3.f ),
-			d = sqrtf( 2.f / 3.f );
+			va <<
+				// FACE 1
+				p0 << -ny << V3( 1. ) - ny << V2( .25, .00 ) <<
+				p1 << -ny << V3( 1. ) - ny << V2( .50, .00 ) <<
+				p5 << -ny << V3( 1. ) - ny << V2( .50, .25 ) <<
 
-			glm::vec3
-			p0 = glm::vec3( +0.f, +0.f, d - a ),
-			p1 = glm::vec3( -b,   -.5f,    -a ),
-			p2 = glm::vec3( -b,   +.5f,    -a ),
-			p3 = glm::vec3( +c,   +0.f,    -a ),
-			pX = p1 - p0,
-			pY = p2 - p0;
+				p5 << -ny << V3( 1. ) - ny << V2( .50, .25 ) <<
+				p4 << -ny << V3( 1. ) - ny << V2( .25, .25 ) <<
+				p0 << -ny << V3( 1. ) - ny << V2( .25, .00 ) <<
 
-			GLsizei
-			divs = 1,
-			len  = 1 << divs;
+				// FACE 2
+				p4 << +nz << +nz << V2( .25, .25 ) <<
+				p5 << +nz << +nz << V2( .50, .25 ) <<
+				p7 << +nz << +nz << V2( .50, .50 ) <<
 
-			GLfloat
-			dX = 1.f / len,
-			dY = 1.f / len;
+				p7 << +nz << +nz << V2( .50, .50 ) <<
+				p6 << +nz << +nz << V2( .25, .50 ) <<
+				p4 << +nz << +nz << V2( .25, .25 ) <<
 
-			for( GLsizei y = 0; y <= len; ++ y ) {
+				// FACE 3
+				p7 << +nx << +nz << V2( .50, .50 ) <<
+				p5 << +nx << +nz << V2( .75, .50 ) <<
+				p1 << +nx << +nz << V2( .75, .75 ) <<
 
-				for( GLsizei x = 0; x <= len - y; ++ x ) {
+				p1 << +nx << +nx << V2( .75, .75 ) <<
+				p3 << +nx << +nx << V2( .50, .75 ) <<
+				p7 << +nx << +nx << V2( .50, .50 ) <<
 
-					glm::vec3 p = x * dX * pX + y * dY * pY;
+				// FACE 4
+				p4 << -nx << V3( 1 ) - nx << V2( .00, .50 ) <<
+				p6 << -nx << V3( 1 ) - nx << V2( .25, .50 ) <<
+				p2 << -nx << V3( 1 ) - nx << V2( .25, .75 ) <<
 
-					va << p << glm::vec3( 1., 0., 0. );
-				}
-			}
+				p2 << -nx << V3( 1 ) - nx << V2( .25, .75 ) <<
+				p0 << -nx << V3( 1 ) - nx << V2( .00, .75 ) <<
+				p4 << -nx << V3( 1 ) - nx << V2( .00, .50 ) <<
 
-			pX = p2 - p0;
-			pY = p3 - p0;
+				// FACE 5
+				p2 << -nz << V3( 1 ) - nz << V2( .25, .75 ) <<
+				p3 << -nz << V3( 1 ) - nz << V2( .50, .75 ) <<
+				p1 << -nz << V3( 1 ) - nz << V2( .50, 1.0 ) <<
 
-			for( GLsizei y = 0; y <= len; ++ y ) {
+				p1 << -nz << V3( 1 ) - nz << V2( .50, 1.0 ) <<
+				p0 << -nz << V3( 1 ) - nz << V2( .25, 1.0 ) <<
+				p2 << -nz << V3( 1 ) - nz << V2( .25, .75 ) <<
 
-				for( GLsizei x = 0; x <= len - y; ++ x ) {
+				// FACE 6
+				p6 << +ny << ny << V2( .25, .50 ) <<
+				p7 << +ny << ny << V2( .50, .50 ) <<
+				p3 << +ny << ny << V2( .50, .75 ) <<
 
-					glm::vec3 p = x * dX * pX + y * dY * pY;
+				p3 << +ny << ny << V2( .50, .75 ) <<
+				p2 << +ny << ny << V2( .25, .75 ) <<
+				p6 << +ny << ny << V2( .25, .50 ) <<
 
-					va << p << glm::vec3( 0., 1., 0. );
-				}
-			}
-
-			pX = p3 - p0;
-			pY = p1 - p0;
-
-			for( GLsizei y = 0; y <= len; ++ y ) {
-
-				for( GLsizei x = 0; x <= len - y; ++ x ) {
-
-					glm::vec3 p = x * dX * pX + y * dY * pY;
-
-					va << p << glm::vec3( 0., 0., 1. );
-				}
-			}
-
-//			va << glm::vec3( p0 ) << glm::vec3( 1., 0., 0. );
-//			va << glm::vec3( p1 ) << glm::vec3( 0., 1., 0. );
-//			va << glm::vec3( p2 ) << glm::vec3( 0., 0., 1. );
-//			va << glm::vec3( p3 ) << glm::vec3( 1., 1., 1. );
+				GLRenderer::VertexArray::Object( 0, 6 * 6, GL_TRIANGLES );
 		}
 	}
 
 	// index arrays
 	{
-		// INDEX-ARRAY-QUAD-3D
-		{
-			glr.indices( "IA-QUAD-3D" ).
-				setUsage( GL_STATIC_DRAW ) <<
-				0 << 1 << 2 << 3 <<
-				GLRenderer::IndexArray::Object( 0, 4, GL_TRIANGLE_FAN );
-		}
-		// IA-YET-ANOTHER-SPHERE
-
-		//     5
-		//   3   4
-		// 0   1   2
-		//     5
-		//   4   8
-		// 2   6   7
-		//     5
-		//   8   a
-		// 7   9   b
-
-		//                      35
-		//                   33    34
-		//                30    31    32
-		//             26    27    28    29
-		//          21    22    23    24    25
-		//       15    16    17    18    19    20
-		//    08    09    10    11    12    13    14
-		// 00    01    02    03    04    05    06    07
-
-		//                      35
-		//                   34    62
-		//                32    60    61
-		//             29    57    58    59
-		//          25    53    54    55    56
-		//       20    48    49    50    51    52
-		//    14    42    43    44    45    46    47
-		// 07    35    36    37    38    39    40    41
-
-		{
-			glr.indices( "IA-YET-ANOTHER-SPHERE" ).
-				setUsage( GL_STATIC_DRAW ) <<
-				0 << 1 << 3 <<
-				1 << 2 << 4 <<
-				1 << 4 << 3 <<
-				3 << 4 << 5 <<
-				GLRenderer::IndexArray::Object( 0, 12, GL_TRIANGLES );
-		}
 	}
 
 	// shaders
 	{
-		// SH-CHARACTER
+		// SH-CUBE-WITH-TEXTURE-BACKGROUND
 		{
 			glr.shader(
-				"SH-CHARACTER",
+				"SH-CUBE-WITH-TEXTURE-BACKGROUND",
 
 				// vertex shader
 				"#version 330 core\n"
-				"in vec3 vertex, normal;\n"
+				"in vec2 vertex;\n"
+				"in vec2 coord;\n"
 				"out VS2FS {\n"
+				"	vec2 coord;\n"
+				"} vs2fs;\n"
+
+				"void main( ) {\n"
+				"	vs2fs.coord = coord;\n"
+				"	gl_Position = vec4( vertex, 0, 1 );\n"
+				"}\n",
+
+				// fragment shader
+				"#version 330 core\n"
+
+				//	light in every space that makes sense to show their behavior
+				"uniform sampler2D txBackground;\n"
+				"in VS2FS {\n"
+				"	vec2 coord;\n"
+				"} vs2fs;\n"
+				"out vec4 fColor;\n"
+				"void main( ) {\n"
+				"	fColor = texture( txBackground, vs2fs.coord );\n"
+				"}\n",
+				GLRenderer::ShaderCode::FROM_CODE ).
+				addUniform( "model",  GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
+				addUniform( "view",   GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & view ).
+				addUniform( "proj",   GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & projection );
+		}
+		// SH-CUBE-WITH-TEXTURE-CUBE
+		{
+			glr.shader(
+				"SH-CUBE-WITH-TEXTURE-CUBE",
+
+				// vertex shader
+				"#version 330 core\n"
+				"in vec3 vertex;\n"
+				"in vec3 normal;\n"
+				"in vec3 color;\n"
+				"in vec2 coord;\n"
+				"out VS2FS {\n"
+				"	vec3 normalMV;\n"
+				"	vec3 color;\n"
 				"	vec2 texCoord;\n"
-				"	vec3 normal;\n"
 				"} vs2fs;\n"
 				"uniform mat4 model;"
 				"uniform mat4 view;"
 				"uniform mat4 proj;"
-				"uniform vec2 letter;"
 
 				"void main( ) {\n"
-				"	vs2fs.texCoord  = letter.xy + .0625 * ( .5 + .5 * vertex.xy );\n"
-				"	vs2fs.normal    = normalize( vec3( vec4( normal, 0 ) * inverse( view * model ) ) );\n"
+				"	vs2fs.normalMV = normalize( vec3( vec4( normal, 0 ) * inverse( view * model ) ) );\n"
+				"	vs2fs.color    = color;\n"
+				"	vs2fs.texCoord = coord;\n"
 				"	gl_Position = proj * view * model * vec4( vertex, 1 );\n"
 				"}\n",
 
@@ -206,88 +205,16 @@ CubeWithTexture::init( ) {
 				"#version 330 core\n"
 
 				//	light in every space that makes sense to show their behavior
-				"uniform sampler2D txChars;\n"
+				"uniform sampler2D txCube;\n"
 				"in VS2FS {\n"
+				"	vec3 normalMV;\n"
+				"	vec3 color;\n"
 				"	vec2 texCoord;\n"
-				"	vec3 normal;\n"
 				"} vs2fs;\n"
 				"out vec4 fColor;\n"
 				"void main( ) {\n"
-				"	fColor = texture( txChars, vs2fs.texCoord );\n"
-				"	if( dot( fColor.rgb, fColor.rgb ) < .1 )\n"
-				"		discard;\n "
-				"	fColor.xyz *= dot( vs2fs.normal, vec3( 0,0,1 ) );\n"
-				"}\n",
-				GLRenderer::ShaderCode::FROM_CODE ).
-				addUniform( "model",  GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
-				addUniform( "view",   GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & view ).
-				addUniform( "proj",   GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & projection ).
-				addUniform( "letter", GLRenderer::Shader::VEC2, GLRenderer::Shader::SCALAR, & letter );
-		}
-		// SH-YET-ANOTHER-SPHERE
-		{
-			glr.shader(
-				"SH-YET-ANOTHER-SPHERE",
-
-				// vertex shader
-				"#version 330 core\n"
-				"in vec3 vertex, color;\n"
-				"out VS2GS {\n"
-				"	vec3 vertex, color;\n"
-				"} vs2gs;\n"
-				"uniform mat4 model;"
-				"uniform mat4 view;"
-				"uniform mat4 proj;"
-				"void main( ) {\n"
-				"	vec4\n"
-				"	v = vec4( vertex, 1 );\n"
-				"	vs2gs.vertex = vec3( view * model * v );\n"
-				"	vs2gs.color  = color;\n"
-				"	gl_Position = proj * view * model * v;\n"
-				"}\n",
-
-				// geometry shader
-				"#version 330 core\n"
-				"layout ( triangles ) in;\n"
-				"layout ( triangle_strip, max_vertices = 3 ) out;\n"
-
-				//	light in every space that makes sense to show their behavior
-				"in VS2GS {\n"
-				"	vec3 vertex, color;\n"
-				"} vs2gs[ ];\n"
-				"out GS2FS {\n"
-				"	vec4 color, normal;\n"
-				"} gs2fs;\n"
-				"void main( ) {\n"
-				"	vec3 n = normalize( cross( vs2gs[ 1 ].vertex - vs2gs[ 0 ].vertex, vs2gs[ 2 ].vertex - vs2gs[ 0 ].vertex ) );\n"
-				"	vec3 c = vs2gs[ 0 ].color;\n"
-				"	gl_Position = gl_in[ 0 ].gl_Position;\n"
-				"	gs2fs.color  = vec4( c, 1 );\n"
-				"	gs2fs.normal = vec4( n, 1 );\n"
-				"	EmitVertex( );\n"
-				"	gl_Position = gl_in[ 1 ].gl_Position;\n"
-				"	gs2fs.color  = vec4( c, 1 );\n"
-				"	gs2fs.normal = vec4( n, 1 );\n"
-				"	EmitVertex( );\n"
-				"	gl_Position = gl_in[ 2 ].gl_Position;\n"
-				"	gs2fs.color  = vec4( c, 1 );\n"
-				"	gs2fs.normal = vec4( n, 1 );\n"
-				"	EmitVertex( );\n"
-				"	EndPrimitive( );\n"
-				"}\n",
-
-				// fragment shader
-				"#version 330 core\n"
-
-				//	light in every space that makes sense to show their behavior
-				"in GS2FS {\n"
-				"	vec4 color, normal;\n"
-				"} gs2fs;\n"
-				"out vec4 fColor;\n"
-				"void main( ) {\n"
-//				"	fColor = vec4( .9, .7, .1, 1. );\n"
-				"	fColor = gs2fs.color;\n"
-				"	fColor.xyz *= .1 + .9 * max( 0, dot( gs2fs.normal.xyz, vec3( 0, 0, 1 ) ) );\n"
+				"	fColor = texture( txCube, vs2fs.texCoord );\n"
+				"	fColor.xyz *= dot( vs2fs.normalMV, vec3( 0,0,1 ) );\n"
 				"}\n",
 				GLRenderer::ShaderCode::FROM_CODE ).
 				addUniform( "model",  GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
@@ -298,31 +225,36 @@ CubeWithTexture::init( ) {
 
 	// textures
 	{
-		// TX-CHARACTERS
+		// TX-CUBE-WITH-TEXTURE-BACKGROUND
 		{
 			glr.texture(
-			"TX-CHARACTERS",
-			new GLRenderer::Texture( "txChars", "../EZGL/glprojects/sometext/pix/characters.png" ) );
+			"TX-CUBE-WITH-TEXTURE-BACKGROUND",
+			new GLRenderer::Texture( "txBackground", "../EZGL/glprojects/cubewithtexture/pix/cubemapsmall.jpg" ) );
+		}
+		// TX-CUBE-WITH-TEXTURE-CUBE
+		{
+			glr.texture(
+			"TX-CUBE-WITH-TEXTURE-CUBE",
+			new GLRenderer::Texture( "txCube", "../EZGL/glprojects/cubewithtexture/pix/cubemapsmall.png" ) );
 		}
 	}
 
 	// programs
 	{
-		// PR-PRINT-A-CHARACTER
+		// PR-CUBE-WITH-TEXTURE-BACKGROUND
 		{
-			glr.program( "PR-PRINT-A-CHARACTER" ).
-				setVertexArray( "VA-QUAD-3D" ).
-				setIndexArray( "IA-QUAD-3D" ).
-				setShader( "SH-CHARACTER" ).
-				addInTexture( "TX-CHARACTERS" ).
+			glr.program( "PR-CUBE-WITH-TEXTURE-BACKGROUND" ).
+				setVertexArray( "VA-CUBE-WITH-TEXTURE-BACKGROUND" ).
+				setShader( "SH-CUBE-WITH-TEXTURE-BACKGROUND" ).
+				addInTexture( "TX-CUBE-WITH-TEXTURE-BACKGROUND" ).
 				build( );
 		}
-		// PR-YET-ANOTHER-SPHERE
+		// PR-CUBE-WITH-TEXTURE-CUBE
 		{
-			glr.program( "PR-YET-ANOTHER-SPHERE" ).
-				setVertexArray( "VA-YET-ANOTHER-SPHERE" ).
-				setIndexArray( "IA-YET-ANOTHER-SPHERE" ).
-				setShader( "SH-YET-ANOTHER-SPHERE" ).
+			glr.program( "PR-CUBE-WITH-TEXTURE-CUBE" ).
+				setVertexArray( "VA-CUBE-WITH-TEXTURE-CUBE" ).
+				setShader( "SH-CUBE-WITH-TEXTURE-CUBE" ).
+				addInTexture( "TX-CUBE-WITH-TEXTURE-CUBE" ).
 				build( );
 		}
 	}
@@ -331,35 +263,21 @@ CubeWithTexture::init( ) {
 void
 CubeWithTexture::paint( ) {
 
-	glEnable( GL_DEPTH_TEST );
+	glDisable( GL_DEPTH_TEST );
 	glDisable( GL_CULL_FACE );
 
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
+	glr.run( { "PR-CUBE-WITH-TEXTURE-BACKGROUND" } );
+
+	glEnable( GL_DEPTH_TEST );
+	glEnable( GL_CULL_FACE );
+
 	model = glm::mat4( 1. );
+	model = glm::translate( model, glm::vec3( 4.f * vcd->mousex / vcd->width - 2.f, 3.f * vcd->mousey / vcd->height - 1.5f, -2.f ) );
+	model = glm::rotate( model, 1.f * vcd->time, glm::vec3( sinf( .1f * vcd->time ), cosf( .11f * vcd->time ), sinf( .12f * vcd->time ) ) );
 
-	model = glm::translate( model, glm::vec3( -7., 0., -7. ) );
-	model = glm::rotate( model, 7.1f * vcd->time, glm::vec3( 1., 0., 0. ) );
-
-	for( GLsizei i = -7; i <= 7; ++ i ) {
-
-		letter = glm::vec2( ( 8.f + i ) / 16.f, 11.f / 16.f );
-		glr.run( { "PR-PRINT-A-CHARACTER" } );
-
-		model = glm::translate( model, glm::vec3( 1., 0., 0. ) );
-		model = glm::rotate( model, -.15f / ( 8.f + i ) * vcd->time, glm::vec3( 1., 0., 0. ) );
-	}
-
-	model = glm::mat4( 1 );
-	model = glm::translate( model, glm::vec3( 0., 0., -7. ) );
-	model = glm::rotate( model, 1.f * vcd->time, glm::vec3( 0, 1, 0 ) );
-//	model = glm::rotate( model, 1.f * vcd->time, glm::vec3( sinf( .1 * vcd->time ), cosf( .11 * vcd->time ), sinf( .12 * vcd->time ) ) );
-	model = glm::scale( model, glm::vec3( 4. ) );
-
-	//glEnable( GL_DEPTH_TEST );
-	glDisable( GL_CULL_FACE );
-
-	glr.run( { "PR-YET-ANOTHER-SPHERE" } );
+	glr.run( { "PR-CUBE-WITH-TEXTURE-CUBE" } );
 }
 
 void
@@ -370,5 +288,5 @@ CubeWithTexture::resize( int p_width, int p_height ) {
 	ratio = ( 1.f * p_width / p_height );
 
 	// create a projection matrix
-	projection = glm::perspective( 45.0f, ratio, 1.0f, 100.f );
+	projection = glm::perspective( 45.0f, ratio, .1f, 100.f );
 }

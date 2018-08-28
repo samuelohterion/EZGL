@@ -12,6 +12,7 @@
 #include "glprojects/multisampling/multisampling.hpp"
 #include "glprojects/sometext/sometext.hpp"
 #include "glprojects/yetanothersphere/yetanothersphere.hpp"
+#include "glprojects/cubewithtexture/cubewithtexture.hpp"
 #include "widget.hpp"
 #include <QApplication>
 
@@ -66,6 +67,9 @@ main( int argc, char *argv[ ] ) {
 	YetAnotherSphere
 	* yetAnotherSphere = new YetAnotherSphere( "YAS " );
 
+	CubeWithTexture
+	* cubeWithTexture = new CubeWithTexture( );
+
 	w.projects[ "FunIn2D" ] = funIn2D;
 	w.projects[ "LightedCheckerboardCave" ] = lightedCheckerboardCave;
 	w.projects[ "CoordinateSystem" ] = coordinateSystem;
@@ -80,8 +84,10 @@ main( int argc, char *argv[ ] ) {
 	w.projects[ "MultiSampling" ] = multiSampling;
 	w.projects[ "SomeText" ] = someText;
 	w.projects[ "YAS" ] = yetAnotherSphere;
+	w.projects[ "CubeWithTexture" ] = cubeWithTexture;
 
-	w.currentProject = "YAS";
+	w.currentProject = "CubeWithTexture";
+
 	w.show( );
 
 	return a.exec( );
