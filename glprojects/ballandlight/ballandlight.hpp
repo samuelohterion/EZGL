@@ -1,7 +1,7 @@
 #ifndef BAllANDLIGHT_HPP
 #define BAllANDLIGHT_HPP
 #include "code/glrenderer.hpp"
-#include "../Interaction/interaction.h"
+#include "interaction.h"
 
 class BallAndLight :
 public GLProject {
@@ -13,7 +13,7 @@ public GLProject {
 	public:
 
 		glm::mat4
-        m,v,p,
+		m,v,p,
 		mv;
 
 		glm::vec3
@@ -22,7 +22,7 @@ public GLProject {
 		pos2,
 		pos;
 
-        glm::mat3
+		glm::mat3
 		nrm;
 
 		Interaction*

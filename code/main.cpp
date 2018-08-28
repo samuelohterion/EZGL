@@ -81,7 +81,7 @@ main( int argc, char *argv[ ] ) {
 	w.projects[ "SomeText" ] = someText;
 	w.projects[ "YAS" ] = yetAnotherSphere;
 
-	w.currentProject = "YAS";
+	w.currentProject = "BallAndLight";
 	w.show( );
 
 	return a.exec( );
