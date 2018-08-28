@@ -8,7 +8,7 @@ public GLProject {
 
 	public:
 
-		YetAnotherSphere( CStr const & p_name = "SomeText", ViewControlData * p_vcd = nullptr );
+		YetAnotherSphere( CStr const & p_name = "YetAnotherSphere", ViewControlData * p_vcd = nullptr );
 
 	public:
 
@@ -32,4 +32,4 @@ public GLProject {
 		resize( int p_width, int p_height );
 };
 
-#endif // INTERACTION_HPP
+#endif // YETANOTHERSPHERE_HPP

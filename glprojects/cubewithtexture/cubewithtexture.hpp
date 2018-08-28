@@ -1,14 +1,14 @@
-#ifndef TEXTUREDCUBE_HPP
-#define TEXTUREDCUBE_HPP
+#ifndef CUBEWITHTEXTURE_HPP
+#define CUBEWITHTEXTURE_HPP
 
 #include "../../code/glrenderer.hpp"
 
-class YetAnotherSphere :
+class CubeWithTexture :
 public GLProject {
 
 	public:
 
-		YetAnotherSphere( CStr const & p_name = "SomeText", ViewControlData * p_vcd = nullptr );
+		CubeWithTexture( CStr const & p_name = "YetAnotherSphere", ViewControlData * p_vcd = nullptr );
 
 	public:
 
@@ -32,4 +32,4 @@ public GLProject {
 		resize( int p_width, int p_height );
 };
 
-#endif // TEXTUREDCUBE_HPP
+#endif // TEXTURETEST_HPP

@@ -1,18 +1,18 @@
-#include "texturedcube.hpp"
+#include "cubewithtexture.hpp"
 
-YetAnotherSphere::YetAnotherSphere( const CStr &p_name, ViewControlData *p_vcd ) :
+CubeWithTexture::CubeWithTexture( const CStr &p_name, ViewControlData *p_vcd ) :
 GLProject ( p_name, p_vcd ) {
 
 }
 
 void
-YetAnotherSphere::init( ) {
+CubeWithTexture::init( ) {
 
 	glClearColor( .11f, .13f, .12f, 1. );
 
 	projection = view = model = glm::mat4( 1. );
 
-	view = glm::lookAt( glm::vec3( 0., 0., 4. ), glm::vec3( 0., 0., 0. ), glm::vec3( 0., 1., 0. ) );
+	view = glm::lookAt( glm::vec3( 0., 3., 4. ), glm::vec3( 0., 0., 0. ), glm::vec3( 0., 1., 0. ) );
 
 	// frame buffer
 	{
@@ -20,16 +20,38 @@ YetAnotherSphere::init( ) {
 
 	// vertex arrays
 	{
-		// VERTEX-ARRAY-QUAD-3D
+		// VA-CUBE-WITH-TEXTURE
 		{
-			glr.vertices( "VA-QUAD-3D" ).
+			/*
+			 *
+			*    2----3
+			*   /|   /|
+			*  6-+--7 |
+			*  | 0--+-1
+			*  |/   |/
+			*  4----5
+			*
+			*/
+
+			glm::vec3
+			p0 = glm::vec3( -1, -1, -1 ),
+			p1 = glm::vec3( +1, -1, -1 ),
+			p2 = glm::vec3( -1, +1, -1 ),
+			p3 = glm::vec3( +1, +1, -1 ),
+			p4 = glm::vec3( -1, -1, +1 ),
+			p5 = glm::vec3( +1, -1, +1 ),
+			p6 = glm::vec3( -1, +1, +1 ),
+			p7 = glm::vec3( +1, +1, +1 ),
+			nx = glm::vec3( +1, +0, +0 ),
+			ny = glm::vec3( +0, +1, +0 ),
+			nz = glm::vec3( +0, +0, +1 );
+
+			glm::vec2
+			c0 = glm::vec2( .25f, .25f );
+
+			glr.vertices( "VA-CUBE-WITH-TEXTURE" ).
 				setUsage( GL_STATIC_DRAW ).
-				addAttrib( "vertex", 3, 0 ). addAttrib( "normal", 3, 3 ) <<
-				-1.f << -1.f << 0.f <<       +0.f << +0.f << +1.f <<
-				+1.f << -1.f << 0.f <<       +0.f << +0.f << +1.f <<
-				+1.f << +1.f << 0.f <<       +0.f << +0.f << +1.f <<
-				-1.f << +1.f << 0.f <<       +0.f << +0.f << +1.f;// <<
-				//GLRenderer::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
+				addAttrib( "vertex", 3, 0 ). addAttrib( "normal", 3, 3 ). addAttrib( "coord", 3, 9 );
 		}
 		// VA-YET-ANOTHER-SPHERE
 		{
@@ -307,7 +329,7 @@ YetAnotherSphere::init( ) {
 }
 
 void
-YetAnotherSphere::paint( ) {
+CubeWithTexture::paint( ) {
 
 	glEnable( GL_DEPTH_TEST );
 	glDisable( GL_CULL_FACE );
@@ -341,7 +363,7 @@ YetAnotherSphere::paint( ) {
 }
 
 void
-YetAnotherSphere::resize( int p_width, int p_height ) {
+CubeWithTexture::resize( int p_width, int p_height ) {
 
 	// get aspect ratio
 	float

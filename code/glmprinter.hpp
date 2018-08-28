@@ -1,0 +1,72 @@
+#ifndef GLMPRINTER_HPP
+#define GLMPRINTER_HPP
+
+#include <iostream>
+#include "../../glm/glm/glm.hpp"
+
+typedef glm::vec2   V2;
+typedef glm::vec3   V3;
+typedef glm::vec4   V4;
+
+typedef glm::mat4   M4;
+typedef glm::mat4x3 M43;
+typedef glm::mat4x2 M42;
+
+typedef glm::mat3x4 M34;
+typedef glm::mat3   M3;
+typedef glm::mat3x2 M32;
+
+typedef glm::mat2x4 M24;
+typedef glm::mat2x3 M23;
+typedef glm::mat2   M2;
+
+void
+print( glm::vec2 const & p_vec ) {
+
+	std::cout << p_vec[ 0 ] << " " << p_vec[ 1 ];
+}
+
+void
+print( glm::vec3 const & p_vec ) {
+
+	std::cout << p_vec[ 0 ] << " " << p_vec[ 1 ] << " " << p_vec[ 2 ];
+}
+
+void
+print( glm::vec4 const & p_vec ) {
+
+	std::cout << p_vec[ 0 ] << " " << p_vec[ 1 ] << " " << p_vec[ 2 ] << " " << p_vec[ 3 ];
+}
+
+void
+print( glm::mat2 const & p_mat ) {
+
+	print( p_mat[ 0 ] );
+	std::cout <<  std::endl;
+	print( p_mat[ 1 ] );
+}
+
+void
+print( glm::mat3 const & p_mat ) {
+
+	print( p_mat[ 0 ] );
+	std::cout <<  std::endl;
+	print( p_mat[ 1 ] );
+	std::cout <<  std::endl;
+	print( p_mat[ 2 ] );
+}
+
+void
+print( glm::mat4 const & p_mat ) {
+
+	print( p_mat[ 0 ] );
+	std::cout <<  std::endl;
+	print( p_mat[ 1 ] );
+	std::cout <<  std::endl;
+	print( p_mat[ 2 ] );
+	std::cout <<  std::endl;
+	print( p_mat[ 3 ] );
+}
+
+
+#endif // GLMPRINTER_HPP

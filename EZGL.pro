@@ -33,7 +33,7 @@ SOURCES += \
 	glprojects/multisampling/multisampling.cpp \
 	glprojects/sometext/sometext.cpp \
 	glprojects/yetanothersphere/yetanothersphere.cpp \
-	glprojects/texturedcube/texturedcube.cpp
+	glprojects/cubewithtexture/cubewithtexture.cpp
 
 
 HEADERS += \
@@ -53,9 +53,10 @@ HEADERS += \
 	glprojects/ballandlight/interaction.h \
 	glprojects/texturetest/texturetest.hpp \
 	glprojects/multisampling/multisampling.hpp \
-	glprojects/sometext/sometext.hpp
+	glprojects/sometext/sometext.hpp \
 	glprojects/yetanothersphere/yetanothersphere.hpp \
-	glprojects/texturedcube/texturedcube.hpp
+	glprojects/cubewithtexture/cubewithtexture.hpp \
+    code/glmprinter.hpp
 
 FORMS += \
 	code/widget.ui
