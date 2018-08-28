@@ -33,6 +33,7 @@ SOURCES += \
 	glprojects/multisampling/multisampling.cpp \
 	glprojects/sometext/sometext.cpp \
 	glprojects/yetanothersphere/yetanothersphere.cpp \
+	glprojects/texturedcube/texturedcube.cpp
 
 
 HEADERS += \
@@ -53,7 +54,8 @@ HEADERS += \
 	glprojects/texturetest/texturetest.hpp \
 	glprojects/multisampling/multisampling.hpp \
 	glprojects/sometext/sometext.hpp
-	glprojects/yetanothersphere/yetanothersphere.hpp
+	glprojects/yetanothersphere/yetanothersphere.hpp \
+	glprojects/texturedcube/texturedcube.hpp
 
 FORMS += \
 	code/widget.ui
