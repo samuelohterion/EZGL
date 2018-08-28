@@ -1475,17 +1475,39 @@ GLRenderer {
 				void
 				build( ) {
 
-					Shader
-					*shLoc = glr->sh[ shader ];
-
-					shLoc->bind( );
-
 					VertexArray
 					*vaLoc = glr->va[ vertexArray ];
 
-					vaLoc->bind( );
+					if( vaLoc ) {
 
-					glBufferData( GL_ARRAY_BUFFER, sizeof( float ) * vaLoc->arr.size( ), vaLoc->arr.data( ), vaLoc->usage );
+						vaLoc->bind( );
+					}
+
+					IndexArray
+					*iaLoc = glr->ia[ indexArray ];
+
+					if( iaLoc ) {
+
+						iaLoc->bind( );
+					}
+
+					Shader
+					*shLoc = glr->sh[ shader ];
+
+					if( shLoc ) {
+
+						shLoc->bind( );
+					}
+
+					if( vaLoc ) {
+
+						glBufferData( GL_ARRAY_BUFFER, sizeof( float ) * vaLoc->arr.size( ), vaLoc->arr.data( ), vaLoc->usage );
+					}
+
+					if( iaLoc ) {
+
+						glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof( GLushort ) * iaLoc->arr.size( ), iaLoc->arr.data( ), iaLoc->usage );
+					}
 
 					for( std::map< CStr, VertexArray::Attr >::const_iterator a = vaLoc->attr.cbegin( ); a != vaLoc->attr.cend( ); ++ a ) {
 
@@ -1499,16 +1521,6 @@ GLRenderer {
 
 						shLoc->setVertexAttrib( nm, sz, GL_FLOAT, GL_FALSE, st * sizeof( GLfloat ), ( void* ) ( of * sizeof( GLfloat ) ) );
 //						shLoc->prg->setVertexAttrib( a->first, a->second, GL_FLOAT, GL_FALSE, vaLoc->attrCount * sizeof( GLfloat ), ( void* ) ( vaLoc->attrOffset[ a->first ] * sizeof( GLfloat ) ) );
-					}
-
-					IndexArray
-					*iaLoc = glr->ia[ indexArray ];
-
-					if( iaLoc ) {
-
-						iaLoc->bind( );
-
-						glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof( GLushort ) * iaLoc->arr.size( ), iaLoc->arr.data( ), iaLoc->usage );
 					}
 
 					for( std::size_t i = 0; i < inTextures.size( ); ++ i ) {
@@ -1528,14 +1540,20 @@ GLRenderer {
 						glr->tx[ inTextures[ i ] ]->release( );
 					}
 
-					shLoc->release( );
+					if( shLoc ) {
+
+						shLoc->release( );
+					}
 
 					if( iaLoc ) {
 
 						iaLoc->release( );
 					}
 
-					vaLoc->release( );
+					if( vaLoc ) {
+
+						vaLoc->release( );
+					}
 				}
 
 				void
@@ -1586,11 +1604,15 @@ GLRenderer {
 					VertexArray
 					*va = glr->va[ vertexArray ];
 
-					va->bind( );
+					if( va ) {
 
-					if( va->usage != GL_STATIC_DRAW )
+						va->bind( );
 
-						glBufferData( GL_ARRAY_BUFFER, sizeof( float ) * va->arr.size( ), va->arr.data( ), va->usage );
+						if( va->usage != GL_STATIC_DRAW ) {
+
+							glBufferData( GL_ARRAY_BUFFER, sizeof( float ) * va->arr.size( ), va->arr.data( ), va->usage );
+						}
+					}
 
 					IndexArray
 					*ia = glr->ia[ indexArray ];
@@ -1608,7 +1630,12 @@ GLRenderer {
 					Shader
 					*sh = glr->sh[ shader ];
 
-					sh->bind( );
+					if( sh ) {
+
+						sh->bind( );
+
+						sh->sendUniforms( );
+					}
 
 					for( GLuint i = 0; i < inTextures.size( ); ++ i ) {
 
@@ -1620,12 +1647,15 @@ GLRenderer {
 						tx->bind( );
 					}
 
-					sh->sendUniforms( );
 					//addUniformInt( tx->name( ).c_str( ), i );
 
-					for( auto i : va->obj )
+					if( va ) {
 
-						glDrawArrays( i.mode, i.offs, i.size );
+						for( auto i : va->obj ) {
+
+							glDrawArrays( i.mode, i.offs, i.size );
+						}
+					}
 
 					if( ia ) {
 
@@ -1635,7 +1665,6 @@ GLRenderer {
 						}
 					}
 
-
 //					glDrawArrays( mode, 0, va->vertexCount );
 
 					for( GLuint i = 0; i < inTextures.size( ); ++ i ) {
@@ -1643,9 +1672,9 @@ GLRenderer {
 						glr->tx[ inTextures[ i ] ]->release( );
 					}
 
-					sh->release( );
+					if( sh ) sh->release( );
 
-					va->release( );
+					if( va ) va->release( );
 
 					if( ia ) ia->release( );
 
@@ -1658,7 +1687,7 @@ GLRenderer {
 							glr->tx[ outTextures[ i ] ]->release( );
 						}
 					}
-			}
+				}
 		};
 
 	public :
