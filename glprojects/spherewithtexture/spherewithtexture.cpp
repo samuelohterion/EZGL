@@ -11,7 +11,7 @@ SphereWithTexture::init( ) {
 
 	GLsizei
 	xSize = 32,
-	ySize = 64;
+	ySize = 16;
 
 	// frame buffer
 	{
@@ -81,7 +81,7 @@ SphereWithTexture::init( ) {
 				ia << a << b << c;
 			}
 
-			for( y = 0; y < ySize - 1; ++ y ) {
+			for( y = 0; y < ySize - 2; ++ y ) {
 
 				for( GLsizei x = 0; x < xSize; ++ x ) {
 
@@ -103,9 +103,9 @@ SphereWithTexture::init( ) {
 			for( GLsizei x = 0; x < xSize; ++x ) {
 
 				GLushort
-				a = 2 + ( xSize + 1 ) * ( y - 1 ) + x,
-				b = 1 + ( xSize + 1 ) * ( y - 1 ) + x,
-				c = 1 + ( xSize + 1 ) * ( y + 0 );
+				a = 2 + ( xSize + 1 ) * ( y + 0 ) + x,
+				b = 1 + ( xSize + 1 ) * ( y + 0 ) + x,
+				c = 1 + ( xSize + 1 ) * ( y + 1 );
 
 				ia << a << b << c;
 			}
@@ -212,7 +212,7 @@ SphereWithTexture::paint( ) {
 	model = glm::translate( model, glm::vec3( 0., 0., -4. ) );
 	model = glm::rotate( model, 1.1f * vcd->time, glm::vec3( 0., 1., 0. ) );
 
-	lightP = V3( +2 * cosf( vcd->time ), 0., -4. + 2. * sinf( vcd->time ) );
+	lightP = V3( +2.f * cosf( 1.7f * vcd->time ), 0.f, -4.f + 2.f * sinf( 1.7f * vcd->time ) );
 	lightC = V3( 1., 1., 1. );
 
 	glr.run( { "PR-SPHERE-WITH-TEXTURE-SPHERE" } );
