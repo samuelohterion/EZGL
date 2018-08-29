@@ -13,6 +13,7 @@
 #include "glprojects/sometext/sometext.hpp"
 #include "glprojects/yetanothersphere/yetanothersphere.hpp"
 #include "glprojects/cubewithtexture/cubewithtexture.hpp"
+#include "glprojects/spherewithtexture/spherewithtexture.hpp"
 #include "widget.hpp"
 #include <QApplication>
 
@@ -70,6 +71,9 @@ main( int argc, char *argv[ ] ) {
 	CubeWithTexture
 	* cubeWithTexture = new CubeWithTexture( );
 
+	SphereWithTexture
+	* sphereWithTexture = new SphereWithTexture( );
+
 	w.projects[ "FunIn2D" ] = funIn2D;
 	w.projects[ "LightedCheckerboardCave" ] = lightedCheckerboardCave;
 	w.projects[ "CoordinateSystem" ] = coordinateSystem;
@@ -85,8 +89,9 @@ main( int argc, char *argv[ ] ) {
 	w.projects[ "SomeText" ] = someText;
 	w.projects[ "YAS" ] = yetAnotherSphere;
 	w.projects[ "CubeWithTexture" ] = cubeWithTexture;
+	w.projects[ "SphereWithTexture" ] = sphereWithTexture;
 
-	w.currentProject = "YAS";
+	w.currentProject = "SphereWithTexture";
 
 	w.show( );
 

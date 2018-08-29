@@ -18,6 +18,7 @@ CONFIG += c++11
 SOURCES += \
 	code/main.cpp \
 	code/widget.cpp \
+	code/glmprinter.cpp \
 	glprojects/cube/cube.cpp \
 	glprojects/funIn2D/funIn2D.cpp \
 	glprojects/lighttest/lighttest.cpp \
@@ -34,7 +35,7 @@ SOURCES += \
 	glprojects/sometext/sometext.cpp \
 	glprojects/yetanothersphere/yetanothersphere.cpp \
 	glprojects/cubewithtexture/cubewithtexture.cpp \
-    code/glmprinter.cpp
+	glprojects/spherewithtexture/spherewithtexture.cpp
 
 
 HEADERS += \
@@ -57,7 +58,8 @@ HEADERS += \
 	glprojects/multisampling/multisampling.hpp \
 	glprojects/sometext/sometext.hpp \
 	glprojects/yetanothersphere/yetanothersphere.hpp \
-	glprojects/cubewithtexture/cubewithtexture.hpp
+	glprojects/cubewithtexture/cubewithtexture.hpp \
+	glprojects/spherewithtexture/spherewithtexture.hpp
 
 FORMS += \
 	code/widget.ui
