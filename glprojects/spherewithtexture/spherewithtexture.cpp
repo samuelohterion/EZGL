@@ -6,6 +6,7 @@ GLProject ( p_name, p_vcd ) {
 
 }
 
+
 void
 SphereWithTexture::init( ) {
 
@@ -136,7 +137,7 @@ SphereWithTexture::init( ) {
 
 				"void main( ) {\n"
 				"	vs2fs.vertex = model * vec4( vertex, 1 );\n"
-				"	vs2fs.normal = model * vec4( vertex, 0 );\n"
+				"	vs2fs.normal = normalize( model * vec4( vertex, 0 ) );\n"
 				"	vs2fs.coord  = coord;\n"
 				"	gl_Position = proj * view * model * vec4( vertex, 1 );\n"
 				"}\n",
@@ -145,9 +146,14 @@ SphereWithTexture::init( ) {
 				"#version 330 core\n"
 
 				//	light in every space that makes sense to show their behavior
+				"uniform mat4 model;\n"
+				"uniform mat4 view;\n"
+				"uniform mat4 proj;\n"
 				"uniform vec3 lightP;"
 				"uniform vec3 lightC;"
-				"uniform sampler2D txEarth;"
+				"uniform sampler2D txSphere;"
+				"uniform sampler2D txClouds;"
+				"uniform sampler2D txNightmap;"
 				"in VS2FS {\n"
 				"	vec4 vertex;\n"
 				"	vec4 normal;\n"
@@ -155,10 +161,14 @@ SphereWithTexture::init( ) {
 				"} vs2fs;\n"
 				"out vec4 fColor;\n"
 				"void main( ) {\n"
-				"	vec3  v = lightP - vs2fs.vertex.xyz;\n"
+				"	vec3  v = normalize( lightP - vs2fs.vertex.xyz );\n"
 				"	float a = dot( vs2fs.normal.xyz, v );\n"
-				"	fColor = texture( txEarth, vs2fs.coord );\n"
-				"	fColor.xyz *= min( max( .1, ( a + dot( vs2fs.normal.xyz, vec3( 0,0,1 ) ) ) ), 1 );\n"
+				"	vec3\n"
+				"		day    = texture( txSphere, vs2fs.coord ).xyz,\n"
+				"		clouds = texture( txClouds, vs2fs.coord ).xyz,\n"
+				"		night  = texture( txNightmap, vs2fs.coord ).xyz;\n"
+				"	fColor.a = 1;\n"
+				"	fColor.rgb = mix( night, day + clouds, vec3( a ) );\n"
 				"}\n",
 				GLRenderer::ShaderCode::FROM_CODE ).
 				addUniform( "model",  GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
@@ -171,11 +181,24 @@ SphereWithTexture::init( ) {
 
 	// textures
 	{
-		// TX-SPHERE-WITH-TEXTURE-SPHERE
+		// https://www.solarsystemscope.com/textures/
+		// TX-SPHERE-WITH-TEXTURE-SPHERE-EARTH-LANDSCAPE
 		{
 			glr.texture(
-				"TX-SPHERE-WITH-TEXTURE-SPHERE",
-				new GLRenderer::Texture( "txEarth", "../EZGL/glprojects/spherewithtexture/pix/earth.png" ) );
+				"TX-SPHERE-WITH-TEXTURE-SPHERE-EARTH-LANDSCAPE",
+				new GLRenderer::Texture( "txSphere", "../EZGL/glprojects/spherewithtexture/pix/2k_earth_daymap.jpg" ) );
+		}
+		// TX-SPHERE-WITH-TEXTURE-SPHERE-EARTH-CLOUDS
+		{
+			glr.texture(
+				"TX-SPHERE-WITH-TEXTURE-SPHERE-EARTH-CLOUDS",
+				new GLRenderer::Texture( "txClouds", "../EZGL/glprojects/spherewithtexture/pix/2k_earth_clouds.jpg" ) );
+		}
+		// TX-SPHERE-WITH-TEXTURE-SPHERE-EARTH-NIGHTMAP
+		{
+			glr.texture(
+				"TX-SPHERE-WITH-TEXTURE-SPHERE-EARTH-NIGHTMAP",
+				new GLRenderer::Texture( "txNightmap", "../EZGL/glprojects/spherewithtexture/pix/2k_earth_nightmap.jpg" ) );
 		}
 	}
 
@@ -187,7 +210,9 @@ SphereWithTexture::init( ) {
 				setVertexArray( "VA-SPHERE-WITH-TEXTURE-SPHERE" ).
 				setIndexArray( "IA-SPHERE-WITH-TEXTURE-SPHERE" ).
 				setShader( "SH-SPHERE-WITH-TEXTURE-SPHERE" ).
-				addInTexture( "TX-SPHERE-WITH-TEXTURE-SPHERE" ).
+				addInTexture( "TX-SPHERE-WITH-TEXTURE-SPHERE-EARTH-LANDSCAPE" ).
+				addInTexture( "TX-SPHERE-WITH-TEXTURE-SPHERE-EARTH-CLOUDS" ).
+				addInTexture( "TX-SPHERE-WITH-TEXTURE-SPHERE-EARTH-NIGHTMAP" ).
 				build( );
 		}
 	}
@@ -197,6 +222,7 @@ SphereWithTexture::init( ) {
 	projection = view = model = glm::mat4( 1. );
 
 //	view = glm::lookAt( glm::vec3( 0., 0., 4. ), glm::vec3( 0., 0., 0. ), glm::vec3( 0., 1., 0. ) );
+	lightC = V3( 1., 1., 1. );
 }
 
 void
@@ -210,10 +236,14 @@ SphereWithTexture::paint( ) {
 	model = glm::mat4( 1. );
 
 	model = glm::translate( model, glm::vec3( 0., 0., -4. ) );
-	model = glm::rotate( model, 1.1f * vcd->time, glm::vec3( 0., 1., 0. ) );
 
-	lightP = V3( +2.f * cosf( 1.7f * vcd->time ), 0.f, -4.f + 2.f * sinf( 1.7f * vcd->time ) );
-	lightC = V3( 1., 1., 1. );
+	GLfloat
+	year = .002f * ( vcd->time + vcd->mousex ),
+	day = 365.f * year;
+
+	lightP = V3( model * V4( +15.f * cosf( year ), 0.f, +15.f * sinf( year ), 1 ) );
+	model = glm::rotate( model, 1.f, glm::vec3( 1.f, 0.f, 0.5f ) );
+	model = glm::rotate( model, day, glm::vec3( 0.f, 1.f, 0.f ) );
 
 	glr.run( { "PR-SPHERE-WITH-TEXTURE-SPHERE" } );
 }
