@@ -86,7 +86,7 @@ main( int argc, char *argv[ ] ) {
 	w.projects[ "YAS" ] = yetAnotherSphere;
 	w.projects[ "CubeWithTexture" ] = cubeWithTexture;
 
-	w.currentProject = "CubeWithTexture";
+	w.currentProject = "YAS";
 
 	w.show( );
 

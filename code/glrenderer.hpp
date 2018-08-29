@@ -1902,7 +1902,13 @@ ViewControlData {
 	buttons;
 
 	GLfloat
-	time;
+	time,
+	dTicks;
+
+	glm::vec2
+	screen,
+	aspect,
+	dMouse;
 };
 
 class GLProject :

@@ -17,9 +17,6 @@ public GLProject {
 		view,
 		projection;
 
-		glm::vec2
-		letter;
-
 	public:
 
 		void

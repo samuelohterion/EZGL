@@ -9,12 +9,6 @@ GLProject ( p_name, p_vcd ) {
 void
 CubeWithTexture::init( ) {
 
-	glClearColor( .11f, .13f, .12f, 1. );
-
-	projection = view = model = glm::mat4( 1. );
-
-	view = glm::lookAt( glm::vec3( 0., 0., 4. ), glm::vec3( 0., 0., 0. ), glm::vec3( 0., 1., 0. ) );
-
 	// frame buffer
 	{
 	}
@@ -26,13 +20,12 @@ CubeWithTexture::init( ) {
 
 			glr.vertices( "VA-CUBE-WITH-TEXTURE-BACKGROUND" ).
 				setUsage( GL_STATIC_DRAW ).
-				addAttrib( "vertex", 2, 0 ).
-				addAttrib( "coord",  2, 2 ) <<
+				addAttrib( "vertex", 2, 0 ) <<
 
-				-1.f << -1.f <<  0.f << 0.f <<
-				+1.f << -1.f <<  1.f << 0.f <<
-				+1.f << +1.f <<  1.f << 1.f <<
-				-1.f << +1.f <<  0.f << 1.f <<
+				-1.f << -1.f <<
+				+1.f << -1.f <<
+				+1.f << +1.f <<
+				-1.f << +1.f <<
 
 				GLRenderer::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
 		}
@@ -167,14 +160,19 @@ CubeWithTexture::init( ) {
 
 				// vertex shader
 				"#version 330 core\n"
+				"uniform int width;\n"
+				"uniform int height;\n"
+
 				"in vec2 vertex;\n"
-				"in vec2 coord;\n"
 				"out VS2FS {\n"
 				"	vec2 coord;\n"
 				"} vs2fs;\n"
 
 				"void main( ) {\n"
-				"	vs2fs.coord = coord;\n"
+				"float\n"
+				"	denom = width < height ? width : height;\n"
+				"	vec2 aspect = vec2( width, height ) / denom;"
+				"	vs2fs.coord = aspect * ( .5 + .5 * vertex );\n"
 				"	gl_Position = vec4( vertex, 0, 1 );\n"
 				"}\n",
 
@@ -187,13 +185,15 @@ CubeWithTexture::init( ) {
 				"	vec2 coord;\n"
 				"} vs2fs;\n"
 				"out vec4 fColor;\n"
+				"float random ( in vec2 st ) {\n"
+					"return fract( sin( dot( st.xy, vec2( 12.9898, 78.233 ) ) ) * 43758.5453123 );\n"
+				"}\n"
 				"void main( ) {\n"
-				"	fColor = texture( txBackground, vs2fs.coord );\n"
+				"	fColor = vec4( .2 - .2 * ( random( fract( vs2fs.coord ) ) < .95 ? 1 : 0 ) * texture( txBackground, fract( vs2fs.coord ) ).rgb, 1 );\n"
 				"}\n",
 				GLRenderer::ShaderCode::FROM_CODE ).
-				addUniform( "model",  GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
-				addUniform( "view",   GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & view ).
-				addUniform( "proj",   GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & projection );
+				addUniform( "width",  GLRenderer::Shader::INT, GLRenderer::Shader::SCALAR, & vcd->width ).
+				addUniform( "height", GLRenderer::Shader::INT, GLRenderer::Shader::SCALAR, & vcd->height );
 		}
 		// SH-CUBE-WITH-TEXTURE-CUBE
 		{
@@ -235,8 +235,8 @@ CubeWithTexture::init( ) {
 				"out vec4 fColor;\n"
 				"void main( ) {\n"
 				"	fColor = texture( txCube, vs2fs.texCoord );\n"
-				"	fColor.xyz *= .5 + .5 * vs2fs.color;\n"
-				"	fColor.xyz *= dot( vs2fs.normalMV, vec3( 0,0,1 ) );\n"
+				"	fColor.xyz *= .85 + .15 * vs2fs.color;\n"
+				"	fColor.xyz *= dot( vs2fs.normalMV, vec3( 0, 0, 1 ) );\n"
 				"}\n",
 				GLRenderer::ShaderCode::FROM_CODE ).
 				addUniform( "model",  GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
@@ -280,6 +280,15 @@ CubeWithTexture::init( ) {
 				build( );
 		}
 	}
+
+	glClearColor( .11f, .13f, .12f, 1. );
+
+	projection = view = model = glm::mat4( 1. );
+
+	view = glm::lookAt( glm::vec3( 0., 0., 4. ), glm::vec3( 0., 0., 0. ), glm::vec3( 0., 1., 0. ) );
+
+	model = glm::mat4( 1. );
+	model = glm::translate( model, glm::vec3( +0.f, +0.f, -3.f ) );
 }
 
 void
@@ -295,9 +304,9 @@ CubeWithTexture::paint( ) {
 	glEnable( GL_DEPTH_TEST );
 	glEnable( GL_CULL_FACE );
 
-	model = glm::mat4( 1. );
-	model = glm::translate( model, glm::vec3( 4.f * vcd->mousex / vcd->width - 2.f, 3.f * vcd->mousey / vcd->height - 1.5f, -2.f ) );
-	model = glm::rotate( model, 1.f * vcd->time, glm::vec3( sinf( .1f * vcd->time ), cosf( .11f * vcd->time ), sinf( .12f * vcd->time ) ) );
+	model = glm::rotate( model, 6.28f * vcd->mousex, glm::vec3( glm::vec4( 0, 1, 0, 0 ) ) );
+	model = glm::rotate( model, 6.28f * vcd->mousey, glm::vec3( glm::vec4( 1, 0, 0, 0 ) ) );
+	//model = glm::rotate( view * model * inverse( view ), 1.f * vcd->time, glm::vec3( sinf( .1f * vcd->time ), cosf( .11f * vcd->time ), sinf( .12f * vcd->time ) ) );
 
 	glr.run( { "PR-CUBE-WITH-TEXTURE-CUBE" } );
 }
