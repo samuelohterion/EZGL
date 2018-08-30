@@ -235,14 +235,15 @@ SphereWithTexture::paint( ) {
 
 	model = glm::mat4( 1. );
 
-	model = glm::translate( model, glm::vec3( 0., 0., -4. ) );
+	model = glm::translate( model, glm::vec3( 0., 0., -2.5 ) );
 
 	GLfloat
 	year = .002f * ( vcd->time + vcd->mousex ),
 	day = 365.f * year;
 
+	model = glm::rotate( model, 30.f / 180.f * 3.14159f, normalize( glm::vec3( 1.f, 0.f, 0.5f ) ) );
 	lightP = V3( model * V4( +15.f * cosf( year ), 0.f, +15.f * sinf( year ), 1 ) );
-	model = glm::rotate( model, 1.f, glm::vec3( 1.f, 0.f, 0.5f ) );
+	model = glm::rotate( model, +23.f / 180.f * 3.14159f, normalize( glm::vec3( 1.f, 0.f, 0.0f ) ) );
 	model = glm::rotate( model, day, glm::vec3( 0.f, 1.f, 0.f ) );
 
 	glr.run( { "PR-SPHERE-WITH-TEXTURE-SPHERE" } );
