@@ -146,12 +146,6 @@ BallAndLight::init( ) {
 			hOr ( b, b, -b),
 			hOl (-b, b, -b);
 
-	glm::vec2
-			coOl( 0., 1.),
-			coOr( 1., 1.),
-			coUl( 0,  0.),
-			coUr( 1., 0.);
-
 //front:
 	
 	glm::vec3 normal (0,0,1);
@@ -159,14 +153,22 @@ BallAndLight::init( ) {
 	vc << vUl << normal << glm::vec2(.5, 0.) << vUr << normal << glm::vec2(.75, 0) << vOr << normal << glm::vec2(.75, .25)
 	   << vUl << normal << glm::vec2(.5, 0.) << vOr << normal << glm:.vec2(.75, .25) << vOl << normal << glm:.vec2(.5, .25);
 
-	vc << GLRenderer::VertexArray::Object( 0, 4, GL_TRIANGLES);
+	vc << GLRenderer::VertexArray::Object( 0, 6, GL_TRIANGLES);
 //left 
 	normal = glm:vec3(-1,0,0);
 	
 	vc << vUl << normal << glm::vec2(.25, .25.) << vOl << normal << glm::vec2(.5, .25) << hOl << normal << glm::vec2(.5, .5)
-	   << vUl << normal << glm::vec2(.25, .25.) << vOl << normal << glm::vec2(.5, .25) << hUl << normal << glm::vec2(.25, .5)
+	   << vUl << normal << glm::vec2(.25, .25.) << hOl << normal << glm::vec2(.5, .5) << hUl << normal << glm::vec2(.25, .5)
 
-	vc << GLRenderer::VertexArray::Object( 4, 8, GL_TRIANGLE_FAN);
+	vc << GLRenderer::VertexArray::Object( 6, 12, GL_TRIANGLES);
+	
+//bottom	
+	normal = glm:vec3(0,-1,0);
+	
+	vc << vUl << normal << glm::vec2(.25, .25.) << vUr << normal << glm::vec2(0., .25) << hUr << normal << glm::vec2(0, .5)
+	   << vUl << normal << glm::vec2(.25, .25.) << hUr << normal << glm::vec2(0., .5) <<  hUl << normal << glm::vec2(.25, .5)
+
+	vc << GLRenderer::VertexArray::Object( 12, 16, GL_TRIANGLES);
 
 
 	glr.frameBuffer( "FRAMEBUFFER-TEXTURE" );
@@ -182,7 +184,7 @@ BallAndLight::init( ) {
 		
 		glr.texture(
 				"TEXTURE-CUBE",
-					new GLRenderer::Texture( "txCube", "../EZGL/glprojects/spherewithtexture/pix/2k_earth_daymap.jpg" ) );
+					new GLRenderer::Texture( "txCube", "../EZGL/glprojects/ballandlight/pix/wuerfelnetz.jpg" ) );
 
 	glr.shader(
 		"SHADER-CUBE",
@@ -228,7 +230,7 @@ BallAndLight::init( ) {
 		"   \n"
 		"   vec3  d     = gs2fs.light.xyz - gs2fs.vertex.xyz; \n"
 		"   vec3 v      = gs2fs.frame;\n"
-		"   vec3 color  = texture( TX, gs2fs.coord ).xyz;  \n"
+		"   vec3 color  = texture( TxCube, gs2fs.coord ).xyz;  \n"
 		"   float a =10*dot(d, gs2fs.normal)/dot(d,d); \n"
 		"   fColor = vec4( clamp(a*color.x,0,1),clamp(a*color.y,0,1), clamp(a*color.z,0,1),  1 );\n"
 		"}\n",
