@@ -11,8 +11,8 @@ void
 SphereWithTexture::init( ) {
 
 	GLsizei
-	xSize = 32,
-	ySize = 16;
+	xSize = 128,
+	ySize = 64;
 
 	// frame buffer
 	{
@@ -28,7 +28,7 @@ SphereWithTexture::init( ) {
 					setUsage( GL_STATIC_DRAW ).
 					addAttrib( "vertex", 3, 0 ). addAttrib( "coord", 2, 3 );
 
-			va << 0.f << 1.f << 0.f << .0f << 1.f;
+			va << 0.f << 1.f << 0.f << .5f << 1.f;
 
 			GLfloat
 			dx = 1.f / xSize,
@@ -56,7 +56,7 @@ SphereWithTexture::init( ) {
 				}
 			}
 
-			va << 0.f << -1.f << 0.f << 1.f << 0.f;
+			va << 0.f << -1.f << 0.f << .5f << 0.f;
 		}
 	}
 
