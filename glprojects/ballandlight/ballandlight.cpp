@@ -173,18 +173,8 @@ BallAndLight::init( ) {
 
 	glr.frameBuffer( "FRAMEBUFFER-TEXTURE" );
 
-
-	glr.vertices( "VERTICES-TEXTURE" ).
-		setUsage( GL_STATIC_DRAW ).
-		addAttrib( "vertex", 2, 0 ) <<
-		coUl << coUr << coOr << coOl;
-
-
-		GLRenderer::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
-		
-		glr.texture(
-				"TEXTURE-CUBE",
-					new GLRenderer::Texture( "txCube", "../EZGL/glprojects/ballandlight/pix/wuerfelnetz.jpg" ) );
+	glr.texture(	"TEXTURE-CUBE",
+			new GLRenderer::Texture( "txCube", "../EZGL/glprojects/ballandlight/pix/wuerfelnetz.jpg" ) );
 
 	glr.shader(
 		"SHADER-CUBE",
@@ -461,13 +451,6 @@ BallAndLight::paint( ) {
 	pos = ballintr->Bounds(vcd->time);
 	pos2 = glm::vec3(-3 ,1, -6.6);
 
-
-	if( ! tex ) {
-
-		glr.run( { "PROGRAM-TEXTURE" } );
-
-		tex = true;
-	}
 	v = glm::translate(glm::mat4(1), glm::vec3(1.5,-.5,-1));
 
 	m = glm::translate( glm::mat4( 1. ), pos);
