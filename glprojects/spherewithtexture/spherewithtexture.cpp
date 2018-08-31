@@ -11,8 +11,8 @@ void
 SphereWithTexture::init( ) {
 
 	GLsizei
-	xSize = 128,
-	ySize = 64;
+	xSize = 64,
+	ySize = 32;
 
 	// frame buffer
 	{
@@ -117,10 +117,10 @@ SphereWithTexture::init( ) {
 
 	// shaders
 	{
-		// SH-SPHERE-WITH-TEXTURE-SPHERE
+		// SH-SPHERE-WITH-TEXTURE-EARTH
 		{
 			glr.shader(
-				"SH-SPHERE-WITH-TEXTURE-SPHERE",
+				"SH-SPHERE-WITH-TEXTURE-EARTH",
 
 				// vertex shader
 				"#version 330 core\n"
@@ -177,6 +177,111 @@ SphereWithTexture::init( ) {
 				addUniform( "lightP", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightP ).
 				addUniform( "lightC", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightC );
 		}
+		// SH-SPHERE-WITH-TEXTURE-SPHERE
+		{
+			glr.shader(
+				"SH-SPHERE-WITH-TEXTURE-SPHERE",
+
+				// vertex shader
+				"#version 330 core\n"
+				"in vec3 vertex;\n"
+				"in vec2 coord;\n"
+				"out VS2FS {\n"
+				"	vec4 vertex;\n"
+				"	vec4 normal;\n"
+				"	vec2 coord;\n"
+				"} vs2fs;\n"
+				"uniform mat4 model;\n"
+				"uniform mat4 view;\n"
+				"uniform mat4 proj;\n"
+
+				"void main( ) {\n"
+				"	vs2fs.vertex = model * vec4( vertex, 1 );\n"
+				"	vs2fs.normal = normalize( model * vec4( vertex, 0 ) );\n"
+				"	vs2fs.coord  = coord;\n"
+				"	gl_Position = proj * view * model * vec4( vertex, 1 );\n"
+				"}\n",
+
+				// fragment shader
+				"#version 330 core\n"
+
+				//	light in every space that makes sense to show their behavior
+				"uniform mat4 model;\n"
+				"uniform mat4 view;\n"
+				"uniform mat4 proj;\n"
+				"uniform vec3 lightP;"
+				"uniform vec3 lightC;"
+				"uniform sampler2D txSphere;"
+				"in VS2FS {\n"
+				"	vec4 vertex;\n"
+				"	vec4 normal;\n"
+				"	vec2 coord;\n"
+				"} vs2fs;\n"
+				"out vec4 fColor;\n"
+				"void main( ) {\n"
+				"	vec3  v = normalize( lightP - vs2fs.vertex.xyz );\n"
+				"	float a = dot( vs2fs.normal.xyz, v );\n"
+				"	fColor = texture( txSphere, vs2fs.coord );\n"
+				"	fColor.rgb *= ( .9 * a + .1 );\n"
+				"}\n",
+				GLRenderer::ShaderCode::FROM_CODE ).
+				addUniform( "model",  GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
+				addUniform( "view",   GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & view ).
+				addUniform( "proj",   GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & projection ).
+				addUniform( "lightP", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightP ).
+				addUniform( "lightC", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightC );
+		}
+		// SH-SPHERE-WITH-TEXTURE-SUN
+		{
+			glr.shader(
+				"SH-SPHERE-WITH-TEXTURE-SUN",
+
+				// vertex shader
+				"#version 330 core\n"
+				"in vec3 vertex;\n"
+				"in vec2 coord;\n"
+				"out VS2FS {\n"
+				"	vec4 vertex;\n"
+				"	vec2 coord;\n"
+				"} vs2fs;\n"
+				"uniform mat4 model;\n"
+				"uniform mat4 view;\n"
+				"uniform mat4 proj;\n"
+
+				"void main( ) {\n"
+				"	vs2fs.vertex = model * vec4( vertex, 1 );\n"
+				"	vs2fs.coord  = coord;\n"
+				"	gl_Position = proj * view * model * vec4( vertex, 1 );\n"
+				"}\n",
+
+				// fragment shader
+				"#version 330 core\n"
+
+				//	light in every space that makes sense to show their behavior
+				"uniform float time;\n"
+				"uniform sampler2D txSphere;\n"
+				"in VS2FS {\n"
+				"	vec4 vertex;\n"
+				"	vec2 coord;\n"
+				"} vs2fs;\n"
+				"out vec4 fColor;\n"
+				"float random ( in vec2 st ) {\n"
+					"return fract( sin( dot( st.xy, vec2( 12.9898, 78.233 ) ) ) * 43758.5453123 );\n"
+				"}\n"
+				"void main( ) {\n"
+				"	fColor =\n"
+				"		texture( txSphere, fract( vs2fs.coord + vec2( sin( -.021 * time ), sin( +.012 * time ) ) ) ) +\n"
+				"		texture( txSphere, fract( vs2fs.coord + vec2( sin( -.016 * time ), sin( +.014 * time ) ) ) ) +\n"
+				"		texture( txSphere, fract( vs2fs.coord + vec2( sin( +.011 * time ), sin( -.018 * time ) ) ) ) +\n"
+				"		texture( txSphere, fract( vs2fs.coord + vec2( sin( -.012 * time ), sin( -.019 * time ) ) ) );\n"
+				"	fColor.xyz /= fColor.a;\n"
+				"}\n",
+				GLRenderer::ShaderCode::FROM_CODE ).
+				addUniform( "model",  GLRenderer::Shader::MAT4,  GLRenderer::Shader::SCALAR, & model ).
+				addUniform( "view",   GLRenderer::Shader::MAT4,  GLRenderer::Shader::SCALAR, & view ).
+				addUniform( "proj",   GLRenderer::Shader::MAT4,  GLRenderer::Shader::SCALAR, & projection ).
+				addUniform( "time",   GLRenderer::Shader::FLOAT, GLRenderer::Shader::SCALAR, & vcd->time );
+		}
 	}
 
 	// textures
@@ -200,19 +305,49 @@ SphereWithTexture::init( ) {
 				"TX-SPHERE-WITH-TEXTURE-SPHERE-EARTH-NIGHTMAP",
 				new GLRenderer::Texture( "txNightmap", "../EZGL/glprojects/spherewithtexture/pix/2k_earth_nightmap.jpg" ) );
 		}
+		// TX-SPHERE-WITH-TEXTURE-SPHERE-MOON
+		{
+			glr.texture(
+				"TX-SPHERE-WITH-TEXTURE-SPHERE-MOON",
+				new GLRenderer::Texture( "txSphere", "../EZGL/glprojects/spherewithtexture/pix/2k_moon.jpg" ) );
+		}
+		// TX-SPHERE-WITH-TEXTURE-SPHERE-SUN
+		{
+			glr.texture(
+				"TX-SPHERE-WITH-TEXTURE-SPHERE-SUN",
+				new GLRenderer::Texture( "txSphere", "../EZGL/glprojects/spherewithtexture/pix/2k_sun.jpg" ) );
+		}
 	}
 
 	// programs
 	{
-		// PR-SPHERE-WITH-TEXTURE-SPHERE
+		// PR-SPHERE-WITH-TEXTURE-SPHERE-EARTH
 		{
-			glr.program( "PR-SPHERE-WITH-TEXTURE-SPHERE" ).
+			glr.program( "PR-SPHERE-WITH-TEXTURE-SPHERE-EARTH" ).
 				setVertexArray( "VA-SPHERE-WITH-TEXTURE-SPHERE" ).
 				setIndexArray( "IA-SPHERE-WITH-TEXTURE-SPHERE" ).
-				setShader( "SH-SPHERE-WITH-TEXTURE-SPHERE" ).
+				setShader( "SH-SPHERE-WITH-TEXTURE-EARTH" ).
 				addInTexture( "TX-SPHERE-WITH-TEXTURE-SPHERE-EARTH-LANDSCAPE" ).
 				addInTexture( "TX-SPHERE-WITH-TEXTURE-SPHERE-EARTH-CLOUDS" ).
 				addInTexture( "TX-SPHERE-WITH-TEXTURE-SPHERE-EARTH-NIGHTMAP" ).
+				build( );
+		}
+		// PR-SPHERE-WITH-TEXTURE-SPHERE-MOON
+		{
+			glr.program( "PR-SPHERE-WITH-TEXTURE-SPHERE-MOON" ).
+				setVertexArray( "VA-SPHERE-WITH-TEXTURE-SPHERE" ).
+				setIndexArray( "IA-SPHERE-WITH-TEXTURE-SPHERE" ).
+				setShader( "SH-SPHERE-WITH-TEXTURE-SPHERE" ).
+				addInTexture( "TX-SPHERE-WITH-TEXTURE-SPHERE-MOON" ).
+				build( );
+		}
+		// PR-SPHERE-WITH-TEXTURE-SPHERE-SUN
+		{
+			glr.program( "PR-SPHERE-WITH-TEXTURE-SPHERE-SUN" ).
+				setVertexArray( "VA-SPHERE-WITH-TEXTURE-SPHERE" ).
+				setIndexArray( "IA-SPHERE-WITH-TEXTURE-SPHERE" ).
+				setShader( "SH-SPHERE-WITH-TEXTURE-SUN" ).
+				addInTexture( "TX-SPHERE-WITH-TEXTURE-SPHERE-SUN" ).
 				build( );
 		}
 	}
@@ -221,7 +356,6 @@ SphereWithTexture::init( ) {
 
 	projection = view = model = glm::mat4( 1. );
 
-//	view = glm::lookAt( glm::vec3( 0., 0., 4. ), glm::vec3( 0., 0., 0. ), glm::vec3( 0., 1., 0. ) );
 	lightC = V3( 1., 1., 1. );
 }
 
@@ -233,20 +367,34 @@ SphereWithTexture::paint( ) {
 
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-	model = glm::mat4( 1. );
-
-	model = glm::translate( model, glm::vec3( 0., 0., -2.5 ) );
+	view = glm::lookAt( glm::vec3( 0., 0., 30. * vcd->mousey / vcd->height ), glm::vec3( 0., 0., 0. ), glm::vec3( 0., 1., 0. ) );
 
 	GLfloat
-	year = .002f * ( vcd->time + vcd->mousex ),
+	year = .002f * ( vcd->time + 3141.5f * vcd->mousex / vcd->width ),
 	day = 365.f * year;
 
-	model = glm::rotate( model, 30.f / 180.f * 3.14159f, normalize( glm::vec3( 1.f, 0.f, 0.5f ) ) );
-	lightP = V3( model * V4( +15.f * cosf( year ), 0.f, +15.f * sinf( year ), 1 ) );
-	model = glm::rotate( model, +23.f / 180.f * 3.14159f, normalize( glm::vec3( 1.f, 0.f, 0.0f ) ) );
-	model = glm::rotate( model, day, glm::vec3( 0.f, 1.f, 0.f ) );
+	//model = glm::rotate( model, 30.f / 180.f * 3.14159f, normalize( glm::vec3( 1.f, 0.f, 0.5f ) ) );
+	lightP = glm::vec4( 0.f, 0.f, 0.f, 1.f );
+	model  = glm::mat4( 1. );
+	model = glm::scale( model, glm::vec3( 3.f ) );
+	glr.run( { "PR-SPHERE-WITH-TEXTURE-SPHERE-SUN" } );
+	model = glm::scale( model, glm::vec3( 1.f / 3.f ) );
 
-	glr.run( { "PR-SPHERE-WITH-TEXTURE-SPHERE" } );
+	model = glm::rotate( model, year, glm::vec3( 0.f, 1.f, 0.f ) );
+	model = glm::translate( model, glm::vec3( 15., 0., 0. ) );
+
+	M4
+	tmp = model;
+	model = glm::rotate( model, +23.f / 180.f * 3.14159f, normalize( glm::vec3( 0.f, 0.f, 1.0f ) ) );
+	model = glm::rotate( model, day, glm::vec3( 0.f, cosf( 23.f / 180.f * 3.14f ), sinf( 23.f / 180.f * 3.14f ) ) );
+
+	glr.run( { "PR-SPHERE-WITH-TEXTURE-SPHERE-EARTH" } );
+
+	//model = glm::rotate( model, -23.f / 180.f * 3.14159f, normalize( glm::vec3( 0.f, 0.f, 1.0f ) ) );
+	model = glm::rotate( tmp, day / 28.5f, glm::vec3( 0, 1, .0 ) );
+	model = glm::translate( model, glm::vec3( 5., 0, 0 ) );
+	model = glm::scale( model, glm::vec3( 1.f / 3.f ) );
+	glr.run( { "PR-SPHERE-WITH-TEXTURE-SPHERE-MOON" } );
 }
 
 void
@@ -257,5 +405,5 @@ SphereWithTexture::resize( int p_width, int p_height ) {
 	ratio = ( 1.f * p_width / p_height );
 
 	// create a projection matrix
-	projection = glm::perspective( 45.0f, ratio, 1.0f, 100.f );
+	projection = glm::perspective( 45.0f, ratio, 1.0f, 300.f );
 }
