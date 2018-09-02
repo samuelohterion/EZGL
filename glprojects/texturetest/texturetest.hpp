@@ -1,7 +1,7 @@
 #ifndef TEXTURETEST_HPP
 #define TEXTURETEST_HPP
 
-#include "../../code/glrenderer.hpp"
+#include "../../code/glr.hpp"
 
 class TextureTest :
 public GLProject {

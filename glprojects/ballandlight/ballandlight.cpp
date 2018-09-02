@@ -20,9 +20,9 @@ BallAndLight::init( ) {
 	nrm = glm::mat3( 1. );
 	glr.vertices( "VERTICES-BALLANDLIGHT" ).
 		setUsage( GL_STATIC_DRAW ).
-		addAttrib( "vertex", 3, 0 ).addAttrib( "color", 3, 3 ).addAttrib("normal", 3, 6);
+		attrib( "vertex", 3, 0 ).attrib( "color", 3, 3 ).attrib("normal", 3, 6);
 
-	GLRenderer::VertexArray
+	GLR::VertexArray
 	& va = glr.vertices( "VERTICES-BALLANDLIGHT" );
 
 	int
@@ -52,7 +52,7 @@ BallAndLight::init( ) {
 		va << x << y << z << color << x << y << z;
 		++vxCount;
 	}
-	va << GLRenderer::VertexArray::Object( 0, vxCount, GL_TRIANGLE_FAN );
+	va << GLR::VertexArray::Object( 0, vxCount, GL_TRIANGLE_FAN );
 	int off = vxCount;
 
 	for (latd; latd < latS; latd++){
@@ -79,7 +79,7 @@ BallAndLight::init( ) {
 		}
 
 	 }
-	 va << GLRenderer::VertexArray::Object( off, vxCount, GL_TRIANGLE_STRIP );
+	 va << GLR::VertexArray::Object( off, vxCount, GL_TRIANGLE_STRIP );
 
 	 off = vxCount;
 
@@ -99,13 +99,13 @@ BallAndLight::init( ) {
 
 		}
 
-	va << GLRenderer::VertexArray::Object( off, vxCount, GL_TRIANGLE_FAN );
+	va << GLR::VertexArray::Object( off, vxCount, GL_TRIANGLE_FAN );
 
 	glr.vertices( "VERTICES-FlOOR" ).
 		setUsage( GL_STATIC_DRAW ).
-		addAttrib( "vertex", 3, 0 ).addAttrib( "color", 3, 3 ).addAttrib("normal", 3, 6);
+		attrib( "vertex", 3, 0 ).attrib( "color", 3, 3 ).attrib("normal", 3, 6);
 
-	GLRenderer::VertexArray
+	GLR::VertexArray
 	& vb = glr.vertices( "VERTICES-FlOOR" );
 
 	color  = glm::vec3(1.f, 0.f, 0.f);
@@ -116,7 +116,7 @@ BallAndLight::init( ) {
 		  glm::vec3( 1,  3, -3) << color << normal <<
 		  glm::vec3(-1,  3, -3) << color << normal;
 
-	vb << GLRenderer::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN);
+	vb << GLR::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN);
 
 	normal = glm::vec3(0.f, 1.f, 0.f);
 
@@ -126,14 +126,14 @@ BallAndLight::init( ) {
 		  glm::vec3(-1, -1, -3) << color << normal ;
 
 
-	vb << GLRenderer::VertexArray::Object( 4, 4, GL_TRIANGLE_FAN);
+	vb << GLR::VertexArray::Object( 4, 4, GL_TRIANGLE_FAN);
 
 
 	glr.vertices( "VERTICES-CUBE" ).
 		setUsage( GL_STATIC_DRAW ).
-		addAttrib( "vertex", 3, 0 ).addAttrib("coord", 3, 3);
+		attrib( "vertex", 3, 0 ).attrib("coord", 3, 3);
 
-	GLRenderer::VertexArray
+	GLR::VertexArray
 	& vc = glr.vertices( "VERTICES-CUBE" );
 	float b = 1.;
 	glm::vec3
@@ -155,12 +155,12 @@ BallAndLight::init( ) {
 	vc << vUl << vUl << vUr << vUl << vOr << vUr << vOl << vUr
 	   << hOl << vOl << hUl << vOl << hUr << vOr << vUr << vOr;
 
-	vc << GLRenderer::VertexArray::Object( 0, 8, GL_TRIANGLE_FAN);
+	vc << GLR::VertexArray::Object( 0, 8, GL_TRIANGLE_FAN);
 
 	vc << hOr << hUl << hUr << hUl << hUl << hUr << hOl << hUr
 	   << vOl << hOl << vOr << hOl << vUr << hOr << hUr << hOr;
 
-	vc << GLRenderer::VertexArray::Object( 8, 8, GL_TRIANGLE_FAN);
+	vc << GLR::VertexArray::Object( 8, 8, GL_TRIANGLE_FAN);
 
 
 	glr.frameBuffer( "FRAMEBUFFER-TEXTURE" );
@@ -168,15 +168,15 @@ BallAndLight::init( ) {
 
 	glr.vertices( "VERTICES-TEXTURE" ).
 		setUsage( GL_STATIC_DRAW ).
-		addAttrib( "vertex", 2, 0 ) <<
+		attrib( "vertex", 2, 0 ) <<
 		coUl << coUr << coOr << coOl;
 
 
-		GLRenderer::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
+		GLR::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
 		tWidth = tHeight = 128;
 		glr.texture(
 			"TEXTURE-CUBE",
-			new GLRenderer::Texture(
+			new GLR::Texture(
 				"TX",
 				GL_TEXTURE_2D,
 				0,
@@ -205,9 +205,9 @@ BallAndLight::init( ) {
 			"    fColor =  int(5*vCoords.x*sin(vCoords.y))%3==0?vec4(1, 1, 1, 1):int(5*vCoords.x*cos(vCoords.y))%3==1?vec4(.2, .4, .7, 1):vec4(.1,.4,.3, 1);\n"
 				 // "fColor = vec4(1,1,1,1);\n"
 			"}\n",
-			GLRenderer::ShaderCode::FROM_CODE );
+			GLR::ShaderCode::FROM_CODE );
 
-		glr.program( "PROGRAM-TEXTURE" ).
+		glr.container( "PROGRAM-TEXTURE" ).
 			setFrameBuffer( "FRAMEBUFFER-TEXTURE" ).
 			setVertexArray( "VERTICES-TEXTURE" ).
 			setShader( "SHADER-TEXTURE" ).
@@ -314,15 +314,15 @@ BallAndLight::init( ) {
 		"   float a =10*dot(d, gs2fs.normal)/dot(d,d); \n"
 		"   fColor = vec4( clamp(a*color.x,0,1),clamp(a*color.y,0,1), clamp(a*color.z,0,1),  1 );\n"
 		"}\n",
-			GLRenderer::ShaderCode::FROM_CODE ).
-			addUniform( "mv", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & mv ).
-			addUniform( "p", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & p ).
-			addUniform( "v", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & v ).
-			addUniform( "pos", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & pos ).
-			addUniform( "light", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & light2 );
+			GLR::ShaderCode::FROM_CODE ).
+			addUniform( "mv", GLR::Shader::MAT4, GLR::Shader::SCALAR, & mv ).
+			addUniform( "p", GLR::Shader::MAT4, GLR::Shader::SCALAR, & p ).
+			addUniform( "v", GLR::Shader::MAT4, GLR::Shader::SCALAR, & v ).
+			addUniform( "pos", GLR::Shader::VEC3, GLR::Shader::SCALAR, & pos ).
+			addUniform( "light", GLR::Shader::VEC3, GLR::Shader::SCALAR, & light2 );
 
 
-	glr.program( "PROGRAM-CUBE" ).
+	glr.container( "PROGRAM-CUBE" ).
 		setVertexArray( "VERTICES-CUBE" ).
 		addInTexture( "TEXTURE-CUBE" ).
 		setShader( "SHADER-CUBE" ).
@@ -384,15 +384,15 @@ BallAndLight::init( ) {
 		"   a = distance>radB?a:.2*pow(a,2);\n"
 		"   fColor = vec4(clamp(a*color.x,0,1), clamp(a*color.y,0,1), clamp(a*color.z,0,1), 1);\n"
 		"}\n",
-			GLRenderer::ShaderCode::FROM_CODE ).
-			addUniform( "mv", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & mv ).
-			addUniform( "p", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & p ).
-			addUniform( "v", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & v ).
-			addUniform( "pos", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & pos ).
-			addUniform( "light", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & light ).
-			addUniform( "rad", GLRenderer::Shader::FLOAT, GLRenderer::Shader::SCALAR, & ballintr->rad );
+			GLR::ShaderCode::FROM_CODE ).
+			addUniform( "mv", GLR::Shader::MAT4, GLR::Shader::SCALAR, & mv ).
+			addUniform( "p", GLR::Shader::MAT4, GLR::Shader::SCALAR, & p ).
+			addUniform( "v", GLR::Shader::MAT4, GLR::Shader::SCALAR, & v ).
+			addUniform( "pos", GLR::Shader::VEC3, GLR::Shader::SCALAR, & pos ).
+			addUniform( "light", GLR::Shader::VEC3, GLR::Shader::SCALAR, & light ).
+			addUniform( "rad", GLR::Shader::FLOAT, GLR::Shader::SCALAR, & ballintr->rad );
 
-	glr.program( "PROGRAM-FLOOR" ).
+	glr.container( "PROGRAM-FLOOR" ).
 		setVertexArray( "VERTICES-FlOOR" ).
 		setShader( "SHADER-FLOOR" ).
 		build( );
@@ -461,16 +461,16 @@ BallAndLight::init( ) {
 		"   fColor = vec4(clamp(a*color.x,0,1), clamp(a*color.y,0,1), clamp(a*color.z,0,1), 1);\n"
 		"}\n",
 
-			GLRenderer::ShaderCode::FROM_CODE ).
-			addUniform( "mv", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & mv ).
-			addUniform( "p", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & p ).
-			addUniform( "v", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & v ).
-			addUniform( "m", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & m ).
-			addUniform( "pos", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & pos2 ).
-			addUniform( "light", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & light2 ).
-			addUniform( "rad", GLRenderer::Shader::FLOAT, GLRenderer::Shader::SCALAR, & ballintr->rad );
+			GLR::ShaderCode::FROM_CODE ).
+			addUniform( "mv", GLR::Shader::MAT4, GLR::Shader::SCALAR, & mv ).
+			addUniform( "p", GLR::Shader::MAT4, GLR::Shader::SCALAR, & p ).
+			addUniform( "v", GLR::Shader::MAT4, GLR::Shader::SCALAR, & v ).
+			addUniform( "m", GLR::Shader::MAT4, GLR::Shader::SCALAR, & m ).
+			addUniform( "pos", GLR::Shader::VEC3, GLR::Shader::SCALAR, & pos2 ).
+			addUniform( "light", GLR::Shader::VEC3, GLR::Shader::SCALAR, & light2 ).
+			addUniform( "rad", GLR::Shader::FLOAT, GLR::Shader::SCALAR, & ballintr->rad );
 
-	glr.program( "PROGRAM-FLOOR-LEFT" ).
+	glr.container( "PROGRAM-FLOOR-LEFT" ).
 		setVertexArray( "VERTICES-FlOOR" ).
 		setShader( "SHADER-FLOOR-LEFT" ).
 		build( );
@@ -516,14 +516,14 @@ BallAndLight::init( ) {
 			"fColor = vec4( clamp(a*vColor.x,0,1),clamp(a*vColor.y,0,1), clamp(a*vColor.z,0,1),  1 );\n"
 		"}\n",
 
-		GLRenderer::ShaderCode::FROM_CODE ).
-			addUniform( "mv", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & mv ).
-			addUniform( "v", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & v ).
-			addUniform( "p", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & p ).
-			addUniform( "light", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & light ).
-			addUniform( "time", GLRenderer::Shader::FLOAT, GLRenderer::Shader::SCALAR, & vcd->time );
+		GLR::ShaderCode::FROM_CODE ).
+			addUniform( "mv", GLR::Shader::MAT4, GLR::Shader::SCALAR, & mv ).
+			addUniform( "v", GLR::Shader::MAT4, GLR::Shader::SCALAR, & v ).
+			addUniform( "p", GLR::Shader::MAT4, GLR::Shader::SCALAR, & p ).
+			addUniform( "light", GLR::Shader::VEC3, GLR::Shader::SCALAR, & light ).
+			addUniform( "time", GLR::Shader::FLOAT, GLR::Shader::SCALAR, & vcd->time );
 
-	glr.program( "PROGRAM-BALLANDLIGHT" ).
+	glr.container( "PROGRAM-BALLANDLIGHT" ).
 		setVertexArray( "VERTICES-BALLANDLIGHT" ).
 		setShader( "SHADER-BALLANDLIGHT" ).
 		build( );

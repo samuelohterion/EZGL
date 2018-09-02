@@ -1,7 +1,7 @@
 #ifndef CUBE_HPP
 #define CUBE_HPP
 
-#include "code/glrenderer.hpp"
+#include "code/glr.hpp"
 
 class Cube :
 public GLProject {

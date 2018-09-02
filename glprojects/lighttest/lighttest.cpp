@@ -18,12 +18,12 @@ LightedCheckerboardCave::init( ) {
 		// create a simple 2d quad as triangle fan
 		glr.vertices( "VERTICES-LIGHTED-CHECKERBOARD-CHECKERBOARD" ).
 			setUsage( GL_STATIC_DRAW ).
-			addAttrib( "vertex", 2, 0 ) <<
+			attrib( "vertex", 2, 0 ) <<
 			-1.f << -1.f <<
 			+1.f << -1.f <<
 			+1.f << +1.f <<
 			-1.f << +1.f <<
-			GLRenderer::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
+			GLR::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
 
 		// create a shader for the checkerboard
 		glr.shader(
@@ -147,16 +147,16 @@ LightedCheckerboardCave::init( ) {
 			// and now compute 2nd step of simple lighting
 			"	fColor.xyz = fColor.xyz * ( pow( a1, 2. ) * light1InModelSpaceColor + pow( a2, 2. ) * light2InCameraSpaceColor + a3 * vec3( 1 ) );\n"
 			"}\n",
-			GLRenderer::ShaderCode::FROM_CODE ).
-			addUniform( "model",               GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
-			addUniform( "view",                GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & view ).
-			addUniform( "projection",          GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & projection ).
-			addUniform( "light1InModelSpacePosition",  GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & light1InModelSpacePosition ).
-			addUniform( "light2InCameraSpacePosition", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & light2InCameraSpacePosition ).
-			addUniform( "light1InModelSpaceColor",  GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & light1InModelSpaceColor ).
-			addUniform( "light2InCameraSpaceColor", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & light2InCameraSpaceColor );
+			GLR::ShaderCode::FROM_CODE ).
+			addUniform( "model",               GLR::Shader::MAT4, GLR::Shader::SCALAR, & model ).
+			addUniform( "view",                GLR::Shader::MAT4, GLR::Shader::SCALAR, & view ).
+			addUniform( "projection",          GLR::Shader::MAT4, GLR::Shader::SCALAR, & projection ).
+			addUniform( "light1InModelSpacePosition",  GLR::Shader::VEC3, GLR::Shader::SCALAR, & light1InModelSpacePosition ).
+			addUniform( "light2InCameraSpacePosition", GLR::Shader::VEC3, GLR::Shader::SCALAR, & light2InCameraSpacePosition ).
+			addUniform( "light1InModelSpaceColor",  GLR::Shader::VEC3, GLR::Shader::SCALAR, & light1InModelSpaceColor ).
+			addUniform( "light2InCameraSpaceColor", GLR::Shader::VEC3, GLR::Shader::SCALAR, & light2InCameraSpaceColor );
 
-		glr.program( "PROGRAM-LIGHTED-CHECKERBOARD-CHECKERBOARD" ).
+		glr.container( "PROGRAM-LIGHTED-CHECKERBOARD-CHECKERBOARD" ).
 			setVertexArray( "VERTICES-LIGHTED-CHECKERBOARD-CHECKERBOARD" ).
 			setShader( "SHADER-LIGHTED-CHECKERBOARD-CHECKERBOARD" ).
 			build( );
@@ -223,12 +223,12 @@ LightedCheckerboardCave::init( ) {
 			"void main( void ) {\n"
 				"fCol = vec4( gs2fsIn.color, 1.f );\n"
 			"}\n",
-			GLRenderer::ShaderCode::FROM_CODE ).
-				addUniform( "model",  GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
-				addUniform( "view",  GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & view ).
-				addUniform( "projection",  GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & projection );
+			GLR::ShaderCode::FROM_CODE ).
+				addUniform( "model",  GLR::Shader::MAT4, GLR::Shader::SCALAR, & model ).
+				addUniform( "view",  GLR::Shader::MAT4, GLR::Shader::SCALAR, & view ).
+				addUniform( "projection",  GLR::Shader::MAT4, GLR::Shader::SCALAR, & projection );
 
-		glr.program( "PROGRAM-LIGHTED-CHECKERBOARD-NORMALS" ).
+		glr.container( "PROGRAM-LIGHTED-CHECKERBOARD-NORMALS" ).
 			setVertexArray(	"VERTICES-LIGHTED-CHECKERBOARD-CHECKERBOARD" ).
 			setShader( "SHADER-LIGHTED-CHECKERBOARD-NORMALS" ).
 			build( );
@@ -238,9 +238,9 @@ LightedCheckerboardCave::init( ) {
 	{
 		glr.vertices( "VERTICES-LIGHTED-CHECKERBOARD-LIGHT-IN-MODEL-SPACE" ).
 			setUsage( GL_STATIC_DRAW ).
-			addAttrib( "color", 3, 0 ) <<
+			attrib( "color", 3, 0 ) <<
 			0.f << 0.f << 0.f <<
-			GLRenderer::VertexArray::Object( 0, 1, GL_POINTS );
+			GLR::VertexArray::Object( 0, 1, GL_POINTS );
 
 		glr.shader(
 			"SHADER-LIGHTED-CHECKERBOARD-LIGHT-IN-MODEL-SPACE",
@@ -307,15 +307,15 @@ LightedCheckerboardCave::init( ) {
 			"		discard;\n"
 			"	fColor = vec4( clamp( 2. * ( 1. - s ), .1, 1 ) * ( vec3( 1. ) + vs2fs.color.xyz ), 1. );\n"
 			"}\n",
-			GLRenderer::ShaderCode::FROM_CODE ).
-			addUniform( "model",               GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
-			addUniform( "view",                GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & view ).
-			addUniform( "projection",          GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & projection ).
-			addUniform( "light1InModelSpacePosition",  GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & light1InModelSpacePosition ).
-			addUniform( "light1InModelSpaceColor",  GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & light1InModelSpaceColor );
+			GLR::ShaderCode::FROM_CODE ).
+			addUniform( "model",               GLR::Shader::MAT4, GLR::Shader::SCALAR, & model ).
+			addUniform( "view",                GLR::Shader::MAT4, GLR::Shader::SCALAR, & view ).
+			addUniform( "projection",          GLR::Shader::MAT4, GLR::Shader::SCALAR, & projection ).
+			addUniform( "light1InModelSpacePosition",  GLR::Shader::VEC3, GLR::Shader::SCALAR, & light1InModelSpacePosition ).
+			addUniform( "light1InModelSpaceColor",  GLR::Shader::VEC3, GLR::Shader::SCALAR, & light1InModelSpaceColor );
 
 
-		glr.program( "PROGRAM-LIGHTED-CHECKERBOARD-LIGHT-IN-MODEL-SPACE" ).
+		glr.container( "PROGRAM-LIGHTED-CHECKERBOARD-LIGHT-IN-MODEL-SPACE" ).
 			setVertexArray( "VERTICES-LIGHTED-CHECKERBOARD-LIGHT-IN-MODEL-SPACE" ).
 			setShader( "SHADER-LIGHTED-CHECKERBOARD-LIGHT-IN-MODEL-SPACE" ).
 			build( );
@@ -325,9 +325,9 @@ LightedCheckerboardCave::init( ) {
 	{
 		glr.vertices( "VERTICES-LIGHTED-CHECKERBOARD-LIGHT-IN-CAMERA-SPACE" ).
 			setUsage( GL_STATIC_DRAW ).
-			addAttrib( "color", 3, 0 ) <<
+			attrib( "color", 3, 0 ) <<
 			0.f << 0.f << 0.f <<
-			GLRenderer::VertexArray::Object( 0, 1, GL_POINTS );
+			GLR::VertexArray::Object( 0, 1, GL_POINTS );
 
 		glr.shader(
 			"SHADER-LIGHTED-CHECKERBOARD-LIGHT-IN-CAMERA-SPACE",
@@ -394,14 +394,14 @@ LightedCheckerboardCave::init( ) {
 			"		discard;\n"
 			"	fColor = vec4( clamp( 2. * ( 1. - s ), .1, 1 ) * ( vec3( 1. ) + vs2fs.color.xyz ), 1. );\n"
 			"}\n",
-			GLRenderer::ShaderCode::FROM_CODE ).
-			addUniform( "model",               GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
-			addUniform( "view",                GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & view ).
-			addUniform( "projection",          GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & projection ).
-			addUniform( "light2InCameraSpacePosition",  GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & light2InCameraSpacePosition ).
-			addUniform( "light2InCameraSpaceColor", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & light2InCameraSpaceColor );
+			GLR::ShaderCode::FROM_CODE ).
+			addUniform( "model",               GLR::Shader::MAT4, GLR::Shader::SCALAR, & model ).
+			addUniform( "view",                GLR::Shader::MAT4, GLR::Shader::SCALAR, & view ).
+			addUniform( "projection",          GLR::Shader::MAT4, GLR::Shader::SCALAR, & projection ).
+			addUniform( "light2InCameraSpacePosition",  GLR::Shader::VEC3, GLR::Shader::SCALAR, & light2InCameraSpacePosition ).
+			addUniform( "light2InCameraSpaceColor", GLR::Shader::VEC3, GLR::Shader::SCALAR, & light2InCameraSpaceColor );
 
-		glr.program( "PROGRAM-LIGHTED-CHECKERBOARD-LIGHT-IN-CAMERA-SPACE" ).
+		glr.container( "PROGRAM-LIGHTED-CHECKERBOARD-LIGHT-IN-CAMERA-SPACE" ).
 			setVertexArray( "VERTICES-LIGHTED-CHECKERBOARD-LIGHT-IN-CAMERA-SPACE" ).
 			setShader( "SHADER-LIGHTED-CHECKERBOARD-LIGHT-IN-CAMERA-SPACE" ).
 			build( );

@@ -1,5 +1,5 @@
-#ifndef GLRENDERER_HPP
-#define GLRENDERER_HPP
+#ifndef GLR_HPP
+#define GLR_HPP
 #ifndef GL_VERTEX_PROGRAM_POINT_SIZE
 #define GL_VERTEX_PROGRAM_POINT_SIZE      0x8642
 #endif
@@ -56,7 +56,7 @@ Named {
 };
 
 class
-GLRenderer {
+GLR {
 
 	public :
 
@@ -342,21 +342,27 @@ GLRenderer {
 				GLenum
 				usage;
 
-				struct Attr { GLint size, offs; };
+				struct Attr {
+
+					GLsizei offs;
+					GLuint size;
+				};
 
 				class Object {
 
 					public:
 
-						Object( GLint p_offs, GLint p_size, GLenum p_mode ) :
+						Object( GLsizei p_offs, GLuint p_size, GLenum p_mode ) :
 						offs( p_offs ),
 						size( p_size ),
 						mode( p_mode ) {
 
 						}
 
-					GLint
-					offs,
+					GLsizei
+					offs;
+
+					GLuint
 					size;
 
 					GLenum
@@ -382,13 +388,8 @@ GLRenderer {
 				usage( GL_STATIC_DRAW ) {
 
 					glGenVertexArrays( 1, &vaoId );
-//					glBindVertexArray( vaoId );
 
 					glGenBuffers( 1, &vboId );
-//					glBindBuffer( GL_ARRAY_BUFFER, vboId );
-//					glBufferData( GL_ARRAY_BUFFER, sizeof( float ) * arr.size( ), arr.data( ), GL_STATIC_DRAW );
-
-//					glBindVertexArray( 0 );
 				}
 
 				~VertexArray( ) {
@@ -431,6 +432,25 @@ GLRenderer {
 				}
 
 				VertexArray
+				&operator << ( glm::vec2 const & p_value ) {
+
+					arr.push_back( p_value.r );
+					arr.push_back( p_value.g );
+
+					return *this;
+				}
+
+				VertexArray
+				&operator << ( glm::vec3 const & p_value ) {
+
+					arr.push_back( p_value.r );
+					arr.push_back( p_value.g );
+					arr.push_back( p_value.b );
+
+					return *this;
+				}
+
+				VertexArray
 				&operator << ( glm::vec4 const & p_value ) {
 
 					arr.push_back( p_value.r );
@@ -442,10 +462,10 @@ GLRenderer {
 				}
 
 				VertexArray
-				&addAttrib( std::string const & p_name, GLuint const &p_size, GLuint const &p_offset ) {
+				& attrib( std::string const & p_name, GLsizei const &p_offset, GLuint const &p_size ) {
 
-					attr[ p_name ].size = p_size;
 					attr[ p_name ].offs = p_offset;
+					attr[ p_name ].size = p_size;
 					stride += p_size;
 
 //					vertexCount = arr.size( ) / stride;
@@ -1344,25 +1364,25 @@ GLRenderer {
 		};
 
 		class
-		Program :
+		Container :
 		public
 		Named {
 
 			private :
 
-				GLRenderer
+				GLR
 				* glr;
 
 			public :
 
-				Program( CStr &p_name, GLRenderer * p_glr ) :
+				Container( CStr &p_name, GLR * p_glr ) :
 				Named( p_name ),
 				glr( p_glr ),
 				fixSize( false ) {
 
 				}
 
-				~Program( ) {
+				~Container( ) {
 
 				}
 
@@ -1395,7 +1415,7 @@ GLRenderer {
 
 			public :
 
-				Program
+				Container
 				& setFrameBuffer( CStr & p_frameBufferName ) {
 
 					frameBuffer = p_frameBufferName;
@@ -1403,7 +1423,7 @@ GLRenderer {
 					return *this;
 				}
 
-				Program
+				Container
 				& setVertexArray( CStr & p_vertexArrayName ) {
 
 					vertexArray = p_vertexArrayName;
@@ -1411,7 +1431,7 @@ GLRenderer {
 					return *this;
 				}
 
-				Program
+				Container
 				& setIndexArray( CStr & p_indexArrayName ) {
 
 					indexArray = p_indexArrayName;
@@ -1419,7 +1439,7 @@ GLRenderer {
 					return *this;
 				}
 
-				Program
+				Container
 				& addInTexture( CStr & p_textureName ) {
 
 					inTextures.push_back( p_textureName );
@@ -1427,7 +1447,7 @@ GLRenderer {
 					return *this;
 				}
 
-				Program
+				Container
 				& addOutTexture( CStr & p_textureName ) {
 
 					outTextures.push_back( p_textureName );
@@ -1435,7 +1455,7 @@ GLRenderer {
 					return *this;
 				}
 
-				Program
+				Container
 				& setShader( CStr & p_shaderName ) {
 
 					shader = p_shaderName;
@@ -1443,7 +1463,7 @@ GLRenderer {
 					return *this;
 				}
 
-				Program
+				Container
 				& setFixSize( std::size_t const & p_width, std::size_t  const & p_height ) {
 
 					fixSize = true;
@@ -1707,7 +1727,7 @@ GLRenderer {
 		std::map< CStr, Shader * >
 		sh;
 
-		std::map< CStr, Program * >
+		std::map< CStr, Container * >
 		pr;
 
 		FrameBuffer
@@ -1722,7 +1742,7 @@ GLRenderer {
 		Shader
 		*currentShader;
 
-		Program
+		Container
 		*currentProgram;
 
 		std::size_t
@@ -1731,11 +1751,11 @@ GLRenderer {
 
 	public :
 
-		GLRenderer( ) {
+		GLR( ) {
 
 		}
 
-		~GLRenderer( ) {
+		~GLR( ) {
 
 			for( auto s : sh )
 
@@ -1865,12 +1885,12 @@ GLRenderer {
 			return *currentShader;
 		}
 
-		Program
-		&program( CStr p_name ) {
+		Container
+		&container( CStr p_name ) {
 
 			if( pr.find( p_name ) == pr.cend( ) ) {
 
-				pr[ p_name ] = new Program( p_name, this );
+				pr[ p_name ] = new Container( p_name, this );
 			}
 
 			currentProgram = pr[ p_name ];
@@ -1929,7 +1949,7 @@ public Named {
 
 	public:
 
-		GLRenderer
+		GLR
 		glr;
 
 		ViewControlData
@@ -1959,4 +1979,4 @@ public Named {
 		virtual void
 		paint( ) = 0;
 };
-#endif // GLRENDERER_HPP
+#endif // GLR_HPP

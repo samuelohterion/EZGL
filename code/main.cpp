@@ -1,21 +1,21 @@
-#include "glprojects/cube/cube.hpp"
-#include "glprojects/funIn2D/funIn2D.hpp"
-#include "glprojects/lighttest/lighttest.hpp"
-#include "glprojects/coordinateSystem/coordinatesystem.hpp"
-#include "glprojects/simpleTriangle/simpletriangle.hpp"
-#include "glprojects/sphere/sphere.hpp"
-#include "glprojects/spheredynamicsurface/spheredynamicsurface.hpp"
-#include "glprojects/simplecoloredtriangle/simplecoloredtriangle.hpp"
-#include "glprojects/robertslighttest2D/robertslighttest2D.hpp"
-#include "glprojects/ballandlight/ballandlight.hpp"
-#include "glprojects/texturetest/texturetest.hpp"
-#include "glprojects/multisampling/multisampling.hpp"
-#include "glprojects/sometext/sometext.hpp"
-#include "glprojects/yetanothersphere/yetanothersphere.hpp"
-#include "glprojects/cubewithtexture/cubewithtexture.hpp"
-#include "glprojects/spherewithtexture/spherewithtexture.hpp"
 #include "widget.hpp"
 #include <QApplication>
+#include "glprojects/triangle2d/triangle2d.hpp"
+#include "glprojects/quad3d/quad3d.hpp"
+#include "glprojects/coordinateSystem/coordinatesystem.hpp"
+//#include "glprojects/cube/cube.hpp"
+//#include "glprojects/funIn2D/funIn2D.hpp"
+//#include "glprojects/lighttest/lighttest.hpp"
+//#include "glprojects/sphere/sphere.hpp"
+//#include "glprojects/spheredynamicsurface/spheredynamicsurface.hpp"
+//#include "glprojects/robertslighttest2D/robertslighttest2D.hpp"
+//#include "glprojects/ballandlight/ballandlight.hpp"
+//#include "glprojects/texturetest/texturetest.hpp"
+//#include "glprojects/multisampling/multisampling.hpp"
+//#include "glprojects/sometext/sometext.hpp"
+//#include "glprojects/yetanothersphere/yetanothersphere.hpp"
+//#include "glprojects/cubewithtexture/cubewithtexture.hpp"
+//#include "glprojects/spherewithtexture/spherewithtexture.hpp"
 
 int
 main( int argc, char *argv[ ] ) {
@@ -26,72 +26,72 @@ main( int argc, char *argv[ ] ) {
 	GLWidget
 	w;
 
-	FunIn2D
-	* funIn2D = new FunIn2D( "FunIn2D" );
+	Triangle2D
+	* triangle2D = new Triangle2D( "Triangle2D" );
 
-	Cube
-	* cube = new Cube( "Cube" );
-
-	LightedCheckerboardCave
-	* lightedCheckerboardCave = new LightedCheckerboardCave( "LightedCheckerboardCave" );
+	Quad3D
+	* quadD = new Quad3D( "Quad3D" );
 
 	CoordinateSystem
 	* coordinateSystem = new CoordinateSystem( "CoordinateSystem" );
 
-	SimpleTriangle
-	* simpleTriangle = new SimpleTriangle( "SimpleTriangle" );
+//	FunIn2D
+//	* funIn2D = new FunIn2D( "FunIn2D" );
 
-	Sphere
-	* sphere = new Sphere( "Sphere" );
+//	Cube
+//	* cube = new Cube( "Cube" );
 
-	SimpleColoredTriangle
-	* simpleColoredTriangle = new SimpleColoredTriangle( "SimpleColoredTriangle" );
+//	LightedCheckerboardCave
+//	* lightedCheckerboardCave = new LightedCheckerboardCave( "LightedCheckerboardCave" );
 
-	SphereDynamicalSurface
-	* sphereDynamicalSurface = new SphereDynamicalSurface( "SphereDynamicalSurface" );
+//	Sphere
+//	* sphere = new Sphere( "Sphere" );
 
-	RobertsLightTest2D
-	* robertsLightTest2D = new RobertsLightTest2D( "RobertsLightTest2D" );
+//	SphereDynamicalSurface
+//	* sphereDynamicalSurface = new SphereDynamicalSurface( "SphereDynamicalSurface" );
 
-	BallAndLight
-	* ballAndLight = new BallAndLight( "BallAndLight" );
+//	RobertsLightTest2D
+//	* robertsLightTest2D = new RobertsLightTest2D( "RobertsLightTest2D" );
 
-	TextureTest
-	* textureTest = new TextureTest( "TextureTest" );
+//	BallAndLight
+//	* ballAndLight = new BallAndLight( "BallAndLight" );
 
-	MultiSampling
-	* multiSampling = new MultiSampling( "MultiSampling" );
+//	TextureTest
+//	* textureTest = new TextureTest( "TextureTest" );
 
-	SomeText
-	* someText = new SomeText( );
+//	MultiSampling
+//	* multiSampling = new MultiSampling( "MultiSampling" );
 
-	YetAnotherSphere
-	* yetAnotherSphere = new YetAnotherSphere( "YAS " );
+//	SomeText
+//	* someText = new SomeText( );
 
-	CubeWithTexture
-	* cubeWithTexture = new CubeWithTexture( );
+//	YetAnotherSphere
+//	* yetAnotherSphere = new YetAnotherSphere( "YAS " );
 
-	SphereWithTexture
-	* sphereWithTexture = new SphereWithTexture( );
+//	CubeWithTexture
+//	* cubeWithTexture = new CubeWithTexture( );
 
-	w.projects[ "FunIn2D" ] = funIn2D;
-	w.projects[ "LightedCheckerboardCave" ] = lightedCheckerboardCave;
-	w.projects[ "CoordinateSystem" ] = coordinateSystem;
-	w.projects[ "SimpleTriangle" ] = simpleTriangle;
-	w.projects[ "Sphere" ] = sphere;
+//	SphereWithTexture
+//	* sphereWithTexture = new SphereWithTexture( );
+
+	w.projects[ "SimpleTriangle" ] = triangle2D;
 	w.projects[ "SimpleColoredTriangle" ] = simpleColoredTriangle;
-	w.projects[ "SphereDynamicalSurface" ] = sphereDynamicalSurface;
-	w.projects[ "RobertsLightTest2D" ] = robertsLightTest2D;
-	w.projects[ "BallAndLight" ] = ballAndLight;
-	w.projects[ "Cube" ] = cube;
-	w.projects[ "TextureTest" ] = textureTest;
-	w.projects[ "MultiSampling" ] = multiSampling;
-	w.projects[ "SomeText" ] = someText;
-	w.projects[ "YAS" ] = yetAnotherSphere;
-	w.projects[ "CubeWithTexture" ] = cubeWithTexture;
-	w.projects[ "SphereWithTexture" ] = sphereWithTexture;
+	w.projects[ "CoordinateSystem" ] = coordinateSystem;
+//	w.projects[ "FunIn2D" ] = funIn2D;
+//	w.projects[ "LightedCheckerboardCave" ] = lightedCheckerboardCave;
+//	w.projects[ "Sphere" ] = sphere;
+//	w.projects[ "SphereDynamicalSurface" ] = sphereDynamicalSurface;
+//	w.projects[ "RobertsLightTest2D" ] = robertsLightTest2D;
+//	w.projects[ "BallAndLight" ] = ballAndLight;
+//	w.projects[ "Cube" ] = cube;
+//	w.projects[ "TextureTest" ] = textureTest;
+//	w.projects[ "MultiSampling" ] = multiSampling;
+//	w.projects[ "SomeText" ] = someText;
+//	w.projects[ "YAS" ] = yetAnotherSphere;
+//	w.projects[ "CubeWithTexture" ] = cubeWithTexture;
+//	w.projects[ "SphereWithTexture" ] = sphereWithTexture;
 
-	w.currentProject = "SphereWithTexture";
+	w.currentProject = "SimpleTriangle";
 
 	w.show( );
 

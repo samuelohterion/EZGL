@@ -23,9 +23,9 @@ Sphere::init( ) {
 
 	glr.vertices( "SPHERE-VERTICES" ).
 		setUsage( GL_STATIC_DRAW ).
-		addAttrib( "vertex", 3, 0 ).addAttrib( "normal", 3, 3 );
+		attrib( "vertex", 3, 0 ).attrib( "normal", 3, 3 );
 
-	GLRenderer::VertexArray
+	GLR::VertexArray
 	& va = glr.vertices( "SPHERE-VERTICES" );
 
 	glm::vec3
@@ -70,7 +70,7 @@ Sphere::init( ) {
 		}
 	}
 
-	va << GLRenderer::VertexArray::Object( vertexOff, vertexSiz, GL_TRIANGLE_FAN );
+	va << GLR::VertexArray::Object( vertexOff, vertexSiz, GL_TRIANGLE_FAN );
 	vertexOff = vertexSiz - vertexOff;
 
 	for( ; latitude < sizeLat - 1; ++ latitude ) {
@@ -104,7 +104,7 @@ Sphere::init( ) {
 
 			vertexSiz += 2;
 		}
-		va << GLRenderer::VertexArray::Object( vertexOff, vertexSiz, GL_TRIANGLE_STRIP );
+		va << GLR::VertexArray::Object( vertexOff, vertexSiz, GL_TRIANGLE_STRIP );
 		vertexOff = vertexSiz - vertexOff;
 	}
 
@@ -135,12 +135,12 @@ Sphere::init( ) {
 			"fColor = vec4( ( .125 * ( vs2fs.vertex.z - 0. ) ) * vs2fs.vertex.xyz, 1. );\n"
 //			"fColor = vec4( vec3( gl_FragCoord.z ), 1. );\n"
 		"}\n",
-		GLRenderer::ShaderCode::FROM_CODE ).
-			addUniform( "mv", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & mv ).
-			addUniform( "p", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & p ).
-			addUniform( "nrm",  GLRenderer::Shader::MAT3, GLRenderer::Shader::SCALAR, & nrm );
+		GLR::ShaderCode::FROM_CODE ).
+			addUniform( "mv", GLR::Shader::MAT4, GLR::Shader::SCALAR, & mv ).
+			addUniform( "p", GLR::Shader::MAT4, GLR::Shader::SCALAR, & p ).
+			addUniform( "nrm",  GLR::Shader::MAT3, GLR::Shader::SCALAR, & nrm );
 
-	glr.program( "SPHERE-PROGRAM" ).
+	glr.container( "SPHERE-PROGRAM" ).
 		setVertexArray( "SPHERE-VERTICES" ).
 		setShader( "SPHERE-SHADER" ).
 		build( );
@@ -209,12 +209,12 @@ Sphere::init( ) {
 			"fColor = vec4( gs2fs.color, 1.f );\n"
 //			"fColor = vec4( vec3( gl_FragCoord.z ), 1. );\n"
 		"}\n",
-		GLRenderer::ShaderCode::FROM_CODE ).
-			addUniform( "p",  GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & p ).
-			addUniform( "mv",  GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & mv ).
-			addUniform( "nrm",  GLRenderer::Shader::MAT3, GLRenderer::Shader::SCALAR, & nrm );
+		GLR::ShaderCode::FROM_CODE ).
+			addUniform( "p",  GLR::Shader::MAT4, GLR::Shader::SCALAR, & p ).
+			addUniform( "mv",  GLR::Shader::MAT4, GLR::Shader::SCALAR, & mv ).
+			addUniform( "nrm",  GLR::Shader::MAT3, GLR::Shader::SCALAR, & nrm );
 
-	glr.program( "NORMALS-PROGRAM" ).
+	glr.container( "NORMALS-PROGRAM" ).
 		setVertexArray(	"SPHERE-VERTICES" ).
 		setShader( "NORMALS-SHADER" ).
 		build( );

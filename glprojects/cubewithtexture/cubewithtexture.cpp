@@ -20,14 +20,14 @@ CubeWithTexture::init( ) {
 
 			glr.vertices( "VA-CUBE-WITH-TEXTURE-BACKGROUND" ).
 				setUsage( GL_STATIC_DRAW ).
-				addAttrib( "vertex", 2, 0 ) <<
+				attrib( "vertex", 2, 0 ) <<
 
 				-1.f << -1.f <<
 				+1.f << -1.f <<
 				+1.f << +1.f <<
 				-1.f << +1.f <<
 
-				GLRenderer::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
+				GLR::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
 		}
 		// VA-CUBE-WITH-TEXTURE-CUBE
 		{
@@ -79,14 +79,14 @@ CubeWithTexture::init( ) {
 			ny = glm::vec3( +0, +1, +0 ),
 			nz = glm::vec3( +0, +0, +1 );
 
-			GLRenderer::VertexArray
+			GLR::VertexArray
 			& va =
 				glr.vertices( "VA-CUBE-WITH-TEXTURE-CUBE" ).
 					setUsage( GL_STATIC_DRAW ).
-					addAttrib( "vertex", 3, 0 ).
-					addAttrib( "normal", 3, 3 ).
-					addAttrib( "color",  3, 6 ).
-					addAttrib( "coord",  2, 9 );
+					attrib( "vertex", 3, 0 ).
+					attrib( "normal", 3, 3 ).
+					attrib( "color",  3, 6 ).
+					attrib( "coord",  2, 9 );
 
 			va <<
 				// FACE 1
@@ -143,7 +143,7 @@ CubeWithTexture::init( ) {
 				p2 << +ny << ny << V2( .25, .75 ) <<
 				p6 << +ny << ny << V2( .25, .50 ) <<
 
-				GLRenderer::VertexArray::Object( 0, 6 * 6, GL_TRIANGLES );
+				GLR::VertexArray::Object( 0, 6 * 6, GL_TRIANGLES );
 		}
 	}
 
@@ -191,9 +191,9 @@ CubeWithTexture::init( ) {
 				"void main( ) {\n"
 				"	fColor = vec4( .2 - .2 * ( random( fract( vs2fs.coord ) ) < .95 ? 1 : 0 ) * texture( txBackground, fract( vs2fs.coord ) ).rgb, 1 );\n"
 				"}\n",
-				GLRenderer::ShaderCode::FROM_CODE ).
-				addUniform( "width",  GLRenderer::Shader::INT, GLRenderer::Shader::SCALAR, & vcd->width ).
-				addUniform( "height", GLRenderer::Shader::INT, GLRenderer::Shader::SCALAR, & vcd->height );
+				GLR::ShaderCode::FROM_CODE ).
+				addUniform( "width",  GLR::Shader::INT, GLR::Shader::SCALAR, & vcd->width ).
+				addUniform( "height", GLR::Shader::INT, GLR::Shader::SCALAR, & vcd->height );
 		}
 		// SH-CUBE-WITH-TEXTURE-CUBE
 		{
@@ -238,10 +238,10 @@ CubeWithTexture::init( ) {
 				"	fColor.xyz *= .85 + .15 * vs2fs.color;\n"
 				"	fColor.xyz *= dot( vs2fs.normalMV, vec3( 0, 0, 1 ) );\n"
 				"}\n",
-				GLRenderer::ShaderCode::FROM_CODE ).
-				addUniform( "model",  GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
-				addUniform( "view",   GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & view ).
-				addUniform( "proj",   GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & projection );
+				GLR::ShaderCode::FROM_CODE ).
+				addUniform( "model",  GLR::Shader::MAT4, GLR::Shader::SCALAR, & model ).
+				addUniform( "view",   GLR::Shader::MAT4, GLR::Shader::SCALAR, & view ).
+				addUniform( "proj",   GLR::Shader::MAT4, GLR::Shader::SCALAR, & projection );
 		}
 	}
 
@@ -251,13 +251,13 @@ CubeWithTexture::init( ) {
 		{
 			glr.texture(
 			"TX-CUBE-WITH-TEXTURE-BACKGROUND",
-			new GLRenderer::Texture( "txBackground", "../EZGL/glprojects/cubewithtexture/pix/cubemapsmall.jpg" ) );
+			new GLR::Texture( "txBackground", "../EZGL/glprojects/cubewithtexture/pix/cubemapsmall.jpg" ) );
 		}
 		// TX-CUBE-WITH-TEXTURE-CUBE
 		{
 			glr.texture(
 			"TX-CUBE-WITH-TEXTURE-CUBE",
-			new GLRenderer::Texture( "txCube", "../EZGL/glprojects/cubewithtexture/pix/cubemapsmall.png" ) );
+			new GLR::Texture( "txCube", "../EZGL/glprojects/cubewithtexture/pix/cubemapsmall.png" ) );
 		}
 	}
 
@@ -265,7 +265,7 @@ CubeWithTexture::init( ) {
 	{
 		// PR-CUBE-WITH-TEXTURE-BACKGROUND
 		{
-			glr.program( "PR-CUBE-WITH-TEXTURE-BACKGROUND" ).
+			glr.container( "PR-CUBE-WITH-TEXTURE-BACKGROUND" ).
 				setVertexArray( "VA-CUBE-WITH-TEXTURE-BACKGROUND" ).
 				setShader( "SH-CUBE-WITH-TEXTURE-BACKGROUND" ).
 				addInTexture( "TX-CUBE-WITH-TEXTURE-BACKGROUND" ).
@@ -273,7 +273,7 @@ CubeWithTexture::init( ) {
 		}
 		// PR-CUBE-WITH-TEXTURE-CUBE
 		{
-			glr.program( "PR-CUBE-WITH-TEXTURE-CUBE" ).
+			glr.container( "PR-CUBE-WITH-TEXTURE-CUBE" ).
 				setVertexArray( "VA-CUBE-WITH-TEXTURE-CUBE" ).
 				setShader( "SH-CUBE-WITH-TEXTURE-CUBE" ).
 				addInTexture( "TX-CUBE-WITH-TEXTURE-CUBE" ).

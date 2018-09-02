@@ -21,12 +21,12 @@ SphereDynamicalSurface::init( ) {
 
 	nrm = glm::mat3( 1. );
 
-	GLRenderer::VertexArray
+	GLR::VertexArray
 	&va = glr.vertices( "SDS-VERTICES" );
 
 	va.	setUsage( GL_STATIC_DRAW ).
-		addAttrib( "vertex", 3, 0 ) <<
-		GLRenderer::VertexArray::Object( 0, 0, GL_POINTS );
+		attrib( "vertex", 3, 0 ) <<
+		GLR::VertexArray::Object( 0, 0, GL_POINTS );
 
 	glr.shader(
 		"SDS-SHADER",
@@ -44,10 +44,10 @@ SphereDynamicalSurface::init( ) {
 		"void main( void ) {\n"
 			"fColor = vec4( 1., 1., 1., 1. );\n"
 		"}\n",
-		GLRenderer::ShaderCode::FROM_CODE ).
-			addUniform( "mvp", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & mvp );
+		GLR::ShaderCode::FROM_CODE ).
+			addUniform( "mvp", GLR::Shader::MAT4, GLR::Shader::SCALAR, & mvp );
 
-	glr.program( "SDS-PROGRAM" ).
+	glr.container( "SDS-PROGRAM" ).
 		setVertexArray( "SDS-VERTICES" ).
 		setShader( "SDS-SHADER" ).
 		build( );
@@ -59,7 +59,7 @@ SphereDynamicalSurface::simulate( ) {
 	float
 	dt = .01f;
 
-	GLRenderer::VertexArray
+	GLR::VertexArray
 	va = glr.vertices( "SDS-VERTICES" );
 
 	std::vector< float >
@@ -129,7 +129,7 @@ SphereDynamicalSurface::paint( ) {
 
 	glr.run( { "SDS-PROGRAM" } );
 
-	GLRenderer::VertexArray
+	GLR::VertexArray
 	& va = glr.vertices( "SDS-VERTICES" );
 
 	if( vcd->time < 1000 ) {

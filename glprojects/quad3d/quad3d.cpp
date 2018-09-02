@@ -1,28 +1,37 @@
-#include "simplecoloredtriangle.hpp"
-#include "../coordinateSystem/coordinatesystem.hpp"
+#include "quad3d.hpp"
+#include "../../code/glmprinter.hpp"
 
-typedef glm::vec3 V3;
-typedef glm::mat4 M4;
-
-SimpleColoredTriangle::SimpleColoredTriangle( CStr const & p_name, ViewControlData *p_vcd ) :
+Quad3D::Quad3D( CStr const & p_name, ViewControlData *p_vcd ) :
 GLProject ( p_name, p_vcd ) {
 
 }
 
 void
-SimpleColoredTriangle::init( ) {
+Quad3D::init( ) {
 
 	glClearColor( .0f, .0f, .0f, 1.f );
 
-	m = glm::mat4( 1. );
+	// frame buffers
+	{
+	}
 
-	glr.vertices( "SCT-VERTICES" ).
-		setUsage( GL_STATIC_DRAW ).
-		addAttrib( "vertex", 3, 0 ).	addAttrib( "color", 3, 3 ) <<
-		-1.f << -1.f << +0. <<			1.f << 0.f << 0.f <<
-		+1.f << -1.f << +0. <<			0.f << 1.f << 0.f <<
-		+0.f << +1.f << +0. <<			0.f << 0.f << 1.f <<
-		GLRenderer::VertexArray::Object( 0, 3, GL_TRIANGLE_FAN );
+	// textures
+	{
+	}
+
+	// vertex arrays
+	{
+		// V-QUAD-3D
+		{
+			glr.vertices( "SCT-VERTICES" ).
+				setUsage( GL_STATIC_DRAW ).
+				attrib( "vertex", 3, 0 ).	attrib( "color", 3, 3 ) <<
+				-1.f << -1.f << +0. <<			1.f << 0.f << 0.f <<
+				+1.f << -1.f << +0. <<			0.f << 1.f << 0.f <<
+				+0.f << +1.f << +0. <<			0.f << 0.f << 1.f <<
+				GLR::VertexArray::Object( 0, 3, GL_TRIANGLE_FAN );
+		}
+	}
 
 	glr.shader(
 		"SCT-SHADER",
@@ -44,17 +53,19 @@ SimpleColoredTriangle::init( ) {
 		"void main( void ) {\n"
 			"fColor = vec4( vColor, 1. );\n"
 		"}\n",
-		GLRenderer::ShaderCode::FROM_CODE ).
-		addUniform( "mvp", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & mvp );
+		GLR::ShaderCode::FROM_CODE ).
+		addUniform( "mvp", GLR::Shader::MAT4, GLR::Shader::SCALAR, & mvp );
 
-	glr.program( "SCT-PROGRAM" ).
+	glr.container( "SCT-PROGRAM" ).
 		setVertexArray( "SCT-VERTICES" ).
 		setShader( "SCT-SHADER" ).
 		build( );
-	}
+
+	m = glm::mat4( 1. );
+}
 
 void
-SimpleColoredTriangle::paint( ) {
+Quad3D::paint( ) {
 
 	float
 	angle = 2.15f * vcd->time;
@@ -79,7 +90,7 @@ SimpleColoredTriangle::paint( ) {
 }
 
 void
-SimpleColoredTriangle::resize( int p_width, int p_height ) {
+Quad3D::resize( int p_width, int p_height ) {
 
 	float
 	w = p_width,
@@ -88,6 +99,5 @@ SimpleColoredTriangle::resize( int p_width, int p_height ) {
 
 	p = glm::perspective(  45.0f, ratio, 1.0f, 100.f );
 
-	print( p );
 	std::cout << std::endl;
 }

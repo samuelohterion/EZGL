@@ -44,16 +44,16 @@ Cube::init( ) {
 
 	glr.vertices( "VERTICES-SOME-NICE-TEXTURE" ).
 		setUsage( GL_STATIC_DRAW ).
-		addAttrib( "vertex", 2, 0 ) <<
+		attrib( "vertex", 2, 0 ) <<
 		-1.f << -1.f <<
 		+1.f << -1.f <<
 		+1.f << +1.f <<
 		-1.f << +1.f <<
-		GLRenderer::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
+		GLR::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
 
 	glr.texture(
 		"TEXTURE-SOME-NICE-TEXTURE-CHECKERBOARD",
-		new GLRenderer::Texture(
+		new GLR::Texture(
 			"TX1",
 			GL_TEXTURE_2D,
 			0,
@@ -84,9 +84,9 @@ Cube::init( ) {
 		"	fColor = ( ( ( int( 8. * vCoords.x ) + int( 8. * vCoords.y ) ) % 2 ) < 1 ) ? vec4( .7, .7, .7, 1. ) : vec4( 0,.0,.0, 1. );\n"
 		"	fColor.xyz += vec3( .3 * random( vCoords ) );\n"
 		"}\n",
-		GLRenderer::ShaderCode::FROM_CODE );
+		GLR::ShaderCode::FROM_CODE );
 
-	glr.program( "PROGRAM-SOME-NICE-TEXTURE-CHECKERBOARD" ).
+	glr.container( "PROGRAM-SOME-NICE-TEXTURE-CHECKERBOARD" ).
 		setFrameBuffer( "FRAMEBUFFER-SOME-NICE-TEXTURE" ).
 		setVertexArray( "VERTICES-SOME-NICE-TEXTURE" ).
 		setShader( "SHADER-SOME-NICE-TEXTURE-CHECKERBOARD" ).
@@ -97,7 +97,7 @@ Cube::init( ) {
 
 	glr.texture(
 		"TEXTURE-SOME-NICE-TEXTURE-ROBERTS-LIGHT-TEST",
-		new GLRenderer::Texture(
+		new GLR::Texture(
 			"TX2",
 			GL_TEXTURE_2D,
 			0,
@@ -113,12 +113,12 @@ Cube::init( ) {
 		"/home/friedrich/Development/c++/2018.06.03/EZGL/glprojects/robertslighttest2D/robertslighttest2D.vsh",
 		// FRAGMENT SHADER
 		"/home/friedrich/Development/c++/2018.06.03/EZGL/glprojects/robertslighttest2D/robertslighttest2D.fsh",
-		GLRenderer::ShaderCode::FROM_FILE ).
-		addUniform( "time", GLRenderer::Shader::FLOAT, GLRenderer::Shader::SCALAR, & vcd->time ).
-		addUniform( "width", GLRenderer::Shader::INT,  GLRenderer::Shader::SCALAR, & textureWidth ).
-		addUniform( "height", GLRenderer::Shader::INT, GLRenderer::Shader::SCALAR, & textureHeight );
+		GLR::ShaderCode::FROM_FILE ).
+		addUniform( "time", GLR::Shader::FLOAT, GLR::Shader::SCALAR, & vcd->time ).
+		addUniform( "width", GLR::Shader::INT,  GLR::Shader::SCALAR, & textureWidth ).
+		addUniform( "height", GLR::Shader::INT, GLR::Shader::SCALAR, & textureHeight );
 
-	glr.program( "PROGRAM-SOME-NICE-TEXTURE-ROBERTS-LIGHT-TEST" ).
+	glr.container( "PROGRAM-SOME-NICE-TEXTURE-ROBERTS-LIGHT-TEST" ).
 		setVertexArray( "VERTICES-SOME-NICE-TEXTURE" ).
 		setShader( "SHADER-SOME-NICE-TEXTURE-ROBERTS-LIGHT-TEST" ).
 			setFrameBuffer( "FRAMEBUFFER-SOME-NICE-TEXTURE" ).
@@ -128,8 +128,8 @@ Cube::init( ) {
 
 	glr.vertices( "VERTICES-LIGHTS" ).
 	setUsage( GL_DYNAMIC_DRAW ).
-	addAttrib( "vertex", 3, 0 ).
-	addAttrib( "color", 3, 3 ) <<
+	attrib( "vertex", 3, 0 ).
+	attrib( "color", 3, 3 ) <<
 
 		.0f << .0f << .0f << lightColors[ 0 ] <<
 		.0f << .0f << .0f << lightColors[ 1 ] <<
@@ -138,7 +138,7 @@ Cube::init( ) {
 		.0f << .0f << .0f << lightColors[ 4 ] <<
 		.0f << .0f << .0f << lightColors[ 5 ] <<
 		.0f << .0f << .0f << lightColors[ 6 ] <<
-		GLRenderer::VertexArray::Object( 0, 7, GL_POINTS );
+		GLR::VertexArray::Object( 0, 7, GL_POINTS );
 
 	glr.shader(
 		"SHADER-LIGHTS",
@@ -176,12 +176,12 @@ Cube::init( ) {
 			"fColor = clamp( 1. * ( 1. - .5 * s ), .1, 1 ) * vec4( vec3( 1. ) + vs2fs.color, 2. );\n"
 //			"fColor = vec4( 1., 1., 1., 1. );\n"
 		"}\n",
-		GLRenderer::ShaderCode::FROM_CODE ).
-		addUniform( "model", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
-		addUniform( "view", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & view ).
-		addUniform( "projection", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & projection );
+		GLR::ShaderCode::FROM_CODE ).
+		addUniform( "model", GLR::Shader::MAT4, GLR::Shader::SCALAR, & model ).
+		addUniform( "view", GLR::Shader::MAT4, GLR::Shader::SCALAR, & view ).
+		addUniform( "projection", GLR::Shader::MAT4, GLR::Shader::SCALAR, & projection );
 
-	glr.program( "PROGRAM-LIGHTS" ).
+	glr.container( "PROGRAM-LIGHTS" ).
 		setShader( "SHADER-LIGHTS" ).
 		setVertexArray( "VERTICES-LIGHTS" ).
 		build( );
@@ -198,17 +198,17 @@ Cube::init( ) {
 */
 
 	glr.vertices( "VERTICES-CUBE" ).
-	addAttrib( "vertex", 3, 0 ).	addAttrib( "color", 3, 3 ) <<
+	attrib( "vertex", 3, 0 ).	attrib( "color", 3, 3 ) <<
 
 		p0 << p0 << p1 << p0 << p5 << px << p4 << px <<
 		p6 << py << p2 << py <<
 		p3 << pz << p1 << pz <<
-		GLRenderer::VertexArray::Object( 0, 8, GL_TRIANGLE_FAN ) <<
+		GLR::VertexArray::Object( 0, 8, GL_TRIANGLE_FAN ) <<
 
 		p7 << p0 << p3 << p0 << p2 << ( py + pz ) << p6 << ( py + pz ) <<
 		p4 << ( px + py ) << p5 << ( px + py ) <<
 		p1 << ( px + pz ) << p3 << ( px + pz ) <<
-		GLRenderer::VertexArray::Object( 8, 8, GL_TRIANGLE_FAN );
+		GLR::VertexArray::Object( 8, 8, GL_TRIANGLE_FAN );
 
 	glr.shader(
 		"SHADER-CUBE",
@@ -303,27 +303,27 @@ Cube::init( ) {
 		"	}\n"
 		"	fColor = vec4( clamp( 2. * f.xyz / f.a, vec3( 0 ), vec3( 1 ) ), 1. );\n"
 		"}\n",
-		GLRenderer::ShaderCode::FROM_CODE ).
-		addUniform( "model", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
-		addUniform( "view", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & view ).
-		addUniform( "projection", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & projection ).
-		addUniform( "lightPos[0]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightCameraSpace[ 0 ] ).
-		addUniform( "lightPos[1]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightCameraSpace[ 1 ] ).
-		addUniform( "lightPos[2]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightCameraSpace[ 2 ] ).
-		addUniform( "lightPos[3]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightCameraSpace[ 3 ] ).
-		addUniform( "lightPos[4]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightCameraSpace[ 4 ] ).
-		addUniform( "lightPos[5]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightCameraSpace[ 5 ] ).
-		addUniform( "lightPos[6]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightCameraSpace[ 6 ] ).
-		addUniform( "lightCol[0]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightColors[ 0 ] ).
-		addUniform( "lightCol[1]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightColors[ 1 ] ).
-		addUniform( "lightCol[2]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightColors[ 2 ] ).
-		addUniform( "lightCol[3]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightColors[ 3 ] ).
-		addUniform( "lightCol[4]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightColors[ 4 ] ).
-		addUniform( "lightCol[5]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightColors[ 5 ] ).
-		addUniform( "lightCol[6]", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & lightColors[ 6 ] ).
-		addUniform( "time",        GLRenderer::Shader::FLOAT, GLRenderer::Shader::SCALAR, & vcd->time );
+		GLR::ShaderCode::FROM_CODE ).
+		addUniform( "model", GLR::Shader::MAT4, GLR::Shader::SCALAR, & model ).
+		addUniform( "view", GLR::Shader::MAT4, GLR::Shader::SCALAR, & view ).
+		addUniform( "projection", GLR::Shader::MAT4, GLR::Shader::SCALAR, & projection ).
+		addUniform( "lightPos[0]", GLR::Shader::VEC3, GLR::Shader::SCALAR, & lightCameraSpace[ 0 ] ).
+		addUniform( "lightPos[1]", GLR::Shader::VEC3, GLR::Shader::SCALAR, & lightCameraSpace[ 1 ] ).
+		addUniform( "lightPos[2]", GLR::Shader::VEC3, GLR::Shader::SCALAR, & lightCameraSpace[ 2 ] ).
+		addUniform( "lightPos[3]", GLR::Shader::VEC3, GLR::Shader::SCALAR, & lightCameraSpace[ 3 ] ).
+		addUniform( "lightPos[4]", GLR::Shader::VEC3, GLR::Shader::SCALAR, & lightCameraSpace[ 4 ] ).
+		addUniform( "lightPos[5]", GLR::Shader::VEC3, GLR::Shader::SCALAR, & lightCameraSpace[ 5 ] ).
+		addUniform( "lightPos[6]", GLR::Shader::VEC3, GLR::Shader::SCALAR, & lightCameraSpace[ 6 ] ).
+		addUniform( "lightCol[0]", GLR::Shader::VEC3, GLR::Shader::SCALAR, & lightColors[ 0 ] ).
+		addUniform( "lightCol[1]", GLR::Shader::VEC3, GLR::Shader::SCALAR, & lightColors[ 1 ] ).
+		addUniform( "lightCol[2]", GLR::Shader::VEC3, GLR::Shader::SCALAR, & lightColors[ 2 ] ).
+		addUniform( "lightCol[3]", GLR::Shader::VEC3, GLR::Shader::SCALAR, & lightColors[ 3 ] ).
+		addUniform( "lightCol[4]", GLR::Shader::VEC3, GLR::Shader::SCALAR, & lightColors[ 4 ] ).
+		addUniform( "lightCol[5]", GLR::Shader::VEC3, GLR::Shader::SCALAR, & lightColors[ 5 ] ).
+		addUniform( "lightCol[6]", GLR::Shader::VEC3, GLR::Shader::SCALAR, & lightColors[ 6 ] ).
+		addUniform( "time",        GLR::Shader::FLOAT, GLR::Shader::SCALAR, & vcd->time );
 
-	glr.program( "PROGRAM-CUBE" ).
+	glr.container( "PROGRAM-CUBE" ).
 		setShader( "SHADER-CUBE" ).
 		setVertexArray( "VERTICES-CUBE" ).
 		addInTexture( "TEXTURE-SOME-NICE-TEXTURE-CHECKERBOARD" ).
@@ -362,7 +362,7 @@ Cube::paint( ) {
 	view  = glm::translate( glm::mat4( 1. ), glm::vec3( 0.f, 0.f, -50.f ) );
 	view  = glm::rotate( view, .123f * angle, glm::vec3( sinf( .1f * angle ), sinf( .21f * angle ), sinf( .31f * angle ) ) );
 
-	GLRenderer::VertexArray
+	GLR::VertexArray
 	& va = glr.vertices( "VERTICES-LIGHTS" );
 
 	glEnable( GL_VERTEX_ATTRIB_ARRAY_NORMALIZED );

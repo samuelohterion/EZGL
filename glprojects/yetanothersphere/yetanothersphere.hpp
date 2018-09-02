@@ -1,7 +1,7 @@
 #ifndef YETANOTHERSPHERE_HPP
 #define YETANOTHERSPHERE_HPP
 
-#include "../../code/glrenderer.hpp"
+#include "../../code/glr.hpp"
 
 class YetAnotherSphere :
 public GLProject {

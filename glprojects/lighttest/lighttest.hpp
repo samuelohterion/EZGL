@@ -1,7 +1,7 @@
 #ifndef LIGHTTEST_HPP
 #define LIGHTTEST_HPP
 
-#include "../../code/glrenderer.hpp"
+#include "../../code/glr.hpp"
 
 class LightedCheckerboardCave :
 public GLProject {

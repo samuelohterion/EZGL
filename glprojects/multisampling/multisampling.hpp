@@ -1,7 +1,7 @@
 #ifndef MULTISAMPLING_HPP
 #define MULTISAMPLING_HPP
 
-#include "../../code/glrenderer.hpp"
+#include "../../code/glr.hpp"
 
 class MultiSampling :
 public GLProject {

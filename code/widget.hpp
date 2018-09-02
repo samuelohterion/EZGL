@@ -12,7 +12,7 @@
 #include <GLES3/gl3.h>
 #include <map>
 #include "clock.hpp"
-#include "glrenderer.hpp"
+#include "glr.hpp"
 
 namespace Ui {
 

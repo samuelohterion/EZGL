@@ -30,31 +30,31 @@ MultiSampling::init( ) {
 		// VERTICES-LIGHTED-CHECKERBOARD-BACKGROUND
 		{
 			glr.vertices( "VERTICES-LIGHTED-CHECKERBOARD-BACKGROUND" ).
-				addAttrib( "vertex", 3, 0 ) <<
+				attrib( "vertex", 3, 0 ) <<
 				-1.f << -1.f << +0.f <<
 				+1.f << -1.f << +0.f <<
 				+1.f << +1.f << +0.f <<
 				-1.f << +1.f << +0.f <<
-				GLRenderer::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
+				GLR::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
 		}
 		// VERTICES-2D-QUAD
 		{
 			glr.vertices( "VERTICES-2D-QUAD" ).
 				setUsage( GL_STATIC_DRAW ).
-				addAttrib( "vertex", 2, 0 ) <<
+				attrib( "vertex", 2, 0 ) <<
 				-1.f << -1.f <<
 				+1.f << -1.f <<
 				+1.f << +1.f <<
 				-1.f << +1.f <<
-				GLRenderer::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
+				GLR::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
 		}
 		// VERTICES-LIGHTED-CHECKERBOARD-LIGHT
 		{
 			glr.vertices( "VERTICES-LIGHTED-CHECKERBOARD-LIGHT" ).
 				setUsage( GL_STATIC_DRAW ).
-				addAttrib( "color", 3, 0 ) <<
+				attrib( "color", 3, 0 ) <<
 				0.f << 0.f << 0.f <<
-				GLRenderer::VertexArray::Object( 0, 1, GL_POINTS );
+				GLR::VertexArray::Object( 0, 1, GL_POINTS );
 		}
 	}
 
@@ -85,7 +85,7 @@ MultiSampling::init( ) {
 				"void main( ) {\n"
 				"	fColor = vec4( .3 - .2 * texture( txIn0, vs2fs.texCoord ).rgb, 1 );\n"
 				"}\n",
-				GLRenderer::ShaderCode::FROM_CODE );
+				GLR::ShaderCode::FROM_CODE );
 		}
 		// SHADER-LIGHTED-CHECKERBOARD-CHECKERBOARD
 		{
@@ -231,15 +231,15 @@ MultiSampling::init( ) {
 				// and now compute 2nd step of simple lighting
 				"	fColor.xyz = fColor.xyz * ( pow( a1, 2. ) * light1InModelSpaceColor + pow( a2, 2. ) * light2InCameraSpaceColor + a3 * vec3( 1 ) );\n"
 				"}\n",
-				GLRenderer::ShaderCode::FROM_CODE ).
-				addUniform( "model",      GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
-				addUniform( "view",       GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & view ).
-				addUniform( "projection", GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & projection ).
-				addUniform( "light1InModelSpacePosition",  GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & light1InModelSpacePosition ).
-				addUniform( "light2InCameraSpacePosition", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & light2InCameraSpacePosition ).
-				addUniform( "light1InModelSpaceColor",  GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & light1InModelSpaceColor ).
-				addUniform( "light2InCameraSpaceColor", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & light2InCameraSpaceColor ).
-				addUniform( "faceIndex", GLRenderer::Shader::INT, GLRenderer::Shader::SCALAR, & faceIndex );
+				GLR::ShaderCode::FROM_CODE ).
+				addUniform( "model",      GLR::Shader::MAT4, GLR::Shader::SCALAR, & model ).
+				addUniform( "view",       GLR::Shader::MAT4, GLR::Shader::SCALAR, & view ).
+				addUniform( "projection", GLR::Shader::MAT4, GLR::Shader::SCALAR, & projection ).
+				addUniform( "light1InModelSpacePosition",  GLR::Shader::VEC3, GLR::Shader::SCALAR, & light1InModelSpacePosition ).
+				addUniform( "light2InCameraSpacePosition", GLR::Shader::VEC3, GLR::Shader::SCALAR, & light2InCameraSpacePosition ).
+				addUniform( "light1InModelSpaceColor",  GLR::Shader::VEC3, GLR::Shader::SCALAR, & light1InModelSpaceColor ).
+				addUniform( "light2InCameraSpaceColor", GLR::Shader::VEC3, GLR::Shader::SCALAR, & light2InCameraSpaceColor ).
+				addUniform( "faceIndex", GLR::Shader::INT, GLR::Shader::SCALAR, & faceIndex );
 		}
 		// SHADER-LIGHTED-CHECKERBOARD-NORMALS
 		{
@@ -302,10 +302,10 @@ MultiSampling::init( ) {
 				"void main( void ) {\n"
 					"fCol = vec4( gs2fsIn.color, 1.f );\n"
 				"}\n",
-				GLRenderer::ShaderCode::FROM_CODE ).
-					addUniform( "model",  GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
-					addUniform( "view",  GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & view ).
-					addUniform( "projection",  GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & projection );
+				GLR::ShaderCode::FROM_CODE ).
+					addUniform( "model",  GLR::Shader::MAT4, GLR::Shader::SCALAR, & model ).
+					addUniform( "view",  GLR::Shader::MAT4, GLR::Shader::SCALAR, & view ).
+					addUniform( "projection",  GLR::Shader::MAT4, GLR::Shader::SCALAR, & projection );
 		}
 		// SHADER-LIGHTED-CHECKERBOARD-LIGHT-IN-MODEL-SPACE
 		{
@@ -381,12 +381,12 @@ MultiSampling::init( ) {
 				"	if( random( gl_PointCoord.xy ) < 1.1 * ( 1. - .1 / ( .1 + sqrt( s ) ) ) )\n"
 				"		discard;\n"
 				"}\n",
-				GLRenderer::ShaderCode::FROM_CODE ).
-				addUniform( "model",               GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
-				addUniform( "view",                GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & view ).
-				addUniform( "projection",          GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & projection ).
-				addUniform( "light1InModelSpacePosition",  GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & light1InModelSpacePosition ).
-				addUniform( "light1InModelSpaceColor",  GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & light1InModelSpaceColor );
+				GLR::ShaderCode::FROM_CODE ).
+				addUniform( "model",               GLR::Shader::MAT4, GLR::Shader::SCALAR, & model ).
+				addUniform( "view",                GLR::Shader::MAT4, GLR::Shader::SCALAR, & view ).
+				addUniform( "projection",          GLR::Shader::MAT4, GLR::Shader::SCALAR, & projection ).
+				addUniform( "light1InModelSpacePosition",  GLR::Shader::VEC3, GLR::Shader::SCALAR, & light1InModelSpacePosition ).
+				addUniform( "light1InModelSpaceColor",  GLR::Shader::VEC3, GLR::Shader::SCALAR, & light1InModelSpaceColor );
 		}
 		// SHADER-LIGHTED-CHECKERBOARD-LIGHT-IN-CAMERA-SPACE
 		{
@@ -462,12 +462,12 @@ MultiSampling::init( ) {
 				"	if( random( gl_PointCoord.xy ) < 1.1 * ( 1. - .1 / ( .1 + sqrt( s ) ) ) )\n"
 				"		discard;\n"
 				"}\n",
-				GLRenderer::ShaderCode::FROM_CODE ).
-				addUniform( "model",               GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
-				addUniform( "view",                GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & view ).
-				addUniform( "projection",          GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & projection ).
-				addUniform( "light2InCameraSpacePosition",  GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & light2InCameraSpacePosition ).
-				addUniform( "light2InCameraSpaceColor", GLRenderer::Shader::VEC3, GLRenderer::Shader::SCALAR, & light2InCameraSpaceColor );
+				GLR::ShaderCode::FROM_CODE ).
+				addUniform( "model",               GLR::Shader::MAT4, GLR::Shader::SCALAR, & model ).
+				addUniform( "view",                GLR::Shader::MAT4, GLR::Shader::SCALAR, & view ).
+				addUniform( "projection",          GLR::Shader::MAT4, GLR::Shader::SCALAR, & projection ).
+				addUniform( "light2InCameraSpacePosition",  GLR::Shader::VEC3, GLR::Shader::SCALAR, & light2InCameraSpacePosition ).
+				addUniform( "light2InCameraSpaceColor", GLR::Shader::VEC3, GLR::Shader::SCALAR, & light2InCameraSpaceColor );
 		}
 		// SHADER-MULTISAMPLING
 		{
@@ -505,8 +505,8 @@ MultiSampling::init( ) {
 				"			texture( txMS, vec2( vs2fs.texCoord.x, vs2fs.texCoord.y - dPixPos.y ) ).rgb;\n"
 				"	fColor.xyz = fColor.xyz + ( ( dx + dy ) );\n"
 				"}\n",
-				GLRenderer::ShaderCode::FROM_CODE ).
-				addUniform( "dPixPos",  GLRenderer::Shader::VEC2, GLRenderer::Shader::SCALAR, & dPixPos );
+				GLR::ShaderCode::FROM_CODE ).
+				addUniform( "dPixPos",  GLR::Shader::VEC2, GLR::Shader::SCALAR, & dPixPos );
 		}
 	}
 
@@ -516,19 +516,19 @@ MultiSampling::init( ) {
 		{
 			glr.texture(
 			"TEXTURE-LIGHTED-CHECKERBOARD-BACKGROUND",
-			new GLRenderer::Texture( "txIn0", "../EZGL/glprojects/texturetest/pix/Schubler.png" ) );
+			new GLR::Texture( "txIn0", "../EZGL/glprojects/texturetest/pix/Schubler.png" ) );
 		}
 		// TEXTURE-LIGHTED-CHECKERBOARD-CHECKERBOARD
 		{
 			glr.texture(
 				"TEXTURE-LIGHTED-CHECKERBOARD-CHECKERBOARD",
-				new GLRenderer::Texture( "txIn1", "../EZGL/glprojects/texturetest/pix/Schubler.png" ) );
+				new GLR::Texture( "txIn1", "../EZGL/glprojects/texturetest/pix/Schubler.png" ) );
 		}
 		// TEXTURE-TEXTURE-MULTISAMPLING
 		{
 			glr.texture(
 				"TEXTURE-MULTISAMPLING",
-				new GLRenderer::Texture( "txMS",
+				new GLR::Texture( "txMS",
 					GL_TEXTURE_2D, 0, GL_RGBA32F,
 					GL_NEAREST, GL_NEAREST,
 					GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE,
@@ -541,7 +541,7 @@ MultiSampling::init( ) {
 	{
 		// PROGRAM-LIGHTED-CHECKERBOARD-BACKGROUND
 		{
-			glr.program( "PROGRAM-LIGHTED-CHECKERBOARD-BACKGROUND" ).
+			glr.container( "PROGRAM-LIGHTED-CHECKERBOARD-BACKGROUND" ).
 				setVertexArray( "VERTICES-LIGHTED-CHECKERBOARD-BACKGROUND" ).
 				setShader( "SHADER-LIGHTED-CHECKERBOARD-BACKGROUND" ).
 				addInTexture( "TEXTURE-LIGHTED-CHECKERBOARD-BACKGROUND" ).
@@ -552,7 +552,7 @@ MultiSampling::init( ) {
 		// PROGRAM-LIGHTED-CHECKERBOARD-CHECKERBOARD
 		{
 
-			glr.program( "PROGRAM-LIGHTED-CHECKERBOARD-CHECKERBOARD" ).
+			glr.container( "PROGRAM-LIGHTED-CHECKERBOARD-CHECKERBOARD" ).
 				setVertexArray( "VERTICES-2D-QUAD" ).
 				setShader( "SHADER-LIGHTED-CHECKERBOARD-CHECKERBOARD" ).
 				addInTexture( "TEXTURE-LIGHTED-CHECKERBOARD-CHECKERBOARD" ).
@@ -563,7 +563,7 @@ MultiSampling::init( ) {
 		// PROGRAM-LIGHTED-CHECKERBOARD-NORMALS
 		{
 
-			glr.program( "PROGRAM-LIGHTED-CHECKERBOARD-NORMALS" ).
+			glr.container( "PROGRAM-LIGHTED-CHECKERBOARD-NORMALS" ).
 				setVertexArray(	"VERTICES-2D-QUAD" ).
 				setShader( "SHADER-LIGHTED-CHECKERBOARD-NORMALS" ).
 				setFrameBuffer( "FRAMEBUFFER-MULTISAMPLING" ).
@@ -572,7 +572,7 @@ MultiSampling::init( ) {
 		}
 		// PROGRAM-LIGHTED-CHECKERBOARD-LIGHT-IN-MODEL-SPACE
 		{
-			glr.program( "PROGRAM-LIGHTED-CHECKERBOARD-LIGHT-IN-MODEL-SPACE" ).
+			glr.container( "PROGRAM-LIGHTED-CHECKERBOARD-LIGHT-IN-MODEL-SPACE" ).
 				setVertexArray( "VERTICES-LIGHTED-CHECKERBOARD-LIGHT" ).
 				setShader( "SHADER-LIGHTED-CHECKERBOARD-LIGHT-IN-MODEL-SPACE" ).
 				setFrameBuffer( "FRAMEBUFFER-MULTISAMPLING" ).
@@ -581,7 +581,7 @@ MultiSampling::init( ) {
 		}
 		// PROGRAM-LIGHTED-CHECKERBOARD-LIGHT-IN-CAMERA-SPACE
 		{
-			glr.program( "PROGRAM-LIGHTED-CHECKERBOARD-LIGHT-IN-CAMERA-SPACE" ).
+			glr.container( "PROGRAM-LIGHTED-CHECKERBOARD-LIGHT-IN-CAMERA-SPACE" ).
 				setVertexArray( "VERTICES-LIGHTED-CHECKERBOARD-LIGHT" ).
 				setShader( "SHADER-LIGHTED-CHECKERBOARD-LIGHT-IN-CAMERA-SPACE" ).
 				setFrameBuffer( "FRAMEBUFFER-MULTISAMPLING" ).
@@ -590,7 +590,7 @@ MultiSampling::init( ) {
 		}
 		// PROGRAM-MULTISAMPLING
 		{
-			glr.program( "PROGRAM-MULTISAMPLING" ).
+			glr.container( "PROGRAM-MULTISAMPLING" ).
 				setVertexArray( "VERTICES-2D-QUAD" ).
 				setShader( "SHADER-MULTISAMPLING" ).
 				addInTexture( "TEXTURE-MULTISAMPLING" ).

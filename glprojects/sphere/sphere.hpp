@@ -1,6 +1,6 @@
 #ifndef SPHERE_HPP
 #define SPHERE_HPP
-#include "code/glrenderer.hpp"
+#include "code/glr.hpp"
 
 class Sphere :
 public GLProject {

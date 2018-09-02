@@ -1,6 +1,6 @@
 #ifndef SPHEREDYNAMICSURFACE_HPP
 #define SPHEREDYNAMICSURFACE_HPP
-#include "code/glrenderer.hpp"
+#include "code/glr.hpp"
 
 class SphereDynamicalSurface :
 public GLProject {

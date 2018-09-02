@@ -24,7 +24,7 @@ YetAnotherSphere::init( ) {
 		{
 			glr.vertices( "VA-QUAD-3D" ).
 				setUsage( GL_STATIC_DRAW ).
-				addAttrib( "vertex", 3, 0 ). addAttrib( "normal", 3, 3 ) <<
+				attrib( "vertex", 3, 0 ). attrib( "normal", 3, 3 ) <<
 				-1.f << -1.f << 0.f <<       +0.f << +0.f << +1.f <<
 				+1.f << -1.f << 0.f <<       +0.f << +0.f << +1.f <<
 				+1.f << +1.f << 0.f <<       +0.f << +0.f << +1.f <<
@@ -33,12 +33,12 @@ YetAnotherSphere::init( ) {
 		}
 		// VA-YET-ANOTHER-SPHERE
 		{
-			GLRenderer::VertexArray
+			GLR::VertexArray
 			& va =
 				glr.vertices( "VA-YET-ANOTHER-SPHERE" ).
 					setUsage( GL_STATIC_DRAW ).
-					addAttrib( "vertex", 3, 0 ).
-					addAttrib( "color", 3, 3 );
+					attrib( "vertex", 3, 0 ).
+					attrib( "color", 3, 3 );
 
 			float
 			a = sqrtf( 1.f / 24.f ),
@@ -112,7 +112,7 @@ YetAnotherSphere::init( ) {
 			glr.indices( "IA-QUAD-3D" ).
 				setUsage( GL_STATIC_DRAW ) <<
 				0 << 1 << 2 << 3 <<
-				GLRenderer::IndexArray::Object( 0, 4, GL_TRIANGLE_FAN );
+				GLR::IndexArray::Object( 0, 4, GL_TRIANGLE_FAN );
 		}
 		// IA-YET-ANOTHER-SPHERE
 
@@ -151,7 +151,7 @@ YetAnotherSphere::init( ) {
 				1 << 2 << 4 <<
 				1 << 4 << 3 <<
 				3 << 4 << 5 <<
-				GLRenderer::IndexArray::Object( 0, 12, GL_TRIANGLES );
+				GLR::IndexArray::Object( 0, 12, GL_TRIANGLES );
 		}
 	}
 
@@ -196,11 +196,11 @@ YetAnotherSphere::init( ) {
 				"		discard;\n "
 				"	fColor.xyz *= dot( vs2fs.normal, vec3( 0,0,1 ) );\n"
 				"}\n",
-				GLRenderer::ShaderCode::FROM_CODE ).
-				addUniform( "model",  GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
-				addUniform( "view",   GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & view ).
-				addUniform( "proj",   GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & projection ).
-				addUniform( "letter", GLRenderer::Shader::VEC2, GLRenderer::Shader::SCALAR, & letter );
+				GLR::ShaderCode::FROM_CODE ).
+				addUniform( "model",  GLR::Shader::MAT4, GLR::Shader::SCALAR, & model ).
+				addUniform( "view",   GLR::Shader::MAT4, GLR::Shader::SCALAR, & view ).
+				addUniform( "proj",   GLR::Shader::MAT4, GLR::Shader::SCALAR, & projection ).
+				addUniform( "letter", GLR::Shader::VEC2, GLR::Shader::SCALAR, & letter );
 		}
 		// SH-YET-ANOTHER-SPHERE
 		{
@@ -267,10 +267,10 @@ YetAnotherSphere::init( ) {
 				"	fColor = gs2fs.color;\n"
 				"	fColor.xyz *= .1 + .9 * max( 0, dot( gs2fs.normal.xyz, vec3( 0, 0, 1 ) ) );\n"
 				"}\n",
-				GLRenderer::ShaderCode::FROM_CODE ).
-				addUniform( "model",  GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & model ).
-				addUniform( "view",   GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & view ).
-				addUniform( "proj",   GLRenderer::Shader::MAT4, GLRenderer::Shader::SCALAR, & projection );
+				GLR::ShaderCode::FROM_CODE ).
+				addUniform( "model",  GLR::Shader::MAT4, GLR::Shader::SCALAR, & model ).
+				addUniform( "view",   GLR::Shader::MAT4, GLR::Shader::SCALAR, & view ).
+				addUniform( "proj",   GLR::Shader::MAT4, GLR::Shader::SCALAR, & projection );
 		}
 	}
 
@@ -280,7 +280,7 @@ YetAnotherSphere::init( ) {
 		{
 			glr.texture(
 			"TX-CHARACTERS",
-			new GLRenderer::Texture( "txChars", "../EZGL/glprojects/sometext/pix/characters.png" ) );
+			new GLR::Texture( "txChars", "../EZGL/glprojects/sometext/pix/characters.png" ) );
 		}
 	}
 
@@ -288,7 +288,7 @@ YetAnotherSphere::init( ) {
 	{
 		// PR-PRINT-A-CHARACTER
 		{
-			glr.program( "PR-PRINT-A-CHARACTER" ).
+			glr.container( "PR-PRINT-A-CHARACTER" ).
 				setVertexArray( "VA-QUAD-3D" ).
 				setIndexArray( "IA-QUAD-3D" ).
 				setShader( "SH-CHARACTER" ).
@@ -297,7 +297,7 @@ YetAnotherSphere::init( ) {
 		}
 		// PR-YET-ANOTHER-SPHERE
 		{
-			glr.program( "PR-YET-ANOTHER-SPHERE" ).
+			glr.container( "PR-YET-ANOTHER-SPHERE" ).
 				setVertexArray( "VA-YET-ANOTHER-SPHERE" ).
 				setIndexArray( "IA-YET-ANOTHER-SPHERE" ).
 				setShader( "SH-YET-ANOTHER-SPHERE" ).

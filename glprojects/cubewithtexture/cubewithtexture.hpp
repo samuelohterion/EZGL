@@ -1,7 +1,7 @@
 #ifndef CUBEWITHTEXTURE_HPP
 #define CUBEWITHTEXTURE_HPP
 
-#include "../../code/glrenderer.hpp"
+#include "../../code/glr.hpp"
 
 class CubeWithTexture :
 public GLProject {

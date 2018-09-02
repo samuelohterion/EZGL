@@ -1,7 +1,7 @@
 #ifndef INTERACTION_HPP
 #define INTERACTION_HPP
 
-#include "../../code/glrenderer.hpp"
+#include "../../code/glr.hpp"
 
 class SomeText :
 public GLProject {

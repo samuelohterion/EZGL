@@ -1,7 +1,7 @@
 #ifndef ROBERTSLIGHTTEST_HPP
 #define ROBERTSLIGHTTEST_HPP
 
-#include "code/glrenderer.hpp"
+#include "code/glr.hpp"
 #include <QString>
 
 class RobertsLightTest2D :

@@ -1,6 +1,6 @@
 #ifndef COORDINATESYSTEM_HPP
 #define COORDINATESYSTEM_HPP
-#include "code/glrenderer.hpp"
+#include "code/glr.hpp"
 
 class CoordinateSystem :
 public GLProject {
@@ -12,8 +12,10 @@ public GLProject {
 	public:
 
 		glm::mat4
-		m,v,p,
-		mv;
+		modelView,
+		model,
+		view,
+		projection;
 
 	public:
 
@@ -27,9 +29,4 @@ public GLProject {
 		resize( int p_width, int p_height );
 
 };
-void
-print( glm::vec4 const & p_vec );
-
-void
-print( glm::mat4 const & p_mat );
 #endif // COORDINATESYSTEM_HPP

@@ -1,14 +1,14 @@
-#ifndef SPHEREWITHTEXTURE_HPP
-#define SPHEREWITHTEXTURE_HPP
+#ifndef SOLARSYSTEM_HPP
+#define SOLARSYSTEM_HPP
 
 #include "../../code/glr.hpp"
 
-class SphereWithTexture :
+class SolarsSystem :
 public GLProject {
 
 	public:
 
-		SphereWithTexture( CStr const & p_name = "SphereWithTexture", ViewControlData * p_vcd = nullptr );
+		SolarsSystem( CStr const & p_name = "SolarsSystem", ViewControlData * p_vcd = nullptr );
 
 	public:
 
@@ -33,4 +33,4 @@ public GLProject {
 		resize( int p_width, int p_height );
 };
 
-#endif // YETANOTHERSPHERE_HPP
+#endif // SOLARSYSTEM_HPP

@@ -1,14 +1,13 @@
-#include "spherewithtexture.hpp"
+#include "solarsystem.hpp"
 #include "../../code/glmprinter.hpp"
 
-SphereWithTexture::SphereWithTexture( const CStr &p_name, ViewControlData *p_vcd ) :
+SolarsSystem::SolarsSystem( const CStr &p_name, ViewControlData *p_vcd ) :
 GLProject ( p_name, p_vcd ) {
 
 }
 
-
 void
-SphereWithTexture::init( ) {
+SolarsSystem::init( ) {
 
 	GLsizei
 	xSize = 64,
@@ -360,7 +359,7 @@ SphereWithTexture::init( ) {
 }
 
 void
-SphereWithTexture::paint( ) {
+SolarsSystem::paint( ) {
 
 	glEnable( GL_DEPTH_TEST );
 	glEnable( GL_CULL_FACE );
@@ -399,7 +398,7 @@ SphereWithTexture::paint( ) {
 }
 
 void
-SphereWithTexture::resize( int p_width, int p_height ) {
+SolarsSystem::resize( int p_width, int p_height ) {
 
 	// get aspect ratio
 	float

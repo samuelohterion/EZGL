@@ -1,7 +1,7 @@
 #ifndef FUNIN2D_HPP
 #define FUNIN2D_HPP
 
-#include "code/glrenderer.hpp"
+#include "code/glr.hpp"
 #include <QString>
 
 class FunIn2D :

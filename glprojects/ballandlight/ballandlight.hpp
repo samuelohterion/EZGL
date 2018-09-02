@@ -1,6 +1,6 @@
 #ifndef BAllANDLIGHT_HPP
 #define BAllANDLIGHT_HPP
-#include "code/glrenderer.hpp"
+#include "code/glr.hpp"
 #include "interaction.h"
 
 class BallAndLight :
