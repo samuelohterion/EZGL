@@ -57,6 +57,30 @@ SolarsSystem::init( ) {
 
 			va << 0.f << -1.f << 0.f << .5f << 0.f;
 		}
+		// V-SPHERE-WITH-TEXTURE-ORBIT-LINE-MERCURY
+		{
+			GLR::VertexArray
+			& va =
+				glr.vertices( "V-SPHERE-WITH-TEXTURE-ORBIT-LINE-MERCURY" ).
+					setUsage( GL_STATIC_DRAW ).
+					attrib( "vertex", 0, 3 ).
+					attrib( "color", 3, 3 );
+
+			GLfloat
+			mercuryDay = 2.f * 3.14159f / 85.f;
+
+			for( GLuint alpha = 0; alpha <= 85; ++ alpha ) {
+
+				GLfloat
+				z = 1.f * cosf( mercuryDay * alpha ),
+				x = 1.f * sinf( mercuryDay * alpha ),
+				c = ( alpha & 1 ) == 1  ? 0.f : 1.f;
+
+				va << x << 0.f << z << c << c << c;
+			}
+
+			va << GLR::VertexArray::Object( 0, 86, GL_LINE_STRIP );
+		}
 	}
 
 	// index arrays
@@ -116,6 +140,47 @@ SolarsSystem::init( ) {
 
 	// shaders
 	{
+		// S-SPHERE-WITH-TEXTURE-ORBIT-LINE-MERCURY
+		{
+			glr.shader(
+				"S-SPHERE-WITH-TEXTURE-ORBIT-LINE-MERCURY",
+
+				// vertex shader
+				"#version 330 core\n"
+				"in vec3 vertex;\n"
+				"in vec3 color;\n"
+				"out VS2FS {\n"
+				"	vec3 color;\n"
+				"} vs2fs;\n"
+				"uniform mat4 model;\n"
+				"uniform mat4 view;\n"
+				"uniform mat4 proj;\n"
+
+				"void main( ) {\n"
+				"	vs2fs.color  = color;\n"
+				"	gl_Position = proj * view * model * vec4( vertex, 1 );\n"
+				"}\n",
+
+				// fragment shader
+				"#version 330 core\n"
+
+				//	light in every space that makes sense to show their behavior
+				"uniform mat4 model;\n"
+				"uniform mat4 view;\n"
+				"uniform mat4 proj;\n"
+				"in VS2FS {\n"
+				"	vec3 color;\n"
+				"} vs2fs;\n"
+				"out vec4 fColor;\n"
+				"void main( ) {\n"
+				"	fColor = vec4( vs2fs.color, 1 );\n"
+				"}\n",
+
+				GLR::ShaderCode::FROM_CODE ).
+				addUniform( "model",  GLR::Shader::MAT4, GLR::Shader::SCALAR, & model ).
+				addUniform( "view",   GLR::Shader::MAT4, GLR::Shader::SCALAR, & view ).
+				addUniform( "proj",   GLR::Shader::MAT4, GLR::Shader::SCALAR, & projection );
+		}
 		// S-SPHERE-WITH-TEXTURE-EARTH
 		{
 			glr.shader(
@@ -312,6 +377,12 @@ SolarsSystem::init( ) {
 				"T-SPHERE-WITH-TEXTURE-SPHERE-MOON",
 				new GLR::Texture( "txSphere", "../EZGL/pix/2k_moon.jpg" ) );
 		}
+		// T-SPHERE-WITH-TEXTURE-SPHERE-MERCURY
+		{
+			glr.texture(
+				"T-SPHERE-WITH-TEXTURE-SPHERE-MERCURY",
+				new GLR::Texture( "txSphere", "../EZGL/pix/2k_mercury.jpg" ) );
+		}
 		// T-SPHERE-WITH-TEXTURE-SPHERE-SUN
 		{
 			glr.texture(
@@ -322,6 +393,13 @@ SolarsSystem::init( ) {
 
 	// containers
 	{
+		// C-SPHERE-WITH-TEXTURE-ORBIT-LINE-MERCURY
+		{
+			glr.container( "C-SPHERE-WITH-TEXTURE-ORBIT-LINE-MERCURY" ).
+				setVertexArray( "V-SPHERE-WITH-TEXTURE-ORBIT-LINE-MERCURY" ).
+				setShader( "S-SPHERE-WITH-TEXTURE-ORBIT-LINE-MERCURY" ).
+				build( );
+		}
 		// C-SPHERE-WITH-TEXTURE-SPHERE-EARTH
 		{
 			glr.container( "C-SPHERE-WITH-TEXTURE-SPHERE-EARTH" ).
@@ -342,6 +420,15 @@ SolarsSystem::init( ) {
 				addInTexture( "T-SPHERE-WITH-TEXTURE-SPHERE-MOON" ).
 				build( );
 		}
+		// C-SPHERE-WITH-TEXTURE-SPHERE-MERCURY
+		{
+			glr.container( "C-SPHERE-WITH-TEXTURE-SPHERE-MERCURY" ).
+				setVertexArray( "V-SPHERE-WITH-TEXTURE-SPHERE" ).
+				setIndexArray( "I-SPHERE-WITH-TEXTURE-SPHERE" ).
+				setShader( "S-SPHERE-WITH-TEXTURE-SPHERE" ).
+				addInTexture( "T-SPHERE-WITH-TEXTURE-SPHERE-MERCURY" ).
+				build( );
+		}
 		// C-SPHERE-WITH-TEXTURE-SPHERE-SUN
 		{
 			glr.container( "C-SPHERE-WITH-TEXTURE-SPHERE-SUN" ).
@@ -358,17 +445,17 @@ SolarsSystem::init( ) {
 	projection = view = model = glm::mat4( 1. );
 
 	lightC = V3( 1., 1., 1. );
+
+	glEnable( GL_DEPTH_TEST );
+	glEnable( GL_CULL_FACE );
 }
 
 void
 SolarsSystem::paint( ) {
 
-	glEnable( GL_DEPTH_TEST );
-	glEnable( GL_CULL_FACE );
-
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-	view = glm::lookAt( glm::vec3( 0., 0., 30. * vcd->mousey / vcd->height ), glm::vec3( 0., 0., 0. ), glm::vec3( 0., 1., 0. ) );
+	view = glm::lookAt( glm::vec3( 0., 0., 15. * vcd->mousey / vcd->height ), glm::vec3( 0., 0., 0. ), glm::vec3( 0., 1., 0. ) );
 
 	GLfloat
 	year = .002f * ( vcd->time + 3141.5f * vcd->mousex / vcd->width ),
@@ -377,25 +464,36 @@ SolarsSystem::paint( ) {
 	lightP = glm::vec4( 0.f, 0.f, 0.f, 1.f );
 
 	model  = glm::mat4( 1. );
+	model = glm::rotate( model, 30.f / 180.f * 3.1415f, glm::vec3( 1.f, 0.f, 0.f ) );
+
+	M4
+	tmp = model;
+
+	model = glm::scale( model, glm::vec3( 8.f ) );
+	glr.run( { "C-SPHERE-WITH-TEXTURE-ORBIT-LINE-MERCURY" } );
+
+	model = tmp;
 	model = glm::scale( model, glm::vec3( 3.f ) );
 
 	glr.run( { "C-SPHERE-WITH-TEXTURE-SPHERE-SUN" } );
 
-	model = glm::scale( model, glm::vec3( 1.f / 3.f ) );
+	model = tmp;
+	model = glm::rotate( model, 365.25f / 85.f * year, glm::vec3( 0.f, 1.f, 0.f ) );
+	model = glm::translate( model, glm::vec3( 8., 0., 0. ) );
+	glr.run( { "C-SPHERE-WITH-TEXTURE-SPHERE-MERCURY" } );
+
+	model = tmp;
 	model = glm::rotate( model, year, glm::vec3( 0.f, 1.f, 0.f ) );
 	model = glm::translate( model, glm::vec3( 15., 0., 0. ) );
-
-	M4
-	tmp = model;
-	model = glm::rotate( model, +23.f / 180.f * 3.14159f, normalize( glm::vec3( 0.f, 0.f, 1.0f ) ) );
+	tmp   = model;
+	model = glm::rotate( model, 23.f / 180.f * 3.1415f, glm::vec3( 1.f, 0.f, 0.f ) );
 	model = glm::rotate( model, day, glm::vec3( 0.f, 1.f, 0.f ) );
-
 	glr.run( { "C-SPHERE-WITH-TEXTURE-SPHERE-EARTH" } );
 
-	model = glm::rotate( tmp, day / 28.5f, glm::vec3( 0, 1, .0 ) );
-	model = glm::translate( model, glm::vec3( 5., 0, 0 ) );
+	model = tmp;
+	model = glm::rotate( model, day / 28.5f, glm::vec3( 0, 1, .0 ) );
+	model = glm::translate( model, glm::vec3( 4., 0, 0 ) );
 	model = glm::scale( model, glm::vec3( 1.f / 3.f ) );
-
 	glr.run( { "C-SPHERE-WITH-TEXTURE-SPHERE-MOON" } );
 }
 
