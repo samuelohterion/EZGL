@@ -23,45 +23,70 @@ Quad3D::init( ) {
 	{
 		// V-QUAD-3D
 		{
-			glr.vertices( "SCT-VERTICES" ).
+			glr.vertices( "V-QUAD-3D" ).
 				setUsage( GL_STATIC_DRAW ).
-				attrib( "vertex", 3, 0 ).	attrib( "color", 3, 3 ) <<
+				attrib( "vertex", 0, 3 ).	attrib( "color", 3, 3 ) <<
 				-1.f << -1.f << +0. <<			1.f << 0.f << 0.f <<
 				+1.f << -1.f << +0. <<			0.f << 1.f << 0.f <<
-				+0.f << +1.f << +0. <<			0.f << 0.f << 1.f <<
-				GLR::VertexArray::Object( 0, 3, GL_TRIANGLE_FAN );
+				+1.f << +1.f << +0. <<			0.f << 0.f << 1.f <<
+				-1.f << +1.f << +0. <<			1.f << 1.f << 0.f <<
+				GLR::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
 		}
 	}
 
-	glr.shader(
-		"SCT-SHADER",
-		//Vertex Shader
-		"#version 330 core\n"
-		"layout( location = 0 ) in vec3 vertex;\n"
-		"layout( location = 1 ) in vec3 color;\n"
-		"uniform mat4 mvp;\n"
-		"out vec3 vColor;\n"
-		"void main( void ) {\n"
-			"vColor = color;\n"
-			"gl_Position = mvp * vec4( vertex, 1. );"
-		"}\n",
+	// index arrays
+	{
+	}
 
-		//Fragment Shader
-		"#version 330 core\n"
-		"in vec3 vColor;\n"
-		"out vec4 fColor;\n"
-		"void main( void ) {\n"
-			"fColor = vec4( vColor, 1. );\n"
-		"}\n",
-		GLR::ShaderCode::FROM_CODE ).
-		addUniform( "mvp", GLR::Shader::MAT4, GLR::Shader::SCALAR, & mvp );
+	// shaders
+	{
+		//S-QUAD-3D"
+		{
+			glr.shader(
+				"S-QUAD-3D",
 
-	glr.container( "SCT-PROGRAM" ).
-		setVertexArray( "SCT-VERTICES" ).
-		setShader( "SCT-SHADER" ).
-		build( );
+				//Vertex Shader
+				"#version 330 core\n"
+				"layout( location = 0 ) in vec3 vertex;\n"
+				"layout( location = 1 ) in vec3 color;\n"
+				"uniform mat4 mvp;\n"
+				"out VS2FS {\n"
+				"	vec3 color;\n"
+				"} vs2fs;\n"
+				"void main( void ) {\n"
+					"vs2fs.color = color;\n"
+					"gl_Position = mvp * vec4( vertex, 1. );"
+				"}\n",
 
-	m = glm::mat4( 1. );
+				//Fragment Shader
+				"#version 330 core\n"
+				"in VS2FS {\n"
+				"	vec3 color;\n"
+				"} vs2fs;\n"
+				"out vec4 fColor;\n"
+				"void main( void ) {\n"
+					"fColor = vec4( vs2fs.color, 1. );\n"
+				"}\n",
+				GLR::ShaderCode::FROM_CODE ).
+				addUniform( "mvp", GLR::Shader::MAT4, GLR::Shader::SCALAR, & mvp );
+		}
+	}
+
+	// container
+	{
+		// C-QUAD-3D
+		{
+			glr.container( "C-QUAD-3D" ).
+				setVertexArray( "V-QUAD-3D" ).
+				setShader( "S-QUAD-3D" ).
+				build( );
+		}
+	}
+
+	p = v = m = glm::mat4( 1. );
+
+	glDisable( GL_DEPTH_TEST );
+	glDisable( GL_CULL_FACE );
 }
 
 void
@@ -69,24 +94,16 @@ Quad3D::paint( ) {
 
 	float
 	angle = 2.15f * vcd->time;
-//	light = glm::vec3( 5.f * sin( vcd->time ), 0.f, 0.f );
-	//light = glm::vec3( 2.f, 2.f, 2.f );
 
 	v = glm::mat4( 1. );
-
 	v = glm::translate( glm::mat4( 1. ), glm::vec3( 0.f, 0.f, -4.f ) );
-	//v = glm::rotate( v, angle, glm::vec3( sin( .1 * angle ), sin( .12 * angle ), sin( .13 * angle ) ) );
 	v = glm::rotate( v, angle, glm::vec3( 0.f, 1.f, 0.f ) );
 
-	mvp = p * v * m;  // Calculate final MVP matrix
-//	norm = glm::transpose( glm::inverse( mvp ) );
-
-	glEnable( GL_DEPTH_TEST );
-	glEnable( GL_CULL_FACE );
+	mvp = p * v * m;
 
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-	glr.run( { "SCT-PROGRAM" } );
+	glr.run( { "C-QUAD-3D" } );
 }
 
 void

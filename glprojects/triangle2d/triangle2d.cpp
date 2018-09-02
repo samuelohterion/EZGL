@@ -27,10 +27,14 @@ Triangle2D::init( ) {
 				setUsage( GL_STATIC_DRAW ).
 				attrib( "vertex", 0, 2 ). attrib( "color", 2, 3 ) <<
 				-1.f << -1.f <<           1.f << 0.f << 0.f <<
-				+1.f << -1.f <<           1.f << 0.f << 0.f <<
-				+0.f << +1.f <<           1.f << 0.f << 0.f <<
+				+1.f << -1.f <<           0.f << 1.f << 0.f <<
+				+0.f << +1.f <<           0.f << 0.f << 1.f <<
 				GLR::VertexArray::Object( 0, 3, GL_TRIANGLES );
 		}
+	}
+
+	// index arrays
+	{
 	}
 
 	// shaders
@@ -43,16 +47,25 @@ Triangle2D::init( ) {
 				//Vertex Shader
 				"#version 330 core\n"
 				"layout( location = 0 ) in vec2 vertex;\n"
+				"layout( location = 1 ) in vec3 color;\n"
+				"out VS2FS {\n"
+				"	vec3 color;\n"
+				"} vs2fs;\n"
 				"void main( void ) {\n"
-					"gl_Position = vec4( vertex, 0., 1. );"
+					"vs2fs.color = color;\n"
+					"gl_Position = vec4( vertex, 0, 1 );\n"
 				"}\n",
 
 				//Fragment Shader
 				"#version 330 core\n"
+				"in VS2FS {\n"
+				"	vec3 color;\n"
+				"} vs2fs;\n"
 				"out vec4 fColor;\n"
 				"void main( void ) {\n"
-					"fColor = vec4( .8, .7, .3, 1. );\n"
+					"fColor = vec4( vs2fs.color, 1 );\n"
 				"}\n",
+
 				GLR::ShaderCode::FROM_CODE );
 		}
 	}
@@ -65,9 +78,12 @@ Triangle2D::init( ) {
 				setVertexArray( "V-TRIANGLE-2D" ).
 				setShader( "S-TRIANGLE-2D" ).
 				build( );
-			}
 		}
 	}
+
+	glDisable( GL_DEPTH_TEST );
+	glDisable( GL_CULL_FACE );
+}
 
 void
 Triangle2D::paint( ) {

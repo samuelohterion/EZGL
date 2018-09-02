@@ -13,14 +13,30 @@ CubeWithTexture::init( ) {
 	{
 	}
 
+	// textures
+	{
+		// T-CUBE-WITH-TEXTURE-BACKGROUND
+		{
+			glr.texture(
+			"T-CUBE-WITH-TEXTURE-BACKGROUND",
+			new GLR::Texture( "txBackground", "../EZGL/pix/cubemapsmall.jpg" ) );
+		}
+		// T-CUBE-WITH-TEXTURE-CUBE
+		{
+			glr.texture(
+			"T-CUBE-WITH-TEXTURE-CUBE",
+			new GLR::Texture( "txCube", "../EZGL/pix/cubemapsmall.png" ) );
+		}
+	}
+
 	// vertex arrays
 	{
-		// VA-CUBE-WITH-TEXTURE-BACKGROUND
+		// V-CUBE-WITH-TEXTURE-BACKGROUND
 		{
 
-			glr.vertices( "VA-CUBE-WITH-TEXTURE-BACKGROUND" ).
+			glr.vertices( "V-CUBE-WITH-TEXTURE-BACKGROUND" ).
 				setUsage( GL_STATIC_DRAW ).
-				attrib( "vertex", 2, 0 ) <<
+				attrib( "vertex", 0, 2 ) <<
 
 				-1.f << -1.f <<
 				+1.f << -1.f <<
@@ -29,7 +45,7 @@ CubeWithTexture::init( ) {
 
 				GLR::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
 		}
-		// VA-CUBE-WITH-TEXTURE-CUBE
+		// V-CUBE-WITH-TEXTURE-CUBE
 		{
 			/*
 			 *
@@ -81,12 +97,12 @@ CubeWithTexture::init( ) {
 
 			GLR::VertexArray
 			& va =
-				glr.vertices( "VA-CUBE-WITH-TEXTURE-CUBE" ).
+				glr.vertices( "V-CUBE-WITH-TEXTURE-CUBE" ).
 					setUsage( GL_STATIC_DRAW ).
-					attrib( "vertex", 3, 0 ).
+					attrib( "vertex", 0, 3 ).
 					attrib( "normal", 3, 3 ).
-					attrib( "color",  3, 6 ).
-					attrib( "coord",  2, 9 );
+					attrib( "color",  6, 3 ).
+					attrib( "coord",  9, 2 );
 
 			va <<
 				// FACE 1
@@ -153,10 +169,10 @@ CubeWithTexture::init( ) {
 
 	// shaders
 	{
-		// SH-CUBE-WITH-TEXTURE-BACKGROUND
+		// S-CUBE-WITH-TEXTURE-BACKGROUND
 		{
 			glr.shader(
-				"SH-CUBE-WITH-TEXTURE-BACKGROUND",
+				"S-CUBE-WITH-TEXTURE-BACKGROUND",
 
 				// vertex shader
 				"#version 330 core\n"
@@ -189,16 +205,17 @@ CubeWithTexture::init( ) {
 					"return fract( sin( dot( st.xy, vec2( 12.9898, 78.233 ) ) ) * 43758.5453123 );\n"
 				"}\n"
 				"void main( ) {\n"
-				"	fColor = vec4( .2 - .2 * ( random( fract( vs2fs.coord ) ) < .95 ? 1 : 0 ) * texture( txBackground, fract( vs2fs.coord ) ).rgb, 1 );\n"
+				"	fColor = vec4( texture( txBackground, vs2fs.coord ).rgb, 1 );\n"
 				"}\n",
+
 				GLR::ShaderCode::FROM_CODE ).
 				addUniform( "width",  GLR::Shader::INT, GLR::Shader::SCALAR, & vcd->width ).
 				addUniform( "height", GLR::Shader::INT, GLR::Shader::SCALAR, & vcd->height );
 		}
-		// SH-CUBE-WITH-TEXTURE-CUBE
+		// S-CUBE-WITH-TEXTURE-CUBE
 		{
 			glr.shader(
-				"SH-CUBE-WITH-TEXTURE-CUBE",
+				"S-CUBE-WITH-TEXTURE-CUBE",
 
 				// vertex shader
 				"#version 330 core\n"
@@ -238,6 +255,7 @@ CubeWithTexture::init( ) {
 				"	fColor.xyz *= .85 + .15 * vs2fs.color;\n"
 				"	fColor.xyz *= dot( vs2fs.normalMV, vec3( 0, 0, 1 ) );\n"
 				"}\n",
+
 				GLR::ShaderCode::FROM_CODE ).
 				addUniform( "model",  GLR::Shader::MAT4, GLR::Shader::SCALAR, & model ).
 				addUniform( "view",   GLR::Shader::MAT4, GLR::Shader::SCALAR, & view ).
@@ -245,38 +263,22 @@ CubeWithTexture::init( ) {
 		}
 	}
 
-	// textures
+	// containers
 	{
-		// TX-CUBE-WITH-TEXTURE-BACKGROUND
+		// C-CUBE-WITH-TEXTURE-BACKGROUND
 		{
-			glr.texture(
-			"TX-CUBE-WITH-TEXTURE-BACKGROUND",
-			new GLR::Texture( "txBackground", "../EZGL/glprojects/cubewithtexture/pix/cubemapsmall.jpg" ) );
-		}
-		// TX-CUBE-WITH-TEXTURE-CUBE
-		{
-			glr.texture(
-			"TX-CUBE-WITH-TEXTURE-CUBE",
-			new GLR::Texture( "txCube", "../EZGL/glprojects/cubewithtexture/pix/cubemapsmall.png" ) );
-		}
-	}
-
-	// programs
-	{
-		// PR-CUBE-WITH-TEXTURE-BACKGROUND
-		{
-			glr.container( "PR-CUBE-WITH-TEXTURE-BACKGROUND" ).
-				setVertexArray( "VA-CUBE-WITH-TEXTURE-BACKGROUND" ).
-				setShader( "SH-CUBE-WITH-TEXTURE-BACKGROUND" ).
-				addInTexture( "TX-CUBE-WITH-TEXTURE-BACKGROUND" ).
+			glr.container( "C-CUBE-WITH-TEXTURE-BACKGROUND" ).
+				setVertexArray( "V-CUBE-WITH-TEXTURE-BACKGROUND" ).
+				setShader( "S-CUBE-WITH-TEXTURE-BACKGROUND" ).
+				addInTexture( "T-CUBE-WITH-TEXTURE-BACKGROUND" ).
 				build( );
 		}
-		// PR-CUBE-WITH-TEXTURE-CUBE
+		// C-CUBE-WITH-TEXTURE-CUBE
 		{
-			glr.container( "PR-CUBE-WITH-TEXTURE-CUBE" ).
-				setVertexArray( "VA-CUBE-WITH-TEXTURE-CUBE" ).
-				setShader( "SH-CUBE-WITH-TEXTURE-CUBE" ).
-				addInTexture( "TX-CUBE-WITH-TEXTURE-CUBE" ).
+			glr.container( "C-CUBE-WITH-TEXTURE-CUBE" ).
+				setVertexArray( "V-CUBE-WITH-TEXTURE-CUBE" ).
+				setShader( "S-CUBE-WITH-TEXTURE-CUBE" ).
+				addInTexture( "T-CUBE-WITH-TEXTURE-CUBE" ).
 				build( );
 		}
 	}
@@ -287,8 +289,6 @@ CubeWithTexture::init( ) {
 
 	view = glm::lookAt( glm::vec3( 0., 0., 4. ), glm::vec3( 0., 0., 0. ), glm::vec3( 0., 1., 0. ) );
 
-	model = glm::mat4( 1. );
-	model = glm::translate( model, glm::vec3( +0.f, +0.f, -3.f ) );
 }
 
 void
@@ -299,16 +299,18 @@ CubeWithTexture::paint( ) {
 
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-	glr.run( { "PR-CUBE-WITH-TEXTURE-BACKGROUND" } );
+	glr.run( { "C-CUBE-WITH-TEXTURE-BACKGROUND" } );
 
 	glEnable( GL_DEPTH_TEST );
 	glEnable( GL_CULL_FACE );
 
-	model = glm::rotate( model, 6.28f * vcd->mousex, glm::vec3( glm::vec4( 0, 1, 0, 0 ) ) );
-	model = glm::rotate( model, 6.28f * vcd->mousey, glm::vec3( glm::vec4( 1, 0, 0, 0 ) ) );
+	model = glm::mat4( 1. );
+	model = glm::translate( model, glm::vec3( +0.f, +0.f, -2.f ) );
+	model = glm::rotate( model, 2.f * 6.28f * vcd->mousex, glm::vec3( glm::vec4( 0, 1, 0, 0 ) ) );
+	model = glm::rotate( model, 2.f * 6.28f * vcd->mousey, glm::vec3( glm::vec4( 1, 0, 0, 0 ) ) );
 	//model = glm::rotate( view * model * inverse( view ), 1.f * vcd->time, glm::vec3( sinf( .1f * vcd->time ), cosf( .11f * vcd->time ), sinf( .12f * vcd->time ) ) );
 
-	glr.run( { "PR-CUBE-WITH-TEXTURE-CUBE" } );
+	glr.run( { "C-CUBE-WITH-TEXTURE-CUBE" } );
 }
 
 void

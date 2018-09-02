@@ -424,25 +424,6 @@ GLR {
 				VertexArray
 				&operator << ( glm::vec3 const & p_value ) {
 
-					arr.push_back( p_value.x );
-					arr.push_back( p_value.y );
-					arr.push_back( p_value.z );
-
-					return *this;
-				}
-
-				VertexArray
-				&operator << ( glm::vec2 const & p_value ) {
-
-					arr.push_back( p_value.r );
-					arr.push_back( p_value.g );
-
-					return *this;
-				}
-
-				VertexArray
-				&operator << ( glm::vec3 const & p_value ) {
-
 					arr.push_back( p_value.r );
 					arr.push_back( p_value.g );
 					arr.push_back( p_value.b );

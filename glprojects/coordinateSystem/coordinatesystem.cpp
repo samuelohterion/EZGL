@@ -27,7 +27,7 @@ CoordinateSystem::init( ) {
 		{
 			glr.vertices( "V-COORDINATE-SYSTEM" ).
 				setUsage( GL_STATIC_DRAW ).
-				attrib( "vertex", 3, 0 ) <<
+				attrib( "vertex", 0, 3 ) <<
 				+0.f << +0.f << +0.f <<
 				+1.f << +0.f << +0.f <<
 				+0.f << +0.f << +0.f <<
@@ -48,6 +48,7 @@ CoordinateSystem::init( ) {
 		{
 			glr.shader(
 				"S-COORDINATE-SYSTEM",
+
 				//Vertex Shader
 				"#version 330 core\n"
 				"layout( location = 0 ) in vec3 vertex;\n"
@@ -84,6 +85,7 @@ CoordinateSystem::init( ) {
 				"void main( void ) {\n"
 					"fColor = gs2fs.color;\n"
 				"}\n",
+
 				GLR::ShaderCode::FROM_CODE ).
 					addUniform( "mv", GLR::Shader::MAT4, GLR::Shader::SCALAR, & modelView ).
 					addUniform( "p",  GLR::Shader::MAT4, GLR::Shader::SCALAR, & projection );
@@ -98,9 +100,14 @@ CoordinateSystem::init( ) {
 					setVertexArray( "V-COORDINATE-SYSTEM" ).
 					setShader( "S-COORDINATE-SYSTEM" ).
 					build( );
-			}
 		}
 	}
+
+	glEnable( GL_DEPTH_TEST );
+	glEnable( GL_CULL_FACE );
+
+	projection = view = model = glm::mat4( 1. );
+}
 
 void
 CoordinateSystem::paint( ) {
@@ -108,17 +115,10 @@ CoordinateSystem::paint( ) {
 	float
 	angle = .31f * vcd->time;
 
-	view = glm::rotate(
-			glm::translate(
-				glm::mat4( 1. ),
-				glm::vec3( 0.f, 0.f, -4.f ) ),
-			angle,
-			glm::vec3( .5 * sin( .2 * angle ), 1.f, 0.f ) );
+	view = glm::translate( glm::mat4( 1. ), glm::vec3( 0.f, 0.f, -2.f ) );
+	view = glm::rotate( view, angle, glm::vec3( .5f * sinf( .2f * angle ), 1.f, 0.f ) );
 
 	modelView = view * model;
-
-	glEnable( GL_DEPTH_TEST );
-	glEnable( GL_CULL_FACE );
 
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 

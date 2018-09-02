@@ -19,13 +19,13 @@ SolarsSystem::init( ) {
 
 	// vertex arrays
 	{
-		// VA-SPHERE-WITH-TEXTURE-SPHERE
+		// V-SPHERE-WITH-TEXTURE-SPHERE
 		{
 			GLR::VertexArray
 			& va =
-				glr.vertices( "VA-SPHERE-WITH-TEXTURE-SPHERE" ).
+				glr.vertices( "V-SPHERE-WITH-TEXTURE-SPHERE" ).
 					setUsage( GL_STATIC_DRAW ).
-					attrib( "vertex", 3, 0 ). attrib( "coord", 2, 3 );
+					attrib( "vertex", 0, 3 ). attrib( "coord", 3, 2 );
 
 			va << 0.f << 1.f << 0.f << .5f << 1.f;
 
@@ -61,11 +61,11 @@ SolarsSystem::init( ) {
 
 	// index arrays
 	{
-		// IA-SPHERE-WITH-TEXTURE-SPHERE
+		// I-SPHERE-WITH-TEXTURE-SPHERE
 		{
 			GLR::IndexArray
 			& ia =
-				glr.indices( "IA-SPHERE-WITH-TEXTURE-SPHERE" ).
+				glr.indices( "I-SPHERE-WITH-TEXTURE-SPHERE" ).
 					setUsage( GL_STATIC_DRAW );
 
 			GLsizei
@@ -116,10 +116,10 @@ SolarsSystem::init( ) {
 
 	// shaders
 	{
-		// SH-SPHERE-WITH-TEXTURE-EARTH
+		// S-SPHERE-WITH-TEXTURE-EARTH
 		{
 			glr.shader(
-				"SH-SPHERE-WITH-TEXTURE-EARTH",
+				"S-SPHERE-WITH-TEXTURE-EARTH",
 
 				// vertex shader
 				"#version 330 core\n"
@@ -176,10 +176,10 @@ SolarsSystem::init( ) {
 				addUniform( "lightP", GLR::Shader::VEC3, GLR::Shader::SCALAR, & lightP ).
 				addUniform( "lightC", GLR::Shader::VEC3, GLR::Shader::SCALAR, & lightC );
 		}
-		// SH-SPHERE-WITH-TEXTURE-SPHERE
+		// S-SPHERE-WITH-TEXTURE-SPHERE
 		{
 			glr.shader(
-				"SH-SPHERE-WITH-TEXTURE-SPHERE",
+				"S-SPHERE-WITH-TEXTURE-SPHERE",
 
 				// vertex shader
 				"#version 330 core\n"
@@ -223,6 +223,7 @@ SolarsSystem::init( ) {
 				"	fColor = texture( txSphere, vs2fs.coord );\n"
 				"	fColor.rgb *= ( .9 * a + .1 );\n"
 				"}\n",
+
 				GLR::ShaderCode::FROM_CODE ).
 				addUniform( "model",  GLR::Shader::MAT4, GLR::Shader::SCALAR, & model ).
 				addUniform( "view",   GLR::Shader::MAT4, GLR::Shader::SCALAR, & view ).
@@ -230,10 +231,10 @@ SolarsSystem::init( ) {
 				addUniform( "lightP", GLR::Shader::VEC3, GLR::Shader::SCALAR, & lightP ).
 				addUniform( "lightC", GLR::Shader::VEC3, GLR::Shader::SCALAR, & lightC );
 		}
-		// SH-SPHERE-WITH-TEXTURE-SUN
+		// S-SPHERE-WITH-TEXTURE-SUN
 		{
 			glr.shader(
-				"SH-SPHERE-WITH-TEXTURE-SUN",
+				"S-SPHERE-WITH-TEXTURE-SUN",
 
 				// vertex shader
 				"#version 330 core\n"
@@ -275,6 +276,7 @@ SolarsSystem::init( ) {
 				"		texture( txSphere, fract( vs2fs.coord + vec2( sin( -.012 * time ), sin( -.019 * time ) ) ) );\n"
 				"	fColor.xyz /= fColor.a;\n"
 				"}\n",
+
 				GLR::ShaderCode::FROM_CODE ).
 				addUniform( "model",  GLR::Shader::MAT4,  GLR::Shader::SCALAR, & model ).
 				addUniform( "view",   GLR::Shader::MAT4,  GLR::Shader::SCALAR, & view ).
@@ -286,67 +288,67 @@ SolarsSystem::init( ) {
 	// textures
 	{
 		// https://www.solarsystemscope.com/textures/
-		// TX-SPHERE-WITH-TEXTURE-SPHERE-EARTH-LANDSCAPE
+		// T-SPHERE-WITH-TEXTURE-SPHERE-EARTH-LANDSCAPE
 		{
 			glr.texture(
-				"TX-SPHERE-WITH-TEXTURE-SPHERE-EARTH-LANDSCAPE",
-				new GLR::Texture( "txSphere", "../EZGL/glprojects/spherewithtexture/pix/2k_earth_daymap.jpg" ) );
+				"T-SPHERE-WITH-TEXTURE-SPHERE-EARTH-LANDSCAPE",
+				new GLR::Texture( "txSphere", "../EZGL/pix/2k_earth_daymap.jpg" ) );
 		}
-		// TX-SPHERE-WITH-TEXTURE-SPHERE-EARTH-CLOUDS
+		// T-SPHERE-WITH-TEXTURE-SPHERE-EARTH-CLOUDS
 		{
 			glr.texture(
-				"TX-SPHERE-WITH-TEXTURE-SPHERE-EARTH-CLOUDS",
-				new GLR::Texture( "txClouds", "../EZGL/glprojects/spherewithtexture/pix/2k_earth_clouds.jpg" ) );
+				"T-SPHERE-WITH-TEXTURE-SPHERE-EARTH-CLOUDS",
+				new GLR::Texture( "txClouds", "../EZGL/pix/2k_earth_clouds.jpg" ) );
 		}
-		// TX-SPHERE-WITH-TEXTURE-SPHERE-EARTH-NIGHTMAP
+		// T-SPHERE-WITH-TEXTURE-SPHERE-EARTH-NIGHTMAP
 		{
 			glr.texture(
-				"TX-SPHERE-WITH-TEXTURE-SPHERE-EARTH-NIGHTMAP",
-				new GLR::Texture( "txNightmap", "../EZGL/glprojects/spherewithtexture/pix/2k_earth_nightmap.jpg" ) );
+				"T-SPHERE-WITH-TEXTURE-SPHERE-EARTH-NIGHTMAP",
+				new GLR::Texture( "txNightmap", "../EZGL/pix/2k_earth_nightmap.jpg" ) );
 		}
-		// TX-SPHERE-WITH-TEXTURE-SPHERE-MOON
+		// T-SPHERE-WITH-TEXTURE-SPHERE-MOON
 		{
 			glr.texture(
-				"TX-SPHERE-WITH-TEXTURE-SPHERE-MOON",
-				new GLR::Texture( "txSphere", "../EZGL/glprojects/spherewithtexture/pix/2k_moon.jpg" ) );
+				"T-SPHERE-WITH-TEXTURE-SPHERE-MOON",
+				new GLR::Texture( "txSphere", "../EZGL/pix/2k_moon.jpg" ) );
 		}
-		// TX-SPHERE-WITH-TEXTURE-SPHERE-SUN
+		// T-SPHERE-WITH-TEXTURE-SPHERE-SUN
 		{
 			glr.texture(
-				"TX-SPHERE-WITH-TEXTURE-SPHERE-SUN",
-				new GLR::Texture( "txSphere", "../EZGL/glprojects/spherewithtexture/pix/2k_sun.jpg" ) );
+				"T-SPHERE-WITH-TEXTURE-SPHERE-SUN",
+				new GLR::Texture( "txSphere", "../EZGL/pix/2k_sun.jpg" ) );
 		}
 	}
 
-	// programs
+	// containers
 	{
-		// PR-SPHERE-WITH-TEXTURE-SPHERE-EARTH
+		// C-SPHERE-WITH-TEXTURE-SPHERE-EARTH
 		{
-			glr.container( "PR-SPHERE-WITH-TEXTURE-SPHERE-EARTH" ).
-				setVertexArray( "VA-SPHERE-WITH-TEXTURE-SPHERE" ).
-				setIndexArray( "IA-SPHERE-WITH-TEXTURE-SPHERE" ).
-				setShader( "SH-SPHERE-WITH-TEXTURE-EARTH" ).
-				addInTexture( "TX-SPHERE-WITH-TEXTURE-SPHERE-EARTH-LANDSCAPE" ).
-				addInTexture( "TX-SPHERE-WITH-TEXTURE-SPHERE-EARTH-CLOUDS" ).
-				addInTexture( "TX-SPHERE-WITH-TEXTURE-SPHERE-EARTH-NIGHTMAP" ).
+			glr.container( "C-SPHERE-WITH-TEXTURE-SPHERE-EARTH" ).
+				setVertexArray( "V-SPHERE-WITH-TEXTURE-SPHERE" ).
+				setIndexArray( "I-SPHERE-WITH-TEXTURE-SPHERE" ).
+				setShader( "S-SPHERE-WITH-TEXTURE-EARTH" ).
+				addInTexture( "T-SPHERE-WITH-TEXTURE-SPHERE-EARTH-LANDSCAPE" ).
+				addInTexture( "T-SPHERE-WITH-TEXTURE-SPHERE-EARTH-CLOUDS" ).
+				addInTexture( "T-SPHERE-WITH-TEXTURE-SPHERE-EARTH-NIGHTMAP" ).
 				build( );
 		}
-		// PR-SPHERE-WITH-TEXTURE-SPHERE-MOON
+		// C-SPHERE-WITH-TEXTURE-SPHERE-MOON
 		{
-			glr.container( "PR-SPHERE-WITH-TEXTURE-SPHERE-MOON" ).
-				setVertexArray( "VA-SPHERE-WITH-TEXTURE-SPHERE" ).
-				setIndexArray( "IA-SPHERE-WITH-TEXTURE-SPHERE" ).
-				setShader( "SH-SPHERE-WITH-TEXTURE-SPHERE" ).
-				addInTexture( "TX-SPHERE-WITH-TEXTURE-SPHERE-MOON" ).
+			glr.container( "C-SPHERE-WITH-TEXTURE-SPHERE-MOON" ).
+				setVertexArray( "V-SPHERE-WITH-TEXTURE-SPHERE" ).
+				setIndexArray( "I-SPHERE-WITH-TEXTURE-SPHERE" ).
+				setShader( "S-SPHERE-WITH-TEXTURE-SPHERE" ).
+				addInTexture( "T-SPHERE-WITH-TEXTURE-SPHERE-MOON" ).
 				build( );
 		}
-		// PR-SPHERE-WITH-TEXTURE-SPHERE-SUN
+		// C-SPHERE-WITH-TEXTURE-SPHERE-SUN
 		{
-			glr.container( "PR-SPHERE-WITH-TEXTURE-SPHERE-SUN" ).
-				setVertexArray( "VA-SPHERE-WITH-TEXTURE-SPHERE" ).
-				setIndexArray( "IA-SPHERE-WITH-TEXTURE-SPHERE" ).
-				setShader( "SH-SPHERE-WITH-TEXTURE-SUN" ).
-				addInTexture( "TX-SPHERE-WITH-TEXTURE-SPHERE-SUN" ).
+			glr.container( "C-SPHERE-WITH-TEXTURE-SPHERE-SUN" ).
+				setVertexArray( "V-SPHERE-WITH-TEXTURE-SPHERE" ).
+				setIndexArray( "I-SPHERE-WITH-TEXTURE-SPHERE" ).
+				setShader( "S-SPHERE-WITH-TEXTURE-SUN" ).
+				addInTexture( "T-SPHERE-WITH-TEXTURE-SPHERE-SUN" ).
 				build( );
 		}
 	}
@@ -372,13 +374,14 @@ SolarsSystem::paint( ) {
 	year = .002f * ( vcd->time + 3141.5f * vcd->mousex / vcd->width ),
 	day = 365.f * year;
 
-	//model = glm::rotate( model, 30.f / 180.f * 3.14159f, normalize( glm::vec3( 1.f, 0.f, 0.5f ) ) );
 	lightP = glm::vec4( 0.f, 0.f, 0.f, 1.f );
+
 	model  = glm::mat4( 1. );
 	model = glm::scale( model, glm::vec3( 3.f ) );
-	glr.run( { "PR-SPHERE-WITH-TEXTURE-SPHERE-SUN" } );
-	model = glm::scale( model, glm::vec3( 1.f / 3.f ) );
 
+	glr.run( { "C-SPHERE-WITH-TEXTURE-SPHERE-SUN" } );
+
+	model = glm::scale( model, glm::vec3( 1.f / 3.f ) );
 	model = glm::rotate( model, year, glm::vec3( 0.f, 1.f, 0.f ) );
 	model = glm::translate( model, glm::vec3( 15., 0., 0. ) );
 
@@ -386,15 +389,14 @@ SolarsSystem::paint( ) {
 	tmp = model;
 	model = glm::rotate( model, +23.f / 180.f * 3.14159f, normalize( glm::vec3( 0.f, 0.f, 1.0f ) ) );
 	model = glm::rotate( model, day, glm::vec3( 0.f, 1.f, 0.f ) );
-	//model = glm::rotate( model, day, glm::vec3( 0.f, cosf( 23.f / 180.f * 3.14f ), sinf( 23.f / 180.f * 3.14f ) ) );
 
-	glr.run( { "PR-SPHERE-WITH-TEXTURE-SPHERE-EARTH" } );
+	glr.run( { "C-SPHERE-WITH-TEXTURE-SPHERE-EARTH" } );
 
-	//model = glm::rotate( model, -23.f / 180.f * 3.14159f, normalize( glm::vec3( 0.f, 0.f, 1.0f ) ) );
 	model = glm::rotate( tmp, day / 28.5f, glm::vec3( 0, 1, .0 ) );
 	model = glm::translate( model, glm::vec3( 5., 0, 0 ) );
 	model = glm::scale( model, glm::vec3( 1.f / 3.f ) );
-	glr.run( { "PR-SPHERE-WITH-TEXTURE-SPHERE-MOON" } );
+
+	glr.run( { "C-SPHERE-WITH-TEXTURE-SPHERE-MOON" } );
 }
 
 void

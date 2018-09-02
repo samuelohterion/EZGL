@@ -21,8 +21,9 @@ SOURCES += \
 	code/glmprinter.cpp \
 	glprojects/triangle2d/triangle2d.cpp \
 	glprojects/quad3d/quad3d.cpp \
-	glprojects/coordinateSystem/coordinatesystem.cpp #\
-#	glprojects/cube/cube.cpp \
+	glprojects/coordinateSystem/coordinatesystem.cpp \
+	glprojects/cubewithtexture/cubewithtexture.cpp \
+#	glprojects/cube/cube.cpp #\
 #	glprojects/funIn2D/funIn2D.cpp \
 #	glprojects/lighttest/lighttest.cpp \
 #	glprojects/sphere/sphere.cpp \
@@ -34,9 +35,8 @@ SOURCES += \
 #	glprojects/multisampling/multisampling.cpp \
 #	glprojects/sometext/sometext.cpp \
 #	glprojects/yetanothersphere/yetanothersphere.cpp \
-#	glprojects/cubewithtexture/cubewithtexture.cpp \
 #	glprojects/spherewithtexture/spherewithtexture.cpp \
-#	glprojects/solarsystem/solarsystem.cpp
+	glprojects/solarsystem/solarsystem.cpp
 
 HEADERS += \
 	code/widget.hpp \
@@ -45,7 +45,8 @@ HEADERS += \
 	code/glr.hpp \
 	glprojects/triangle2d/triangle2d.hpp \
 	glprojects/quad3d/quad3d.hpp \
-	glprojects/coordinateSystem/coordinatesystem.hpp #\
+	glprojects/coordinateSystem/coordinatesystem.hpp \
+	glprojects/cubewithtexture/cubewithtexture.hpp \
 #	glprojects/cube/cube.hpp \
 #	glprojects/funIn2D/funIn2D.hpp \
 #	glprojects/lighttest/lighttest.hpp \
@@ -58,9 +59,8 @@ HEADERS += \
 #	glprojects/multisampling/multisampling.hpp \
 #	glprojects/sometext/sometext.hpp \
 #	glprojects/yetanothersphere/yetanothersphere.hpp \
-#	glprojects/cubewithtexture/cubewithtexture.hpp \
 #	glprojects/spherewithtexture/spherewithtexture.hpp \
-#	glprojects/solarsystem/solarsystem.hpp
+	glprojects/solarsystem/solarsystem.hpp
 
 FORMS += \
 	code/widget.ui

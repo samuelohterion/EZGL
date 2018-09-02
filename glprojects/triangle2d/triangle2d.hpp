@@ -11,8 +11,6 @@ public GLProject {
 
 	public:
 
-	public:
-
 		void
 		init( );
 

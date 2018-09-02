@@ -3,6 +3,8 @@
 #include "glprojects/triangle2d/triangle2d.hpp"
 #include "glprojects/quad3d/quad3d.hpp"
 #include "glprojects/coordinateSystem/coordinatesystem.hpp"
+#include "glprojects/cubewithtexture/cubewithtexture.hpp"
+#include "glprojects/solarsystem/solarsystem.hpp"
 //#include "glprojects/cube/cube.hpp"
 //#include "glprojects/funIn2D/funIn2D.hpp"
 //#include "glprojects/lighttest/lighttest.hpp"
@@ -14,7 +16,6 @@
 //#include "glprojects/multisampling/multisampling.hpp"
 //#include "glprojects/sometext/sometext.hpp"
 //#include "glprojects/yetanothersphere/yetanothersphere.hpp"
-//#include "glprojects/cubewithtexture/cubewithtexture.hpp"
 //#include "glprojects/spherewithtexture/spherewithtexture.hpp"
 
 int
@@ -30,16 +31,22 @@ main( int argc, char *argv[ ] ) {
 	* triangle2D = new Triangle2D( "Triangle2D" );
 
 	Quad3D
-	* quadD = new Quad3D( "Quad3D" );
+	* quad3D = new Quad3D( "Quad3D" );
 
 	CoordinateSystem
 	* coordinateSystem = new CoordinateSystem( "CoordinateSystem" );
 
-//	FunIn2D
-//	* funIn2D = new FunIn2D( "FunIn2D" );
+	CubeWithTexture
+	* cubeWithTexture = new CubeWithTexture( );
+
+	SolarsSystem
+	* solarsSystem = new SolarsSystem( "SolarsSystem" );
 
 //	Cube
 //	* cube = new Cube( "Cube" );
+
+//	FunIn2D
+//	* funIn2D = new FunIn2D( "FunIn2D" );
 
 //	LightedCheckerboardCave
 //	* lightedCheckerboardCave = new LightedCheckerboardCave( "LightedCheckerboardCave" );
@@ -68,30 +75,29 @@ main( int argc, char *argv[ ] ) {
 //	YetAnotherSphere
 //	* yetAnotherSphere = new YetAnotherSphere( "YAS " );
 
-//	CubeWithTexture
-//	* cubeWithTexture = new CubeWithTexture( );
 
 //	SphereWithTexture
 //	* sphereWithTexture = new SphereWithTexture( );
 
-	w.projects[ "SimpleTriangle" ] = triangle2D;
-	w.projects[ "SimpleColoredTriangle" ] = simpleColoredTriangle;
+	w.projects[ "Triangle2D" ] = triangle2D;
+	w.projects[ "Quad3D" ] = quad3D;
 	w.projects[ "CoordinateSystem" ] = coordinateSystem;
+	w.projects[ "CubeWithTexture" ] = cubeWithTexture;
+	w.projects[ "SolarsSystem" ] = solarsSystem;
+//	w.projects[ "Cube" ] = cube;
 //	w.projects[ "FunIn2D" ] = funIn2D;
 //	w.projects[ "LightedCheckerboardCave" ] = lightedCheckerboardCave;
 //	w.projects[ "Sphere" ] = sphere;
 //	w.projects[ "SphereDynamicalSurface" ] = sphereDynamicalSurface;
 //	w.projects[ "RobertsLightTest2D" ] = robertsLightTest2D;
 //	w.projects[ "BallAndLight" ] = ballAndLight;
-//	w.projects[ "Cube" ] = cube;
 //	w.projects[ "TextureTest" ] = textureTest;
 //	w.projects[ "MultiSampling" ] = multiSampling;
 //	w.projects[ "SomeText" ] = someText;
 //	w.projects[ "YAS" ] = yetAnotherSphere;
-//	w.projects[ "CubeWithTexture" ] = cubeWithTexture;
 //	w.projects[ "SphereWithTexture" ] = sphereWithTexture;
 
-	w.currentProject = "SimpleTriangle";
+	w.currentProject = "SolarsSystem";
 
 	w.show( );
 
