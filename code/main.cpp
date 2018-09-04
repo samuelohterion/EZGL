@@ -5,6 +5,7 @@
 #include "glprojects/coordinateSystem/coordinatesystem.hpp"
 #include "glprojects/cubewithtexture/cubewithtexture.hpp"
 #include "glprojects/solarsystem/solarsystem.hpp"
+#include "glprojects/zbuffertexture/zbuffertexture.hpp"
 //#include "glprojects/cube/cube.hpp"
 //#include "glprojects/funIn2D/funIn2D.hpp"
 //#include "glprojects/lighttest/lighttest.hpp"
@@ -41,6 +42,9 @@ main( int argc, char *argv[ ] ) {
 
 	SolarsSystem
 	* solarsSystem = new SolarsSystem( "SolarsSystem" );
+
+	ZBufferTexture
+	* zBufferTexture = new ZBufferTexture( "ZBufferTexture" );
 
 //	Cube
 //	* cube = new Cube( "Cube" );
@@ -84,6 +88,7 @@ main( int argc, char *argv[ ] ) {
 	w.projects[ "CoordinateSystem" ] = coordinateSystem;
 	w.projects[ "CubeWithTexture" ] = cubeWithTexture;
 	w.projects[ "SolarsSystem" ] = solarsSystem;
+	w.projects[ "ZBufferTexture" ] = zBufferTexture;
 //	w.projects[ "Cube" ] = cube;
 //	w.projects[ "FunIn2D" ] = funIn2D;
 //	w.projects[ "LightedCheckerboardCave" ] = lightedCheckerboardCave;
@@ -97,7 +102,7 @@ main( int argc, char *argv[ ] ) {
 //	w.projects[ "YAS" ] = yetAnotherSphere;
 //	w.projects[ "SphereWithTexture" ] = sphereWithTexture;
 
-	w.currentProject = "SolarsSystem";
+	w.currentProject = "ZBufferTexture";
 
 	w.show( );
 

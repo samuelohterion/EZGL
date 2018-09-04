@@ -57,29 +57,27 @@ SolarsSystem::init( ) {
 
 			va << 0.f << -1.f << 0.f << .5f << 0.f;
 		}
-		// V-SPHERE-WITH-TEXTURE-ORBIT-LINE-MERCURY
+		// V-SPHERE-WITH-TEXTURE-ORBIT-LINE
 		{
 			GLR::VertexArray
 			& va =
-				glr.vertices( "V-SPHERE-WITH-TEXTURE-ORBIT-LINE-MERCURY" ).
+				glr.vertices( "V-SPHERE-WITH-TEXTURE-ORBIT-LINE" ).
 					setUsage( GL_STATIC_DRAW ).
-					attrib( "vertex", 0, 3 ).
-					attrib( "color", 3, 3 );
+					attrib( "vertex", 0, 4 ); //z is used for storing angle
 
-			GLfloat
-			mercuryDay = 2.f * 3.14159f / 85.f;
+			day = .002f * 3.14159f;
 
-			for( GLuint alpha = 0; alpha <= 85; ++ alpha ) {
+			for( GLuint alpha = 0; alpha <= 1000; ++ alpha ) {
 
 				GLfloat
-				z = 1.f * cosf( mercuryDay * alpha ),
-				x = 1.f * sinf( mercuryDay * alpha ),
-				c = ( alpha & 1 ) == 1  ? 0.f : 1.f;
+				a = day * alpha,
+				z = 1.f * cosf( a ),
+				x = 1.f * sinf( a );
 
-				va << x << 0.f << z << c << c << c;
+				va << x << 0.f << z << a;
 			}
 
-			va << GLR::VertexArray::Object( 0, 86, GL_LINE_STRIP );
+			va << GLR::VertexArray::Object( 0, 1001, GL_LINE_STRIP );
 		}
 	}
 
@@ -140,46 +138,45 @@ SolarsSystem::init( ) {
 
 	// shaders
 	{
-		// S-SPHERE-WITH-TEXTURE-ORBIT-LINE-MERCURY
+		// S-SPHERE-WITH-TEXTURE-ORBIT-LINE
 		{
 			glr.shader(
-				"S-SPHERE-WITH-TEXTURE-ORBIT-LINE-MERCURY",
+				"S-SPHERE-WITH-TEXTURE-ORBIT-LINE",
 
 				// vertex shader
 				"#version 330 core\n"
-				"in vec3 vertex;\n"
-				"in vec3 color;\n"
+				"in vec4 vertex;\n"
 				"out VS2FS {\n"
-				"	vec3 color;\n"
+				"	float angle;\n"
 				"} vs2fs;\n"
 				"uniform mat4 model;\n"
 				"uniform mat4 view;\n"
 				"uniform mat4 proj;\n"
+				"uniform float day;\n"
 
 				"void main( ) {\n"
-				"	vs2fs.color  = color;\n"
-				"	gl_Position = proj * view * model * vec4( vertex, 1 );\n"
+				"	vs2fs.angle = vertex.a;\n"
+				"	gl_Position = proj * view * model * vec4( vertex.xyz, 1 );\n"
 				"}\n",
 
 				// fragment shader
 				"#version 330 core\n"
 
 				//	light in every space that makes sense to show their behavior
-				"uniform mat4 model;\n"
-				"uniform mat4 view;\n"
-				"uniform mat4 proj;\n"
 				"in VS2FS {\n"
-				"	vec3 color;\n"
+				"	float angle;\n"
 				"} vs2fs;\n"
 				"out vec4 fColor;\n"
 				"void main( ) {\n"
-				"	fColor = vec4( vs2fs.color, 1 );\n"
+				"	fColor.a   = 1;\n"
+				"	fColor.rgb = vec4( .5 + .5 * sin( day * vs2fs.angle ) );\n"
 				"}\n",
 
 				GLR::ShaderCode::FROM_CODE ).
-				addUniform( "model",  GLR::Shader::MAT4, GLR::Shader::SCALAR, & model ).
-				addUniform( "view",   GLR::Shader::MAT4, GLR::Shader::SCALAR, & view ).
-				addUniform( "proj",   GLR::Shader::MAT4, GLR::Shader::SCALAR, & projection );
+				addUniform( "model", GLR::Shader::MAT4,  GLR::Shader::SCALAR, & model ).
+				addUniform( "view",  GLR::Shader::MAT4,  GLR::Shader::SCALAR, & view ).
+				addUniform( "proj",  GLR::Shader::MAT4,  GLR::Shader::SCALAR, & projection ).
+				addUniform( "day",   GLR::Shader::FLOAT, GLR::Shader::SCALAR, & day );
 		}
 		// S-SPHERE-WITH-TEXTURE-EARTH
 		{
@@ -393,11 +390,11 @@ SolarsSystem::init( ) {
 
 	// containers
 	{
-		// C-SPHERE-WITH-TEXTURE-ORBIT-LINE-MERCURY
+		// C-SPHERE-WITH-TEXTURE-ORBIT-LINE
 		{
-			glr.container( "C-SPHERE-WITH-TEXTURE-ORBIT-LINE-MERCURY" ).
-				setVertexArray( "V-SPHERE-WITH-TEXTURE-ORBIT-LINE-MERCURY" ).
-				setShader( "S-SPHERE-WITH-TEXTURE-ORBIT-LINE-MERCURY" ).
+			glr.container( "C-SPHERE-WITH-TEXTURE-ORBIT-LINE" ).
+				setVertexArray( "V-SPHERE-WITH-TEXTURE-ORBIT-LINE" ).
+				setShader( "S-SPHERE-WITH-TEXTURE-ORBIT-LINE" ).
 				build( );
 		}
 		// C-SPHERE-WITH-TEXTURE-SPHERE-EARTH
@@ -470,7 +467,8 @@ SolarsSystem::paint( ) {
 	tmp = model;
 
 	model = glm::scale( model, glm::vec3( 8.f ) );
-	glr.run( { "C-SPHERE-WITH-TEXTURE-ORBIT-LINE-MERCURY" } );
+	day = 85.f;
+	glr.run( { "C-SPHERE-WITH-TEXTURE-ORBIT-LINE" } );
 
 	model = tmp;
 	model = glm::scale( model, glm::vec3( 3.f ) );
@@ -480,7 +478,7 @@ SolarsSystem::paint( ) {
 	model = tmp;
 	model = glm::rotate( model, 365.25f / 85.f * year, glm::vec3( 0.f, 1.f, 0.f ) );
 	model = glm::translate( model, glm::vec3( 8., 0., 0. ) );
-	glr.run( { "C-SPHERE-WITH-TEXTURE-SPHERE-MERCURY" } );
+	glr.run( { "C-SPHERE-WITH-TEXTURE-SPHERE" } );
 
 	model = tmp;
 	model = glm::rotate( model, year, glm::vec3( 0.f, 1.f, 0.f ) );

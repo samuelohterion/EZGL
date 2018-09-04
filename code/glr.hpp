@@ -1312,29 +1312,35 @@ GLR {
 		public
 		Named {
 
-			public :
+			private:
 
 				GLuint
-				id;
+				__id;
 
 			public :
 
 				FrameBuffer( CStr & p_name ) :
 				Named( p_name ),
-				id( 0 ) {
+				__id( 0 ) {
 
-					glGenFramebuffers( 1, &id );
+					glGenFramebuffers( 1, & __id );
 				}
 
 				~FrameBuffer( ) {
 
-					glDeleteFramebuffers( 1, &id);
+					glDeleteFramebuffers( 1, & __id);
 				}
 
 				void
 				bind( ) {
 
-					glBindFramebuffer( GL_FRAMEBUFFER, id );
+					glBindFramebuffer( GL_FRAMEBUFFER, __id );
+				}
+
+				GLuint
+				id( ) const {
+
+					return __id;
 				}
 
 				void
@@ -1572,7 +1578,7 @@ GLR {
 					if( 0 < frameBuffer.length( ) ) {
 
 						GLenum const
-						drawBuffers[ 8 ] = {
+						drawBuffers[ 0x20 ] = {
 
 							GL_COLOR_ATTACHMENT0,
 							GL_COLOR_ATTACHMENT1,
@@ -1581,7 +1587,31 @@ GLR {
 							GL_COLOR_ATTACHMENT4,
 							GL_COLOR_ATTACHMENT5,
 							GL_COLOR_ATTACHMENT6,
-							GL_COLOR_ATTACHMENT7
+							GL_COLOR_ATTACHMENT7,
+							GL_COLOR_ATTACHMENT8,
+							GL_COLOR_ATTACHMENT9,
+							GL_COLOR_ATTACHMENT10,
+							GL_COLOR_ATTACHMENT11,
+							GL_COLOR_ATTACHMENT12,
+							GL_COLOR_ATTACHMENT13,
+							GL_COLOR_ATTACHMENT14,
+							GL_COLOR_ATTACHMENT15,
+							GL_COLOR_ATTACHMENT16,
+							GL_COLOR_ATTACHMENT17,
+							GL_COLOR_ATTACHMENT18,
+							GL_COLOR_ATTACHMENT19,
+							GL_COLOR_ATTACHMENT20,
+							GL_COLOR_ATTACHMENT21,
+							GL_COLOR_ATTACHMENT22,
+							GL_COLOR_ATTACHMENT23,
+							GL_COLOR_ATTACHMENT24,
+							GL_COLOR_ATTACHMENT25,
+							GL_COLOR_ATTACHMENT26,
+							GL_COLOR_ATTACHMENT27,
+							GL_COLOR_ATTACHMENT28,
+							GL_COLOR_ATTACHMENT29,
+							GL_COLOR_ATTACHMENT30,
+							GL_COLOR_ATTACHMENT31
 						};
 
 						FrameBuffer
@@ -1596,10 +1626,27 @@ GLR {
 
 							tx->bind( );
 
-							glFramebufferTexture2D( GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, tx->id, 0 );
+							if( tx->format == GL_DEPTH_COMPONENT ) {
+
+								glFramebufferTexture2D( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, tx->id, 0 );
+								//glFramebufferTexture( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, tx->id, 0 );
+							}
+							else {
+
+								glFramebufferTexture2D( GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, tx->id, 0 );
+							}
 						}
 
-						glDrawBuffers( outTextures.size( ), drawBuffers );
+						if( 0 < outTextures.size( ) ) {
+
+
+
+							glDrawBuffers( outTextures.size( ), drawBuffers );
+						}
+						else {
+
+							glDrawBuffer( GL_NONE );
+						}
 					}
 
 					VertexArray
@@ -1786,7 +1833,7 @@ GLR {
 		}
 
 		FrameBuffer
-		&frameBuffer( CStr p_name ) {
+		& frameBuffer( CStr p_name ) {
 
 			if( fb.find( p_name ) == fb.cend( ) ) {
 
@@ -1795,7 +1842,7 @@ GLR {
 
 			currentFrameBuffer = fb[ p_name ];
 
-			return *currentFrameBuffer;
+			return * currentFrameBuffer;
 		}
 
 		Texture

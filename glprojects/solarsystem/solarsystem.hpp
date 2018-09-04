@@ -21,6 +21,9 @@ public GLProject {
 		lightP,
 		lightC;
 
+		GLfloat
+		day;
+
 	public:
 
 		void

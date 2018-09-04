@@ -23,6 +23,7 @@ SOURCES += \
 	glprojects/quad3d/quad3d.cpp \
 	glprojects/coordinateSystem/coordinatesystem.cpp \
 	glprojects/cubewithtexture/cubewithtexture.cpp \
+	glprojects/zbuffertexture/zbuffertexture.cpp \
 #	glprojects/cube/cube.cpp #\
 #	glprojects/funIn2D/funIn2D.cpp \
 #	glprojects/lighttest/lighttest.cpp \
@@ -47,6 +48,8 @@ HEADERS += \
 	glprojects/quad3d/quad3d.hpp \
 	glprojects/coordinateSystem/coordinatesystem.hpp \
 	glprojects/cubewithtexture/cubewithtexture.hpp \
+	glprojects/zbuffertexture/zbuffertexture.hpp \
+#	glprojects/multisampling/multisampling.hpp \
 #	glprojects/cube/cube.hpp \
 #	glprojects/funIn2D/funIn2D.hpp \
 #	glprojects/lighttest/lighttest.hpp \
@@ -56,7 +59,6 @@ HEADERS += \
 #	glprojects/ballandlight/ballandlight.hpp \
 #	glprojects/ballandlight/interaction.h \
 #	glprojects/texturetest/texturetest.hpp \
-#	glprojects/multisampling/multisampling.hpp \
 #	glprojects/sometext/sometext.hpp \
 #	glprojects/yetanothersphere/yetanothersphere.hpp \
 #	glprojects/spherewithtexture/spherewithtexture.hpp \
