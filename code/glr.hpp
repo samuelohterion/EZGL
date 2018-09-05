@@ -220,6 +220,76 @@ GLR {
 				}
 		};
 
+
+		class
+		RenderBuffer :
+		public
+		Named {
+
+			private:
+
+				GLuint
+				__id;
+
+				GLenum
+				__storageType;
+
+			public :
+
+				GLsizei
+				width,
+				height;
+
+			public :
+
+				RenderBuffer( CStr & p_name, GLenum const & p_storageType ) :
+				Named( p_name ),
+				__id( 0 ),
+				__storageType( p_storageType ) {
+
+					glGenRenderbuffers( 1, & __id );
+				}
+
+				~RenderBuffer( ) {
+
+					glDeleteRenderbuffers( 1, & __id);
+				}
+
+				void
+				bind( ) {
+
+					glBindRenderbuffer( GL_RENDERBUFFER, __id );
+				}
+
+				GLuint
+				id( ) const {
+
+					return __id;
+				}
+
+				void
+				release( ) {
+
+					glBindFramebuffer( GL_RENDERBUFFER, 0 );
+				}
+
+				void
+				resize( GLsizei p_width, GLsizei p_height ) {
+
+					width = p_width;
+					height = p_height;
+
+					glBindRenderbuffer( GL_RENDERBUFFER, __id );
+
+					glRenderbufferStorage( GL_RENDERBUFFER, __storageType, p_width, p_height );
+
+					//glTexStorage2D( target, 0, GL_RG32F, width, height );
+					//glTexImage2D( target, level, internal_format, width, height, 0, format, type, nullptr );
+
+					glBindRenderbuffer( GL_RENDERBUFFER, 0 );
+				}
+		};
+
 		class
 		IndexArray :
 		public Named {
@@ -1386,7 +1456,8 @@ GLR {
 
 				std::vector< Str >
 				inTextures,
-				outTextures;
+				outTextures,
+				renderBuffers;
 
 				Str
 				shader;
@@ -1438,6 +1509,14 @@ GLR {
 				& addOutTexture( CStr & p_textureName ) {
 
 					outTextures.push_back( p_textureName );
+
+					return *this;
+				}
+
+				Container
+				& addRenderBuffer( CStr & p_colorRenderBufferName ) {
+
+					renderBuffers.push_back( p_colorRenderBufferName );
 
 					return *this;
 				}
@@ -1626,20 +1705,17 @@ GLR {
 
 							tx->bind( );
 
-							if( tx->format == GL_DEPTH_COMPONENT ) {
+							if( GL_COLOR_ATTACHMENT0 <= tx->format && tx->format  <= GL_COLOR_ATTACHMENT31 ) {
 
-								glFramebufferTexture2D( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, tx->id, 0 );
-								//glFramebufferTexture( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, tx->id, 0 );
+								glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, tx->id, 0 );
 							}
-							else {
+							else  {
 
-								glFramebufferTexture2D( GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, tx->id, 0 );
+								glFramebufferTexture2D( GL_FRAMEBUFFER, tx->format, GL_TEXTURE_2D, tx->id, 0 );
 							}
 						}
 
 						if( 0 < outTextures.size( ) ) {
-
-
 
 							glDrawBuffers( outTextures.size( ), drawBuffers );
 						}
