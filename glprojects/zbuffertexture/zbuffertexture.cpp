@@ -9,8 +9,6 @@ GLProject ( p_name, p_vcd ) {
 void
 ZBufferTexture::init( ) {
 
-	glClearColor( .0f, .0f, .0f, 1.f );
-
 	// frame buffers
 	{
 		// F-Z-BUFFER-TEXTURE
@@ -27,7 +25,15 @@ ZBufferTexture::init( ) {
 				"T-Z-BUFFER-TEXTURE-Z",
 				new GLR::Texture(
 				"txZ", GL_TEXTURE_2D, 0,
-				GL_DEPTH_COMPONENT24, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 32, 32 ) );
+				GL_DEPTH_COMPONENT32, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 32, 32 ) );
+		}
+		// T-Z-BUFFER-TEXTURE-COLOR
+		{
+			glr.texture(
+				"T-Z-BUFFER-TEXTURE-COLOR",
+				new GLR::Texture(
+				"txColor", GL_TEXTURE_2D, 0,
+				GL_RGBA, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_RGBA, GL_FLOAT, 32, 32 ) );
 		}
 	}
 
@@ -75,21 +81,22 @@ ZBufferTexture::init( ) {
 				"	vec2 coord;\n"
 				"} vs2fs;\n"
 				"void main( void ) {\n"
-					"vs2fs.coord = .5 + .5 * vertex.xy;\n"
+					"vs2fs.coord = .5 + .5 * vertex;\n"
 					"gl_Position = vec4( vertex, 0, 1. );"
 				"}\n",
 
 				//Fragment Shader
 				"#version 330 core\n"
 				"uniform sampler2D txZ;"
+				"uniform sampler2D txColor;"
 				"in VS2FS {\n"
 				"	vec2 coord;\n"
 				"} vs2fs;\n"
 				"out vec4 fColor;\n"
 				"void main( void ) {\n"
-				"	float z = texture( txZ, vs2fs.coord ).r;\n"
-				"	z = ( z == 0 ) ? 1 : 0;\n"
-					"fColor = vec4( z, z, z, 1. );\n"
+				"	float z = texture( txZ, vs2fs.coord ).x;\n"
+				"	vec4  c = texture( txColor, vs2fs.coord );\n"
+					"fColor = vec4( c.rgb, 1 );\n"
 				"}\n",
 				GLR::ShaderCode::FROM_CODE );
 		}
@@ -135,9 +142,11 @@ ZBufferTexture::init( ) {
 				"uniform mat4 mvp;\n"
 				"out VS2FS {\n"
 				"	vec4 vertex;\n"
+				"	vec4 color;\n"
 				"} vs2fs;\n"
 				"void main( void ) {\n"
 					"vs2fs.vertex = mvp * vec4( vertex, 1 );\n"
+					"vs2fs.color  = vec4( color, 1 );\n"
 					"gl_Position = vs2fs.vertex;"
 				"}\n",
 
@@ -145,10 +154,11 @@ ZBufferTexture::init( ) {
 				"#version 330 core\n"
 				"in VS2FS {\n"
 				"	vec4 vertex;\n"
+				"	vec4 color;\n"
 				"} vs2fs;\n"
 				"out vec4 fColor;\n"
 				"void main( void ) {\n"
-					"fColor = vs2fs.vertex.zzzz;\n"
+					"fColor = vs2fs.color;\n"
 				"}\n",
 				GLR::ShaderCode::FROM_CODE ).
 				addUniform( "mvp", GLR::Shader::MAT4, GLR::Shader::SCALAR, & mvp );
@@ -168,6 +178,7 @@ ZBufferTexture::init( ) {
 		{
 			glr.container( "C-Z-BUFFER-TEXTURE-QUAD-3D-Z" ).
 				setFrameBuffer( "F-Z-BUFFER-TEXTURE" ).
+				addOutTexture( "T-Z-BUFFER-TEXTURE-COLOR" ).
 				addOutTexture( "T-Z-BUFFER-TEXTURE-Z" ).
 				setVertexArray( "V-Z-BUFFER-TEXTURE-QUAD-3D" ).
 				setShader( "S-Z-BUFFER-TEXTURE-QUAD-3D-Z" ).
@@ -176,6 +187,7 @@ ZBufferTexture::init( ) {
 		// C-Z-BUFFER-TEXTURE-QUAD-2D
 		{
 			glr.container( "C-Z-BUFFER-TEXTURE-QUAD-2D" ).
+				addInTexture( "T-Z-BUFFER-TEXTURE-COLOR" ).
 				addInTexture( "T-Z-BUFFER-TEXTURE-Z" ).
 				setVertexArray( "V-Z-BUFFER-TEXTURE-QUAD-2D" ).
 				setShader( "S-Z-BUFFER-TEXTURE-QUAD-2D" ).
@@ -198,13 +210,16 @@ ZBufferTexture::paint( ) {
 
 	mvp = p * v * m;
 
+	glClearColor( .8f, .2f, .3f, 1.f );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
 	glEnable( GL_DEPTH_TEST );
 	glEnable( GL_CULL_FACE );
 	glr.run( { "C-Z-BUFFER-TEXTURE-QUAD-3D-Z" } );
+
+	glClearColor( .1f, .2f, .8f, 1.f );
 	glDisable( GL_DEPTH_TEST );
 	glDisable( GL_CULL_FACE );
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	glr.run( { "C-Z-BUFFER-TEXTURE-QUAD-2D" } );
 }
 

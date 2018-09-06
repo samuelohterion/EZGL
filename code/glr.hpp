@@ -130,6 +130,13 @@ GLR {
 					glTexParameteri( target, GL_TEXTURE_WRAP_S, wrap_s );
 					glTexParameteri( target, GL_TEXTURE_WRAP_T, wrap_t );
 
+					if( format == GL_DEPTH_COMPONENT ) {
+
+						glTexParameteri( GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY );
+						glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE );
+						glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL );
+					}
+
 					glTexImage2D( target, level, internal_format, width, height, 0, format, type, nullptr );
 
 					glBindTexture( GL_TEXTURE_2D, 0 );
@@ -219,7 +226,6 @@ GLR {
 					glBindTexture( GL_TEXTURE_2D, 0 );
 				}
 		};
-
 
 		class
 		RenderBuffer :
@@ -1698,6 +1704,9 @@ GLR {
 
 						fb->bind( );
 
+						GLuint
+						colorAttachments = 0;
+
 						for( GLuint i = 0; i < outTextures.size( ); ++ i ) {
 
 							Texture
@@ -1705,19 +1714,27 @@ GLR {
 
 							tx->bind( );
 
-							if( GL_COLOR_ATTACHMENT0 <= tx->format && tx->format  <= GL_COLOR_ATTACHMENT31 ) {
+							if( tx->format == GL_DEPTH_COMPONENT ) {
 
-								glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, tx->id, 0 );
+								glFramebufferTexture2D( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, tx->id, 0 );
 							}
-							else  {
+							else if ( tx->format == GL_STENCIL_INDEX ) {
 
-								glFramebufferTexture2D( GL_FRAMEBUFFER, tx->format, GL_TEXTURE_2D, tx->id, 0 );
+								glFramebufferTexture2D( GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, tx->id, 0 );
+							}
+							else if ( tx->format == GL_DEPTH_STENCIL ) {
+
+								glFramebufferTexture2D( GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, tx->id, 0 );
+							}
+							else {
+
+								glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttachments ++, GL_TEXTURE_2D, tx->id, 0 );
 							}
 						}
 
-						if( 0 < outTextures.size( ) ) {
+						if( 0 < colorAttachments ) {
 
-							glDrawBuffers( outTextures.size( ), drawBuffers );
+							glDrawBuffers( colorAttachments, drawBuffers );
 						}
 						else {
 
