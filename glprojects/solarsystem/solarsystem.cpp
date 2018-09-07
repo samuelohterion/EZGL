@@ -65,12 +65,12 @@ SolarsSystem::init( ) {
 					setUsage( GL_STATIC_DRAW ).
 					attrib( "vertex", 0, 4 ); //z is used for storing angle
 
-			day = .002f * 3.14159f;
+			days = .002f * 3.14159f;
 
 			for( GLuint alpha = 0; alpha <= 1000; ++ alpha ) {
 
 				GLfloat
-				a = day * alpha,
+				a = days * alpha,
 				z = 1.f * cosf( a ),
 				x = 1.f * sinf( a );
 
@@ -145,14 +145,13 @@ SolarsSystem::init( ) {
 
 				// vertex shader
 				"#version 330 core\n"
+				"uniform mat4 model;\n"
+				"uniform mat4 view;\n"
+				"uniform mat4 proj;\n"
 				"in vec4 vertex;\n"
 				"out VS2FS {\n"
 				"	float angle;\n"
 				"} vs2fs;\n"
-				"uniform mat4 model;\n"
-				"uniform mat4 view;\n"
-				"uniform mat4 proj;\n"
-				"uniform float day;\n"
 
 				"void main( ) {\n"
 				"	vs2fs.angle = vertex.a;\n"
@@ -163,20 +162,21 @@ SolarsSystem::init( ) {
 				"#version 330 core\n"
 
 				//	light in every space that makes sense to show their behavior
+				"uniform float days;\n"
 				"in VS2FS {\n"
 				"	float angle;\n"
 				"} vs2fs;\n"
 				"out vec4 fColor;\n"
 				"void main( ) {\n"
 				"	fColor.a   = 1;\n"
-				"	fColor.rgb = vec4( .5 + .5 * sin( day * vs2fs.angle ) );\n"
+				"	fColor.rgb = vec3( .5 + .5 * sin( days * vs2fs.angle ) );\n"
 				"}\n",
 
 				GLR::ShaderCode::FROM_CODE ).
 				addUniform( "model", GLR::Shader::MAT4,  GLR::Shader::SCALAR, & model ).
 				addUniform( "view",  GLR::Shader::MAT4,  GLR::Shader::SCALAR, & view ).
 				addUniform( "proj",  GLR::Shader::MAT4,  GLR::Shader::SCALAR, & projection ).
-				addUniform( "day",   GLR::Shader::FLOAT, GLR::Shader::SCALAR, & day );
+				addUniform( "days",   GLR::Shader::FLOAT, GLR::Shader::SCALAR, & days );
 		}
 		// S-SPHERE-WITH-TEXTURE-EARTH
 		{
@@ -349,11 +349,11 @@ SolarsSystem::init( ) {
 
 	// textures
 	{
-		// https://www.solarsystemscope.com/textures/
-		// T-SPHERE-WITH-TEXTURE-SPHERE-EARTH-LANDSCAPE
+		// from https://www.solarsystemscope.com/textures/
+		// T-SPHERE-WITH-TEXTURE-SPHERE-EARTH-DAYMAP
 		{
 			glr.texture(
-				"T-SPHERE-WITH-TEXTURE-SPHERE-EARTH-LANDSCAPE",
+				"T-SPHERE-WITH-TEXTURE-SPHERE-EARTH-DAYMAP",
 				new GLR::Texture( "txSphere", "../EZGL/pix/2k_earth_daymap.jpg" ) );
 		}
 		// T-SPHERE-WITH-TEXTURE-SPHERE-EARTH-CLOUDS
@@ -403,7 +403,7 @@ SolarsSystem::init( ) {
 				setVertexArray( "V-SPHERE-WITH-TEXTURE-SPHERE" ).
 				setIndexArray( "I-SPHERE-WITH-TEXTURE-SPHERE" ).
 				setShader( "S-SPHERE-WITH-TEXTURE-EARTH" ).
-				addInTexture( "T-SPHERE-WITH-TEXTURE-SPHERE-EARTH-LANDSCAPE" ).
+				addInTexture( "T-SPHERE-WITH-TEXTURE-SPHERE-EARTH-DAYMAP" ).
 				addInTexture( "T-SPHERE-WITH-TEXTURE-SPHERE-EARTH-CLOUDS" ).
 				addInTexture( "T-SPHERE-WITH-TEXTURE-SPHERE-EARTH-NIGHTMAP" ).
 				build( );
@@ -452,44 +452,68 @@ SolarsSystem::paint( ) {
 
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-	view = glm::lookAt( glm::vec3( 0., 0., 15. * vcd->mousey / vcd->height ), glm::vec3( 0., 0., 0. ), glm::vec3( 0., 1., 0. ) );
+	view = glm::lookAt( glm::vec3( 0., 0., +5. + 30. * vcd->mousey / vcd->height ), glm::vec3( 0., 0., 0. ), glm::vec3( 0., 1., 0. ) );
 
 	GLfloat
-	year = .002f * ( vcd->time + 3141.5f * vcd->mousex / vcd->width ),
-	day = 365.f * year;
+	day = 2.f * ( vcd->time + 3141.5f * vcd->mousex / vcd->width ),
+	d   = 0.f;
 
 	lightP = glm::vec4( 0.f, 0.f, 0.f, 1.f );
 
-	model  = glm::mat4( 1. );
-	model = glm::rotate( model, 30.f / 180.f * 3.1415f, glm::vec3( 1.f, 0.f, 0.f ) );
+	model = glm::mat4( 1. );
+	model = glm::rotate( model, 15.f * vcd->mousey / vcd->height / 180.f * 3.1415f, glm::vec3( 1.f, 0.f, 0.0f ) );
+	// this is now the center
 
+	// store center
 	M4
 	tmp = model;
 
+	// paint a sun
+	days = day;
+	model = glm::scale( model, glm::vec3( 4.f ) );
+	glr.run( { "C-SPHERE-WITH-TEXTURE-SPHERE-SUN" } );
+
+	// restore center
+	model = tmp;
+	// mercury needs 85 days for one round
+	days = 85.f;
 	model = glm::scale( model, glm::vec3( 8.f ) );
-	day = 85.f;
+	glr.run( { "C-SPHERE-WITH-TEXTURE-ORBIT-LINE" } );
+
+	// restore center
+	model = tmp;
+	d     = 1.f / 85.f;
+	model = glm::rotate( model, d * day, glm::vec3( 0.f, 1.f, 0.f ) );
+	model = glm::translate( model, glm::vec3( 8., 0., 0. ) );
+	model = glm::scale( model, glm::vec3( 1.f / 3.f ) );
+	glr.run( { "C-SPHERE-WITH-TEXTURE-SPHERE-MERCURY" } );
+
+	model = tmp;
+	days  = 365.25f;
+	d     = 1.f / 365.25f;
+	model = glm::scale( model, glm::vec3( 15.f ) );
 	glr.run( { "C-SPHERE-WITH-TEXTURE-ORBIT-LINE" } );
 
 	model = tmp;
-	model = glm::scale( model, glm::vec3( 3.f ) );
-
-	glr.run( { "C-SPHERE-WITH-TEXTURE-SPHERE-SUN" } );
-
-	model = tmp;
-	model = glm::rotate( model, 365.25f / 85.f * year, glm::vec3( 0.f, 1.f, 0.f ) );
-	model = glm::translate( model, glm::vec3( 8., 0., 0. ) );
-	glr.run( { "C-SPHERE-WITH-TEXTURE-SPHERE" } );
-
-	model = tmp;
-	model = glm::rotate( model, year, glm::vec3( 0.f, 1.f, 0.f ) );
+	d     = 1.f / 365.25f;
+	model = glm::rotate( model, d * day, glm::vec3( 0.f, 1.f, 0.f ) );
 	model = glm::translate( model, glm::vec3( 15., 0., 0. ) );
+
 	tmp   = model;
+	d     = 1.f;
 	model = glm::rotate( model, 23.f / 180.f * 3.1415f, glm::vec3( 1.f, 0.f, 0.f ) );
-	model = glm::rotate( model, day, glm::vec3( 0.f, 1.f, 0.f ) );
+	model = glm::rotate( model, d * day, glm::vec3( 0.f, 1.f, 0.f ) );
 	glr.run( { "C-SPHERE-WITH-TEXTURE-SPHERE-EARTH" } );
 
 	model = tmp;
-	model = glm::rotate( model, day / 28.5f, glm::vec3( 0, 1, .0 ) );
+	days = 28.5f;
+	model = glm::rotate( model, d, glm::vec3( 0, 1, 0 ) );
+	model = glm::scale( model, glm::vec3( 4.f ) );
+	glr.run( { "C-SPHERE-WITH-TEXTURE-ORBIT-LINE" } );
+
+	model = tmp;
+	d    = 1.f / 28.5f;
+	model = glm::rotate( model, d * day, glm::vec3( 0, 1, .1 ) );
 	model = glm::translate( model, glm::vec3( 4., 0, 0 ) );
 	model = glm::scale( model, glm::vec3( 1.f / 3.f ) );
 	glr.run( { "C-SPHERE-WITH-TEXTURE-SPHERE-MOON" } );
@@ -503,5 +527,5 @@ SolarsSystem::resize( int p_width, int p_height ) {
 	ratio = ( 1.f * p_width / p_height );
 
 	// create a projection matrix
-	projection = glm::perspective( 45.0f, ratio, 1.0f, 300.f );
+	projection = glm::perspective( 45.0f, ratio, 1.0f, 100.f );
 }

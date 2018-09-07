@@ -165,8 +165,8 @@ GLWidget::paintGL( ) {
 	if( projects.contains( currentProject ) ) {
 
 		projects[ currentProject ]->paint( );
-		}
 	}
+}
 
 void GLWidget::addGLProject( GLProject * p_glProject ) {
 

@@ -1686,8 +1686,6 @@ GLR {
 						glViewport( 0, 0, viewPortWidth, viewPortHeight );
 					}
 
-					FrameBuffer
-					* fb = nullptr;
 
 					if( 0 < frameBuffer.length( ) ) {
 
@@ -1728,7 +1726,8 @@ GLR {
 							GL_COLOR_ATTACHMENT31
 						};
 
-						fb = __glr->fb[ frameBuffer ];
+						FrameBuffer
+						* fb = __glr->fb[ frameBuffer ];
 
 						fb->bind( );
 
@@ -1816,7 +1815,7 @@ GLR {
 						tx->bind( );
 					}
 
-					//addqUniformInt( tx->name( ).c_str( ), i );
+					//addUniformInt( tx->name( ).c_str( ), i );
 
 					glClear( clearBits( ) );
 

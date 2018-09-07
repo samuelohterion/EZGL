@@ -22,7 +22,7 @@ public GLProject {
 		lightC;
 
 		GLfloat
-		day;
+		days;
 
 	public:
 
