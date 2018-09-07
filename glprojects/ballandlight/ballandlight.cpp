@@ -146,25 +146,30 @@ BallAndLight::init( ) {
 			hOr ( b, b, -b),
 			hOl (-b, b, -b);
 
-	glm::vec2
-			coOl(-1., 1.),
-			coOr( 1., 1.),
-			coUl(-1, -1.),
-			coUr( 1.,-1.);
+//front:
+	
+	glm::vec3 normal (0,0,1);
+	
+	vc << vUl << normal << glm::vec2(.5, 0.) << vUr << normal << glm::vec2(.75, 0) << vOr << normal << glm::vec2(.75, .25)
+	   << vUl << normal << glm::vec2(.5, 0.) << vOr << normal << glm:.vec2(.75, .25) << vOl << normal << glm:.vec2(.5, .25);
 
-	vc << vUl << vUl << vUr << vUl << vOr << vUr << vOl << vUr
-	   << hOl << vOl << hUl << vOl << hUr << vOr << vUr << vOr;
+	vc << GLRenderer::VertexArray::Object( 0, 6, GL_TRIANGLES);
+//left 
+	normal = glm:vec3(-1,0,0);
+	
+	vc << vUl << normal << glm::vec2(.25, .25.) << vOl << normal << glm::vec2(.5, .25) << hOl << normal << glm::vec2(.5, .5)
+	   << vUl << normal << glm::vec2(.25, .25.) << hOl << normal << glm::vec2(.5, .5) << hUl << normal << glm::vec2(.25, .5)
 
 	vc << GLR::VertexArray::Object( 0, 8, GL_TRIANGLE_FAN);
 
-	vc << hOr << hUl << hUr << hUl << hUl << hUr << hOl << hUr
-	   << vOl << hOl << vOr << hOl << vUr << hOr << hUr << hOr;
+	vc << GLRenderer::VertexArray::Object( 12, 16, GL_TRIANGLES);
 
 	vc << GLR::VertexArray::Object( 8, 8, GL_TRIANGLE_FAN);
 
-
 	glr.frameBuffer( "FRAMEBUFFER-TEXTURE" );
 
+	glr.texture(	"TEXTURE-CUBE",
+			new GLRenderer::Texture( "txCube", "../EZGL/glprojects/ballandlight/pix/wuerfelnetz.jpg" ) );
 
 	glr.vertices( "VERTICES-TEXTURE" ).
 		setUsage( GL_STATIC_DRAW ).
@@ -220,97 +225,44 @@ BallAndLight::init( ) {
 		//Vertex Shader
 		"#version 330 core\n"
 		"layout( location = 0 ) in vec3 vertex;\n"
-		"layout( location = 1 ) in vec3 coord;\n"
+		"layout( location = 1 ) in vec3 normal;\n"
+		"layout( location = 2 ) in vec2 coord;\n"
 
 		"uniform mat4 mv; \n"
 		"uniform mat4 v; \n"
 		"uniform mat4 p;\n"
 		"uniform vec3 light;\n"
-		"uniform vec3 pos;\n"
-		"out vec4 vVert;\n"
-		"out vec4 vPos;\n"
-		"out vec4 vLight;\n"
-		"out VS2GS {\n"
-			 "	vec3 vertex, frame;\n"
-			 "  vec4 pos, light;\n"
-			 "	int vertexID;\n"
-			 "  vec3 coord;"
-			 "} vs2gs;\n"
+	
+		"out VS2FS {\n"
+		 "	vec3 vertex, normal;\n"
+		 " 	vec4 light;\n"
+		 "	vec2 coord;"
+		 "	} vs2gs;\n"
 		" \n"
 		"void main( void ) {\n"
-		"	 vs2gs.vertexID = gl_VertexID;\n"
-		"	 vs2gs.frame    = vertex;\n"
-		"    vs2gs.light    = v* vec4( light.xyz, 1 );\n"
-		"    vs2gs.pos      = v* vec4(pos.xyz, 1);\n"
-		"    vs2gs.vertex   = (mv * vec4(vertex, 1 )).xyz; \n"
-		"    vs2gs.coord    = coord; \n"
-		"    gl_Position    = p*mv*vec4(vertex, 1);\n"
+		"	vs2gs.normal   = normalize( transpose(inverse(mv))*vec4(normal,0)).xzy;\n"
+		"    	vs2fs.light    = v* vec4( light.xyz, 1 );\n"
+		"   	vs2fs.vertex   = (mv * vec4(vertex, 1 )).xyz; \n"
+		"   	vs2fs.coord    = coord; \n"
+		"    	gl_Position    = p*mv*vec4(vertex, 1);\n"
 		"}\n",
-
-		// geometry shader
-		"#version 330 core\n"
-		"layout ( triangles ) in;\n"
-		"layout ( triangle_strip, max_vertices = 3 ) out;\n"
-		"in VS2GS {\n"
-		"	vec3 vertex, frame;\n"
-		"   vec4 pos, light;\n"
-		"	int vertexID;\n"
-		"   vec3 coord;\n"
-		"} vs2gs[ ];\n"
-		"out GS2FS {\n"
-		"	vec3 vertex, frame, normal;\n"
-		"   vec4 pos, light;\n"
-		 "  vec2 coord;\n"
-		"} gs2fs;\n"
-		"void main( ) {\n"
-		"	int id = vs2gs[ 0 ].vertexID;\n"
-		"	vec3 n = normalize( cross( vs2gs[ 1 ].vertex - vs2gs[ 0 ].vertex, vs2gs[ 2 ].vertex - vs2gs[ 0 ].vertex ) );\n"
-		"	gl_Position  = gl_in[ 0 ].gl_Position;\n"
-		"	gs2fs.frame  = vs2gs[ 0 ].frame;\n"
-		"	gs2fs.vertex = vs2gs[ 0 ].vertex;\n"
-		"	gs2fs.normal = n;\n"
-		"	gs2fs.light  = vs2gs[ 2 ].light;\n"
-		"	gs2fs.pos    = vs2gs[ 2 ].pos;\n"
-		"   gs2fs.coord  = vec2(0.,0.);\n"
-		"	EmitVertex( );\n"
-
-		"	gl_Position = gl_in[ 1 ].gl_Position;\n"
-		"	gs2fs.frame = vs2gs[ 1 ].frame;\n"
-		"	gs2fs.vertex = vs2gs[ 1 ].vertex;\n"
-		"	gs2fs.normal = n;\n"
-		"	gs2fs.light  = vs2gs[ 2 ].light;\n"
-		"	gs2fs.pos    = vs2gs[ 2 ].pos;\n"
-		"   gs2fs.coord  =! all( equal( vs2gs[ 1 ].coord, vs2gs[ 2 ].coord ) ) ? vec2( 0, 1 ) :  vec2( 1, 1 );\n"
-		"	EmitVertex( );\n"
-
-		"	gl_Position = gl_in[ 2 ].gl_Position;\n"
-		"	gs2fs.frame = vs2gs[ 2 ].frame;\n"
-		"	gs2fs.vertex = vs2gs[ 2 ].vertex;\n"
-		"	gs2fs.normal = n;\n"
-		"	gs2fs.light  = vs2gs[ 2 ].light;\n"
-		"	gs2fs.pos    = vs2gs[ 2 ].pos;\n"
-		"  	gs2fs.coord  =  ! all( equal( vs2gs[ 1 ].coord, vs2gs[ 2 ].coord ) ) ? vec2( 1, 1 ) :  vec2( 1, 0 );\n"
-		"	EmitVertex( );\n"
-
-		"	EndPrimitive( );\n"
-		"}\n",
+	
 		//Fragment Shader
 		"#version 330 core\n"
 
-		"in GS2FS {\n"
-		"	vec3 vertex, frame, normal;\n"
-		"   vec4 pos, light;\n"
-		"   vec2 coord;\n"
+		"in VS2FS {\n"
+		" 	vec3 vertex,, normal;\n"
+		"  	vec4 light;\n"
+		"   	vec2 coord;\n"
 		"} gs2fs;\n"
-		"uniform sampler2D TX;\n"
+		"uniform sampler2D TxCube;\n"
 		"\n"
 		"out vec4 fColor;\n"
 		"\n"
 		"void main( void ) {\n"
 		"   \n"
 		"   vec3  d     = gs2fs.light.xyz - gs2fs.vertex.xyz; \n"
-		"   vec3 v      = gs2fs.frame;\n"
-		"   vec3 color  = texture( TX, gs2fs.coord ).xyz;  \n"
+		"   vec3 color  = texture( TxCube, gs2fs.coord ).xyz;  \n"
 		"   float a =10*dot(d, gs2fs.normal)/dot(d,d); \n"
 		"   fColor = vec4( clamp(a*color.x,0,1),clamp(a*color.y,0,1), clamp(a*color.z,0,1),  1 );\n"
 		"}\n",
@@ -542,13 +494,6 @@ BallAndLight::paint( ) {
 	pos = ballintr->Bounds(vcd->time);
 	pos2 = glm::vec3(-3 ,1, -6.6);
 
-
-	if( ! tex ) {
-
-		glr.run( { "PROGRAM-TEXTURE" } );
-
-		tex = true;
-	}
 	v = glm::translate(glm::mat4(1), glm::vec3(1.5,-.5,-1));
 
 	m = glm::translate( glm::mat4( 1. ), pos);
