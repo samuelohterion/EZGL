@@ -90,6 +90,9 @@ public QGLWidget {
 	public:
 
 		void
+		addGLProject( GLProject * p_glProject );
+
+		void
 		updateShaderUniforms( );
 
 		void
@@ -105,6 +108,9 @@ public QGLWidget {
 
 		void
 		slotStopTimer( );
+
+		void
+		slotSetGLProject( QString const & p_name );
 };
 
 #endif // WIDGET_HPP

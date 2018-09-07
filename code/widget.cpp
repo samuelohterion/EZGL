@@ -165,7 +165,12 @@ GLWidget::paintGL( ) {
 	if( projects.contains( currentProject ) ) {
 
 		projects[ currentProject ]->paint( );
+		}
 	}
+
+void GLWidget::addGLProject( GLProject * p_glProject ) {
+
+	projects[ p_glProject->name( ).c_str( ) ] = p_glProject;
 }
 
 void
@@ -193,5 +198,12 @@ GLWidget::slotTimerFun( ) {
 void
 GLWidget::slotStopTimer( ) {
 
-	timer.stop( );
+		timer.stop( );
+}
+
+void GLWidget::slotSetGLProject( QString const & p_name ) {
+
+	currentProject = p_name;
+
+	this->setWindowTitle( "EZGL - " + currentProject );
 }

@@ -1434,13 +1434,17 @@ GLR {
 			private :
 
 				GLR
-				* glr;
+				* __glr;
+
+				GLuint
+				__clearBits;
 
 			public :
 
 				Container( CStr &p_name, GLR * p_glr ) :
 				Named( p_name ),
-				glr( p_glr ),
+				__glr( p_glr ),
+				__clearBits( 0x00000000 ),
 				fixSize( false ) {
 
 				}
@@ -1478,6 +1482,28 @@ GLR {
 				fixSize;
 
 			public :
+
+				GLenum
+				clearBits( ) const {
+
+					return __clearBits;
+				}
+
+				Container
+				& addClearBits( GLenum const & p_clearBits ) {
+
+					__clearBits = p_clearBits;
+
+					return *this;
+				}
+
+				Container
+				& subClearBits( GLenum const & p_clearBits ) {
+
+					__clearBits |= ~p_clearBits;
+
+					return *this;
+				}
 
 				Container
 				& setFrameBuffer( CStr & p_frameBufferName ) {
@@ -1559,7 +1585,7 @@ GLR {
 
 						for( auto & ot : this->outTextures ) {
 
-							glr->tx[ ot ]->resize( viewPortWidth, viewPortHeight );
+							__glr->tx[ ot ]->resize( viewPortWidth, viewPortHeight );
 						}
 					}
 				}
@@ -1568,7 +1594,7 @@ GLR {
 				build( ) {
 
 					VertexArray
-					*vaLoc = glr->va[ vertexArray ];
+					*vaLoc = __glr->va[ vertexArray ];
 
 					if( vaLoc ) {
 
@@ -1576,7 +1602,7 @@ GLR {
 					}
 
 					IndexArray
-					*iaLoc = glr->ia[ indexArray ];
+					*iaLoc = __glr->ia[ indexArray ];
 
 					if( iaLoc ) {
 
@@ -1584,7 +1610,7 @@ GLR {
 					}
 
 					Shader
-					*shLoc = glr->sh[ shader ];
+					*shLoc = __glr->sh[ shader ];
 
 					if( shLoc ) {
 
@@ -1620,7 +1646,7 @@ GLR {
 						glActiveTexture( GL_TEXTURE0 + i );
 
 						Texture
-						*tx = glr->tx[ inTextures[ i ] ];
+						*tx = __glr->tx[ inTextures[ i ] ];
 
 						tx->bind( );
 
@@ -1629,7 +1655,7 @@ GLR {
 
 					for( std::size_t i = 0; i < inTextures.size( ); ++ i ) {
 
-						glr->tx[ inTextures[ i ] ]->release( );
+						__glr->tx[ inTextures[ i ] ]->release( );
 					}
 
 					if( shLoc ) {
@@ -1659,6 +1685,9 @@ GLR {
 
 						glViewport( 0, 0, viewPortWidth, viewPortHeight );
 					}
+
+					FrameBuffer
+					* fb = nullptr;
 
 					if( 0 < frameBuffer.length( ) ) {
 
@@ -1699,8 +1728,7 @@ GLR {
 							GL_COLOR_ATTACHMENT31
 						};
 
-						FrameBuffer
-						*fb = glr->fb[ frameBuffer ];
+						fb = __glr->fb[ frameBuffer ];
 
 						fb->bind( );
 
@@ -1710,7 +1738,7 @@ GLR {
 						for( GLuint i = 0; i < outTextures.size( ); ++ i ) {
 
 							Texture
-							*tx = glr->tx[ outTextures[ i ] ];
+							*tx = __glr->tx[ outTextures[ i ] ];
 
 							tx->bind( );
 
@@ -1743,7 +1771,7 @@ GLR {
 					}
 
 					VertexArray
-					*va = glr->va[ vertexArray ];
+					*va = __glr->va[ vertexArray ];
 
 					if( va ) {
 
@@ -1756,7 +1784,7 @@ GLR {
 					}
 
 					IndexArray
-					*ia = glr->ia[ indexArray ];
+					*ia = __glr->ia[ indexArray ];
 
 					if( ia ) {
 
@@ -1769,7 +1797,7 @@ GLR {
 					}
 
 					Shader
-					*sh = glr->sh[ shader ];
+					*sh = __glr->sh[ shader ];
 
 					if( sh ) {
 
@@ -1783,12 +1811,14 @@ GLR {
 						glActiveTexture( GL_TEXTURE0 + i );
 
 						Texture
-						*tx = glr->tx[ inTextures[ i ] ];
+						*tx = __glr->tx[ inTextures[ i ] ];
 
 						tx->bind( );
 					}
 
-					//addUniformInt( tx->name( ).c_str( ), i );
+					//addqUniformInt( tx->name( ).c_str( ), i );
+
+					glClear( clearBits( ) );
 
 					if( va ) {
 
@@ -1810,7 +1840,7 @@ GLR {
 
 					for( GLuint i = 0; i < inTextures.size( ); ++ i ) {
 
-						glr->tx[ inTextures[ i ] ]->release( );
+						__glr->tx[ inTextures[ i ] ]->release( );
 					}
 
 					if( sh ) sh->release( );
@@ -1821,11 +1851,11 @@ GLR {
 
 					if( 0 < frameBuffer.size( ) ) {
 
-						glr->fb[ frameBuffer ]->release( );
+						__glr->fb[ frameBuffer ]->release( );
 
 						for( GLuint i = 0; i < outTextures.size( ); ++ i ) {
 
-							glr->tx[ outTextures[ i ] ]->release( );
+							__glr->tx[ outTextures[ i ] ]->release( );
 						}
 					}
 				}

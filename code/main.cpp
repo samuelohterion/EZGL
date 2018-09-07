@@ -83,12 +83,12 @@ main( int argc, char *argv[ ] ) {
 //	SphereWithTexture
 //	* sphereWithTexture = new SphereWithTexture( );
 
-	w.projects[ "Triangle2D" ] = triangle2D;
-	w.projects[ "Quad3D" ] = quad3D;
-	w.projects[ "CoordinateSystem" ] = coordinateSystem;
-	w.projects[ "CubeWithTexture" ] = cubeWithTexture;
-	w.projects[ "SolarsSystem" ] = solarsSystem;
-	w.projects[ "ZBufferTexture" ] = zBufferTexture;
+	w.addGLProject( triangle2D );
+	w.addGLProject( quad3D );
+	w.addGLProject( coordinateSystem );
+	w.addGLProject( cubeWithTexture );
+	w.addGLProject( solarsSystem );
+	w.addGLProject( zBufferTexture );
 //	w.projects[ "Cube" ] = cube;
 //	w.projects[ "FunIn2D" ] = funIn2D;
 //	w.projects[ "LightedCheckerboardCave" ] = lightedCheckerboardCave;
@@ -102,7 +102,7 @@ main( int argc, char *argv[ ] ) {
 //	w.projects[ "YAS" ] = yetAnotherSphere;
 //	w.projects[ "SphereWithTexture" ] = sphereWithTexture;
 
-	w.currentProject = "ZBufferTexture";
+	w.slotSetGLProject( "ZBufferTexture" );
 
 	w.show( );
 
