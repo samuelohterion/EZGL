@@ -22,6 +22,8 @@ public GLProject {
 		lightC;
 
 		GLfloat
+		dtime,
+		tm,
 		days;
 
 	public:

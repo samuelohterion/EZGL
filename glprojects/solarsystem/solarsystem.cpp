@@ -13,6 +13,9 @@ SolarsSystem::init( ) {
 	xSize = 64,
 	ySize = 32;
 
+	tm = 0.f;
+	dtime = 0.f;
+
 	// frame buffer
 	{
 	}
@@ -169,7 +172,7 @@ SolarsSystem::init( ) {
 				"out vec4 fColor;\n"
 				"void main( ) {\n"
 				"	fColor.a   = 1;\n"
-				"	fColor.rgb = vec3( .5 + .5 * sin( days * vs2fs.angle ) );\n"
+				"	fColor.rgb = vec3( .5 + .5 * sin( days * vs2fs.angle ) < .5 ? .1 : .2 );\n"
 				"}\n",
 
 				GLR::ShaderCode::FROM_CODE ).
@@ -454,9 +457,13 @@ SolarsSystem::paint( ) {
 
 	view = glm::lookAt( glm::vec3( 0., 0., +5. + 30. * vcd->mousey / vcd->height ), glm::vec3( 0., 0., 0. ), glm::vec3( 0., 1., 0. ) );
 
+	dtime = 1.f * vcd->mousex / vcd->width;
+
+	tm += 10.f * dtime;
+
 	GLfloat
-	day = 2.f * ( vcd->time + 3141.5f * vcd->mousex / vcd->width ),
-	d   = 0.f;
+	day = tm,
+	d = 0.f;
 
 	lightP = glm::vec4( 0.f, 0.f, 0.f, 1.f );
 
@@ -470,7 +477,7 @@ SolarsSystem::paint( ) {
 
 	// paint a sun
 	days = day;
-	model = glm::scale( model, glm::vec3( 4.f ) );
+	model = glm::scale( model, glm::vec3( 3.f ) );
 	glr.run( { "C-SPHERE-WITH-TEXTURE-SPHERE-SUN" } );
 
 	// restore center
@@ -503,17 +510,22 @@ SolarsSystem::paint( ) {
 	d     = 1.f;
 	model = glm::rotate( model, 23.f / 180.f * 3.1415f, glm::vec3( 1.f, 0.f, 0.f ) );
 	model = glm::rotate( model, d * day, glm::vec3( 0.f, 1.f, 0.f ) );
+	model = glm::scale( model, glm::vec3( 1.f / 1.f ) );
 	glr.run( { "C-SPHERE-WITH-TEXTURE-SPHERE-EARTH" } );
 
 	model = tmp;
+	model = glm::rotate( model, d, glm::vec3( 0, 1, 0.1 ) );
+
+	M4
+	tmp2 = model;
+
 	days = 28.5f;
-	model = glm::rotate( model, d, glm::vec3( 0, 1, 0 ) );
 	model = glm::scale( model, glm::vec3( 4.f ) );
 	glr.run( { "C-SPHERE-WITH-TEXTURE-ORBIT-LINE" } );
 
-	model = tmp;
+	model = tmp2;
 	d    = 1.f / 28.5f;
-	model = glm::rotate( model, d * day, glm::vec3( 0, 1, .1 ) );
+	model = glm::rotate( model, d * day, glm::vec3( 0, 1, 0 ) );
 	model = glm::translate( model, glm::vec3( 4., 0, 0 ) );
 	model = glm::scale( model, glm::vec3( 1.f / 3.f ) );
 	glr.run( { "C-SPHERE-WITH-TEXTURE-SPHERE-MOON" } );
@@ -527,5 +539,5 @@ SolarsSystem::resize( int p_width, int p_height ) {
 	ratio = ( 1.f * p_width / p_height );
 
 	// create a projection matrix
-	projection = glm::perspective( 45.0f, ratio, 1.0f, 100.f );
+	projection = glm::perspective( 45.f * 3.14159f / 180.f, ratio, 1.0f, 100.f );
 }
