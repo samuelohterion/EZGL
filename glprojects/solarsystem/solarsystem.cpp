@@ -335,10 +335,9 @@ SolarsSystem::init( ) {
 				"}\n"
 				"void main( ) {\n"
 				"	fColor =\n"
-				"		texture( txSphere, fract( vs2fs.coord + vec2( sin( -.021 * time ), sin( +.012 * time ) ) ) ) +\n"
+				"		texture( txSphere, fract( vs2fs.coord + vec2( sin( -.011 * time ), sin( +.012 * time ) ) ) ) +\n"
 				"		texture( txSphere, fract( vs2fs.coord + vec2( sin( -.016 * time ), sin( +.014 * time ) ) ) ) +\n"
-				"		texture( txSphere, fract( vs2fs.coord + vec2( sin( +.011 * time ), sin( -.018 * time ) ) ) ) +\n"
-				"		texture( txSphere, fract( vs2fs.coord + vec2( sin( -.012 * time ), sin( -.019 * time ) ) ) );\n"
+				"		texture( txSphere, fract( vs2fs.coord + .1 * ( 1. + .5 * sin( +.11 * time ) ) * vec2( sin( +.011 * time ), sin( -.0018 * time ) ) ) );\n"
 				"	fColor.xyz /= fColor.a;\n"
 				"}\n",
 
@@ -383,6 +382,12 @@ SolarsSystem::init( ) {
 				"T-SPHERE-WITH-TEXTURE-SPHERE-MERCURY",
 				new GLR::Texture( "txSphere", "../EZGL/pix/2k_mercury.jpg" ) );
 		}
+		// T-SPHERE-WITH-TEXTURE-SPHERE-VENUS
+		{
+			glr.texture(
+				"T-SPHERE-WITH-TEXTURE-SPHERE-VENUS",
+				new GLR::Texture( "txSphere", "../EZGL/pix/2k_venus_surface.jpg" ) );
+		}
 		// T-SPHERE-WITH-TEXTURE-SPHERE-SUN
 		{
 			glr.texture(
@@ -418,6 +423,15 @@ SolarsSystem::init( ) {
 				setIndexArray( "I-SPHERE-WITH-TEXTURE-SPHERE" ).
 				setShader( "S-SPHERE-WITH-TEXTURE-SPHERE" ).
 				addInTexture( "T-SPHERE-WITH-TEXTURE-SPHERE-MOON" ).
+				build( );
+		}
+		// C-SPHERE-WITH-TEXTURE-SPHERE-VENUS
+		{
+			glr.container( "C-SPHERE-WITH-TEXTURE-SPHERE-VENUS" ).
+				setVertexArray( "V-SPHERE-WITH-TEXTURE-SPHERE" ).
+				setIndexArray( "I-SPHERE-WITH-TEXTURE-SPHERE" ).
+				setShader( "S-SPHERE-WITH-TEXTURE-SPHERE" ).
+				addInTexture( "T-SPHERE-WITH-TEXTURE-SPHERE-VENUS" ).
 				build( );
 		}
 		// C-SPHERE-WITH-TEXTURE-SPHERE-MERCURY
@@ -459,7 +473,7 @@ SolarsSystem::paint( ) {
 
 	dtime = 1.f * vcd->mousex / vcd->width;
 
-	tm += 10.f * dtime;
+	tm += 5.f * log2f( 1.f + dtime );
 
 	GLfloat
 	day = tm,
@@ -494,6 +508,20 @@ SolarsSystem::paint( ) {
 	model = glm::translate( model, glm::vec3( 8., 0., 0. ) );
 	model = glm::scale( model, glm::vec3( 1.f / 3.f ) );
 	glr.run( { "C-SPHERE-WITH-TEXTURE-SPHERE-MERCURY" } );
+
+	// restore center
+	model = tmp;
+	// mercury needs 85 days for one round
+	days = 224.7f;
+	model = glm::scale( model, glm::vec3( 10.5f ) );
+	glr.run( { "C-SPHERE-WITH-TEXTURE-ORBIT-LINE" } );
+
+	model = tmp;
+	d     = 1.f / 224.7f;
+	model = glm::rotate( model, d * day, glm::vec3( 0.f, 1.f, 0.f ) );
+	model = glm::translate( model, glm::vec3( 10.5f, 0., 0. ) );
+	model = glm::scale( model, glm::vec3( 1.f ) );
+	glr.run( { "C-SPHERE-WITH-TEXTURE-SPHERE-VENUS" } );
 
 	model = tmp;
 	days  = 365.25f;
@@ -539,5 +567,5 @@ SolarsSystem::resize( int p_width, int p_height ) {
 	ratio = ( 1.f * p_width / p_height );
 
 	// create a projection matrix
-	projection = glm::perspective( 45.f * 3.14159f / 180.f, ratio, 1.0f, 100.f );
+	projection = glm::perspective( 30.f * 3.14159f / 180.f, ratio, 1.0f, 100.f );
 }
