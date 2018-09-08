@@ -241,6 +241,67 @@ SolarsSystem::init( ) {
 				addUniform( "lightP", GLR::Shader::VEC3, GLR::Shader::SCALAR, & lightP ).
 				addUniform( "lightC", GLR::Shader::VEC3, GLR::Shader::SCALAR, & lightC );
 		}
+		// S-SPHERE-WITH-TEXTURE-VENUS
+		{
+			glr.shader(
+				"S-SPHERE-WITH-TEXTURE-VENUS",
+
+				// vertex shader
+				"#version 330 core\n"
+				"in vec3 vertex;\n"
+				"in vec2 coord;\n"
+				"out VS2FS {\n"
+				"	vec4 vertex;\n"
+				"	vec4 normal;\n"
+				"	vec2 coord;\n"
+				"} vs2fs;\n"
+				"uniform mat4 model;\n"
+				"uniform mat4 view;\n"
+				"uniform mat4 proj;\n"
+
+				"void main( ) {\n"
+				"	vs2fs.vertex = model * vec4( vertex, 1 );\n"
+				"	vs2fs.normal = normalize( model * vec4( vertex, 0 ) );\n"
+				"	vs2fs.coord  = coord;\n"
+				"	gl_Position = proj * view * model * vec4( vertex, 1 );\n"
+				"}\n",
+
+				// fragment shader
+				"#version 330 core\n"
+
+				//	light in every space that makes sense to show their behavior
+				"uniform mat4 model;\n"
+				"uniform mat4 view;\n"
+				"uniform mat4 proj;\n"
+				"uniform vec3 lightP;"
+				"uniform vec3 lightC;"
+				"uniform sampler2D txS;"
+				"uniform sampler2D txA;"
+				"uniform float time;"
+				"in VS2FS {\n"
+				"	vec4 vertex;\n"
+				"	vec4 normal;\n"
+				"	vec2 coord;\n"
+				"} vs2fs;\n"
+				"out vec4 fColor;\n"
+				"void main( ) {\n"
+				"	vec3  v = normalize( lightP - vs2fs.vertex.xyz );\n"
+				"	float a = dot( vs2fs.normal.xyz, v );\n"
+				"	fColor  =  mix(\n"
+				"		texture( txS, vs2fs.coord ),\n"
+				"		texture( txA, fract( vec2( .05 * time + vs2fs.coord.x, vs2fs.coord.y ) ) ),\n"
+				"		vec4( .5 + .3 * sin( .0031 * time ) ) );\n"
+				"	fColor.rgb *= ( .9 * a + .1 );\n"
+				"}\n",
+
+				GLR::ShaderCode::FROM_CODE ).
+				addUniform( "model",  GLR::Shader::MAT4,  GLR::Shader::SCALAR, & model ).
+				addUniform( "view",   GLR::Shader::MAT4,  GLR::Shader::SCALAR, & view ).
+				addUniform( "proj",   GLR::Shader::MAT4,  GLR::Shader::SCALAR, & projection ).
+				addUniform( "lightP", GLR::Shader::VEC3,  GLR::Shader::SCALAR, & lightP ).
+				addUniform( "lightC", GLR::Shader::VEC3,  GLR::Shader::SCALAR, & lightC ).
+				addUniform( "time",   GLR::Shader::FLOAT, GLR::Shader::SCALAR, & vcd->time );
+		}
 		// S-SPHERE-WITH-TEXTURE-SPHERE
 		{
 			glr.shader(
@@ -335,9 +396,9 @@ SolarsSystem::init( ) {
 				"}\n"
 				"void main( ) {\n"
 				"	fColor =\n"
-				"		texture( txSphere, fract( vs2fs.coord + vec2( sin( -.011 * time ), sin( +.012 * time ) ) ) ) +\n"
-				"		texture( txSphere, fract( vs2fs.coord + vec2( sin( -.016 * time ), sin( +.014 * time ) ) ) ) +\n"
-				"		texture( txSphere, fract( vs2fs.coord + .1 * ( 1. + .5 * sin( +.11 * time ) ) * vec2( sin( +.011 * time ), sin( -.0018 * time ) ) ) );\n"
+				"		texture( txSphere, fract( vs2fs.coord + vec2( sin( -.0061 * time ), sin( +.0052 * time ) ) ) ) +\n"
+				"		texture( txSphere, fract( vs2fs.coord + vec2( sin( -.0071 * time ), sin( +.0054 * time ) ) ) ) +\n"
+				"		texture( txSphere, fract( vs2fs.coord + .1 * ( 1. + .5 * sin( +.11 * time ) ) * vec2( sin( +.0031 * time ), sin( -.00318 * time ) ) ) );\n"
 				"	fColor.xyz /= fColor.a;\n"
 				"}\n",
 
@@ -382,11 +443,23 @@ SolarsSystem::init( ) {
 				"T-SPHERE-WITH-TEXTURE-SPHERE-MERCURY",
 				new GLR::Texture( "txSphere", "../EZGL/pix/2k_mercury.jpg" ) );
 		}
-		// T-SPHERE-WITH-TEXTURE-SPHERE-VENUS
+		// T-SPHERE-WITH-TEXTURE-SPHERE-MARS
 		{
 			glr.texture(
-				"T-SPHERE-WITH-TEXTURE-SPHERE-VENUS",
-				new GLR::Texture( "txSphere", "../EZGL/pix/2k_venus_surface.jpg" ) );
+				"T-SPHERE-WITH-TEXTURE-SPHERE-MARS",
+				new GLR::Texture( "txSphere", "../EZGL/pix/2k_mars.jpg" ) );
+		}
+		// T-SPHERE-WITH-TEXTURE-SPHERE-VENUS-SURFACE
+		{
+			glr.texture(
+				"T-SPHERE-WITH-TEXTURE-SPHERE-VENUS-SURFACE",
+				new GLR::Texture( "txS", "../EZGL/pix/2k_venus_surface.jpg" ) );
+		}
+		// T-SPHERE-WITH-TEXTURE-SPHERE-VENUS-ATMOSPHERE
+		{
+			glr.texture(
+				"T-SPHERE-WITH-TEXTURE-SPHERE-VENUS-ATMOSPHERE",
+				new GLR::Texture( "txA", "../EZGL/pix/2k_venus_atmosphere.jpg" ) );
 		}
 		// T-SPHERE-WITH-TEXTURE-SPHERE-SUN
 		{
@@ -430,8 +503,9 @@ SolarsSystem::init( ) {
 			glr.container( "C-SPHERE-WITH-TEXTURE-SPHERE-VENUS" ).
 				setVertexArray( "V-SPHERE-WITH-TEXTURE-SPHERE" ).
 				setIndexArray( "I-SPHERE-WITH-TEXTURE-SPHERE" ).
-				setShader( "S-SPHERE-WITH-TEXTURE-SPHERE" ).
-				addInTexture( "T-SPHERE-WITH-TEXTURE-SPHERE-VENUS" ).
+				setShader( "S-SPHERE-WITH-TEXTURE-VENUS" ).
+				addInTexture( "T-SPHERE-WITH-TEXTURE-SPHERE-VENUS-SURFACE" ).
+				addInTexture( "T-SPHERE-WITH-TEXTURE-SPHERE-VENUS-ATMOSPHERE" ).
 				build( );
 		}
 		// C-SPHERE-WITH-TEXTURE-SPHERE-MERCURY
@@ -441,6 +515,15 @@ SolarsSystem::init( ) {
 				setIndexArray( "I-SPHERE-WITH-TEXTURE-SPHERE" ).
 				setShader( "S-SPHERE-WITH-TEXTURE-SPHERE" ).
 				addInTexture( "T-SPHERE-WITH-TEXTURE-SPHERE-MERCURY" ).
+				build( );
+		}
+		// C-SPHERE-WITH-TEXTURE-SPHERE-MARS
+		{
+			glr.container( "C-SPHERE-WITH-TEXTURE-SPHERE-MARS" ).
+				setVertexArray( "V-SPHERE-WITH-TEXTURE-SPHERE" ).
+				setIndexArray( "I-SPHERE-WITH-TEXTURE-SPHERE" ).
+				setShader( "S-SPHERE-WITH-TEXTURE-SPHERE" ).
+				addInTexture( "T-SPHERE-WITH-TEXTURE-SPHERE-MARS" ).
 				build( );
 		}
 		// C-SPHERE-WITH-TEXTURE-SPHERE-SUN
@@ -469,7 +552,7 @@ SolarsSystem::paint( ) {
 
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-	view = glm::lookAt( glm::vec3( 0., 0., +5. + 30. * vcd->mousey / vcd->height ), glm::vec3( 0., 0., 0. ), glm::vec3( 0., 1., 0. ) );
+	view = glm::lookAt( glm::vec3( 0., 0., +5. + 150. * vcd->mousey / vcd->height ), glm::vec3( 0., 0., 0. ), glm::vec3( 0., 1., 0. ) );
 
 	dtime = 1.f * vcd->mousex / vcd->width;
 
@@ -482,7 +565,7 @@ SolarsSystem::paint( ) {
 	lightP = glm::vec4( 0.f, 0.f, 0.f, 1.f );
 
 	model = glm::mat4( 1. );
-	model = glm::rotate( model, 15.f * vcd->mousey / vcd->height / 180.f * 3.1415f, glm::vec3( 1.f, 0.f, 0.0f ) );
+	model = glm::rotate( model, 35.f * vcd->mousey / vcd->height / 180.f * 3.1415f, glm::vec3( 1.f, 0.f, 0.0f ) );
 	// this is now the center
 
 	// store center
@@ -508,6 +591,22 @@ SolarsSystem::paint( ) {
 	model = glm::translate( model, glm::vec3( 8., 0., 0. ) );
 	model = glm::scale( model, glm::vec3( 1.f / 3.f ) );
 	glr.run( { "C-SPHERE-WITH-TEXTURE-SPHERE-MERCURY" } );
+
+	// restore center
+	model = tmp;
+	days  = 687.f;
+	d     = 1.f / 687.f;
+	model = glm::scale( model, glm::vec3( 20.f ) );
+	glr.run( { "C-SPHERE-WITH-TEXTURE-ORBIT-LINE" } );
+
+
+	// restore center
+	model = tmp;
+	d     = 1.f / 687.f;
+	model = glm::rotate( model, d * day, glm::vec3( 0.f, 1.f, 0.f ) );
+	model = glm::translate( model, glm::vec3( 20., 0., 0. ) );
+	model = glm::scale( model, glm::vec3( 1.f / 7.5f ) );
+	glr.run( { "C-SPHERE-WITH-TEXTURE-SPHERE-MARS" } );
 
 	// restore center
 	model = tmp;
@@ -548,13 +647,13 @@ SolarsSystem::paint( ) {
 	tmp2 = model;
 
 	days = 28.5f;
-	model = glm::scale( model, glm::vec3( 4.f ) );
+	model = glm::scale( model, glm::vec3( 3.f ) );
 	glr.run( { "C-SPHERE-WITH-TEXTURE-ORBIT-LINE" } );
 
 	model = tmp2;
 	d    = 1.f / 28.5f;
 	model = glm::rotate( model, d * day, glm::vec3( 0, 1, 0 ) );
-	model = glm::translate( model, glm::vec3( 4., 0, 0 ) );
+	model = glm::translate( model, glm::vec3( 3., 0, 0 ) );
 	model = glm::scale( model, glm::vec3( 1.f / 3.f ) );
 	glr.run( { "C-SPHERE-WITH-TEXTURE-SPHERE-MOON" } );
 }
@@ -567,5 +666,5 @@ SolarsSystem::resize( int p_width, int p_height ) {
 	ratio = ( 1.f * p_width / p_height );
 
 	// create a projection matrix
-	projection = glm::perspective( 30.f * 3.14159f / 180.f, ratio, 1.0f, 100.f );
+	projection = glm::perspective( 30.f * 3.14159f / 180.f, ratio, 1.0f, 300.f );
 }
