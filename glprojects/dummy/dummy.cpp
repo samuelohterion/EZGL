@@ -1,15 +1,29 @@
 #include "dummy.hpp"
 #include "../../code/glmprinter.hpp"
 
-Dummy::Dummy( CStr const & p_name, ViewControlData *p_vcd ) :
-GLProject ( p_name, p_vcd ) {
+Dummy::Dummy ( CStr const & p_name, ViewControlData *p_vcd ) :
+GLProject ( p_name, p_vcd ),
+m ( glm::mat4( 1.f ) ),
+v ( m ),
+p ( m ),
+t ( new Triangle ( glm::vec3 ( 1.f, 0.f, 0.f ), glm::vec3 ( 0.f, 1.f,0.f ), glm::vec3 ( 0.f, 0.f, 1.f ) ) ) {
 
+	t->divide ( 6 );
+}
+
+Dummy::~Dummy ( ){
+
+	if ( t )
+
+		delete t;
+
+	t = nullptr;
 }
 
 void
-Dummy::init( ) {
+Dummy::init ( ) {
 
-	glClearColor( .0f, .0f, .0f, 1.f );
+	glClearColor ( .0f, .0f, .0f, 1.f );
 
 	// frame buffers
 	{
@@ -21,16 +35,16 @@ Dummy::init( ) {
 
 	// vertex arrays
 	{
-		// V-QUAD-3D
+		// V-DUMMY-TRIANGLE
 		{
-			glr.vertices( "V-QUAD-3D" ).
-				setUsage( GL_STATIC_DRAW ).
-				attrib( "vertex", 0, 3 ).	attrib( "color", 3, 3 ) <<
-				-1.f << -1.f << +0. <<			1.f << 0.f << 0.f <<
-				+1.f << -1.f << +0. <<			0.f << 1.f << 0.f <<
-				+1.f << +1.f << +0. <<			0.f << 0.f << 1.f <<
-				-1.f << +1.f << +0. <<			1.f << 1.f << 0.f <<
-				GLR::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
+			GLR::VertexArray
+			& va = glr.vertices ( "V-DUMMY-TRIANGLE" ).
+				attrib ( "vertex", 0, 3 ).
+				setUsage ( GL_DYNAMIC_DRAW );
+
+			t->fill ( va );
+
+			va << GLR::VertexArray::Object ( 0, va.vertexCount ( ), GL_TRIANGLES );
 		}
 	}
 
@@ -40,21 +54,20 @@ Dummy::init( ) {
 
 	// shaders
 	{
-		//S-QUAD-3D"
+		//S-DUMMY-TRIANGLE"
 		{
-			glr.shader(
-				"S-QUAD-3D",
+			glr.shader (
+				"S-DUMMY-TRIANGLE",
 
 				//Vertex Shader
 				"#version 330 core\n"
 				"layout( location = 0 ) in vec3 vertex;\n"
-				"layout( location = 1 ) in vec3 color;\n"
 				"uniform mat4 mvp;\n"
 				"out VS2FS {\n"
 				"	vec3 color;\n"
 				"} vs2fs;\n"
 				"void main( void ) {\n"
-					"vs2fs.color = color;\n"
+					"vs2fs.color = vertex;\n"
 					"gl_Position = mvp * vec4( vertex, 1. );"
 				"}\n",
 
@@ -74,11 +87,11 @@ Dummy::init( ) {
 
 	// container
 	{
-		// C-QUAD-3D
+		// C-DUMMY-TRIANGLE
 		{
-			glr.container( "C-QUAD-3D" ).
-				setVertexArray( "V-QUAD-3D" ).
-				setShader( "S-QUAD-3D" ).
+			glr.container( "C-DUMMY-TRIANGLE" ).
+				setVertexArray( "V-DUMMY-TRIANGLE" ).
+				setShader( "S-DUMMY-TRIANGLE" ).
 				build( );
 		}
 	}
@@ -93,17 +106,17 @@ void
 Dummy::paint( ) {
 
 	float
-	angle = 2.15f * vcd->time;
+	angle = .15f * vcd->time;
 
 	v = glm::mat4( 1. );
-	v = glm::translate( glm::mat4( 1. ), glm::vec3( 0.f, 0.f, -4.f ) );
+	v = glm::translate( glm::mat4( 1. ), glm::vec3( 0.f, 0.f, -2.f ) );
 	v = glm::rotate( v, angle, glm::vec3( 0.f, 1.f, 0.f ) );
 
 	mvp = p * v * m;
 
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-	glr.run( { "C-QUAD-3D" } );
+	glr.run( { "C-DUMMY-TRIANGLE" } );
 }
 
 void

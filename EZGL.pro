@@ -28,7 +28,7 @@ SOURCES += \
 #	glprojects/funIn2D/funIn2D.cpp \
 #	glprojects/lighttest/lighttest.cpp \
 #	glprojects/sphere/sphere.cpp \
-#	glprojects/spheredynamicsurface/spheredynamicsurface.cpp \
+	glprojects/spheredynamicsurface/spheredynamicsurface.cpp \
 #	glprojects/robertslighttest2D/robertslighttest2D.cpp \
 #	glprojects/ballandlight/ballandlight.cpp \
 #	glprojects/ballandlight/interaction.cpp \
@@ -55,7 +55,7 @@ HEADERS += \
 #	glprojects/funIn2D/funIn2D.hpp \
 #	glprojects/lighttest/lighttest.hpp \
 #	glprojects/sphere/sphere.hpp \
-#	glprojects/spheredynamicsurface/spheredynamicsurface.hpp \
+	glprojects/spheredynamicsurface/spheredynamicsurface.hpp \
 #	glprojects/robertslighttest2D/robertslighttest2D.hpp \
 #	glprojects/ballandlight/ballandlight.hpp \
 #	glprojects/ballandlight/interaction.h \

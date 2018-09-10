@@ -11,7 +11,7 @@
 //#include "glprojects/funIn2D/funIn2D.hpp"
 //#include "glprojects/lighttest/lighttest.hpp"
 //#include "glprojects/sphere/sphere.hpp"
-//#include "glprojects/spheredynamicsurface/spheredynamicsurface.hpp"
+#include "glprojects/spheredynamicsurface/spheredynamicsurface.hpp"
 //#include "glprojects/robertslighttest2D/robertslighttest2D.hpp"
 //#include "glprojects/ballandlight/ballandlight.hpp"
 //#include "glprojects/texturetest/texturetest.hpp"
@@ -62,8 +62,8 @@ main( int argc, char *argv[ ] ) {
 //	Sphere
 //	* sphere = new Sphere( "Sphere" );
 
-//	SphereDynamicalSurface
-//	* sphereDynamicalSurface = new SphereDynamicalSurface( "SphereDynamicalSurface" );
+	SphereDynamicalSurface
+	* sphereDynamicalSurface = new SphereDynamicalSurface( "SphereDynamicalSurface" );
 
 //	RobertsLightTest2D
 //	* robertsLightTest2D = new RobertsLightTest2D( "RobertsLightTest2D" );
@@ -87,17 +87,19 @@ main( int argc, char *argv[ ] ) {
 //	SphereWithTexture
 //	* sphereWithTexture = new SphereWithTexture( );
 
+	w.addGLProject( dummy );
 	w.addGLProject( triangle2D );
 	w.addGLProject( quad3D );
 	w.addGLProject( coordinateSystem );
 	w.addGLProject( cubeWithTexture );
 	w.addGLProject( solarsSystem );
 	w.addGLProject( zBufferTexture );
+//	w.addGLProject( yetAnotherSphere );
 //	w.projects[ "Cube" ] = cube;
 //	w.projects[ "FunIn2D" ] = funIn2D;
 //	w.projects[ "LightedCheckerboardCave" ] = lightedCheckerboardCave;
 //	w.projects[ "Sphere" ] = sphere;
-//	w.projects[ "SphereDynamicalSurface" ] = sphereDynamicalSurface;
+	w.addGLProject( sphereDynamicalSurface );
 //	w.projects[ "RobertsLightTest2D" ] = robertsLightTest2D;
 //	w.projects[ "BallAndLight" ] = ballAndLight;
 //	w.projects[ "TextureTest" ] = textureTest;
@@ -106,7 +108,7 @@ main( int argc, char *argv[ ] ) {
 //	w.projects[ "YAS" ] = yetAnotherSphere;
 //	w.projects[ "SphereWithTexture" ] = sphereWithTexture;
 
-	w.slotSetGLProject( "SolarsSystem" );
+	w.slotSetGLProject( "Dummy" );
 
 	w.show( );
 

@@ -19,14 +19,6 @@ ZBufferTexture::init( ) {
 
 	// textures
 	{
-//		// T-Z-BUFFER-TEXTURE-COLOR
-//		{
-//			glr.texture(
-//				"T-Z-BUFFER-TEXTURE-COLOR",
-//				new GLR::Texture(
-//				"txC", GL_TEXTURE_2D, 0,
-//				GL_RGBA, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_RGBA, GL_FLOAT, 32, 32 ) );
-//		}
 		// T-Z-BUFFER-TEXTURE-Z
 		{
 			glr.texture(

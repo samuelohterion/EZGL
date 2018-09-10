@@ -1,8 +1,5 @@
 #include "spheredynamicsurface.hpp"
 
-typedef glm::vec3 V3;
-typedef glm::mat4 M4;
-
 SphereDynamicalSurface::SphereDynamicalSurface( CStr const & p_name, ViewControlData *p_vcd ) :
 GLProject ( p_name, p_vcd ) {
 
@@ -11,46 +8,79 @@ GLProject ( p_name, p_vcd ) {
 void
 SphereDynamicalSurface::init( ) {
 
-	glClearColor( .0f, .0f, .0f, 1.f );
+	// frame buffers
+	{
+	}
+
+	// textures
+	{
+	}
+
+	// vertex arrays
+	{
+		// V-SPHERE-GENERICAL-SURFACE
+		{
+			GLuint
+			numVertices = 100;
+
+			GLR::VertexArray
+			& va = glr.vertices( "V-SPHERE-GENERICAL-SURFACE" ).
+				setUsage( GL_DYNAMIC_DRAW ).
+				attrib( "vertex", 0, 3 ) <<
+				GLR::VertexArray::Object( 0, numVertices, GL_POINTS );
+
+			for( GLuint i = 0; i < numVertices; ++ i ) {
+
+				va << 0.f << 0.f << 0.f;
+			}
+		}
+	}
+
+	// index arrays
+	{
+	}
+
+	// shaders
+	{
+		//S-SPHERE-GENERICAL-SURFACE
+		{
+			glr.shader(
+				"S-SPHERE-GENERICAL-SURFACE",
+
+				//Vertex Shader
+				"#version 330 core\n"
+				"layout( location = 0 ) in vec3 vertex;\n"
+				"uniform mat4 mvp;\n"
+				"void main( void ) {\n"
+					"gl_Position = mvp * vec4( vertex, 1. );"
+				"}\n",
+
+				//Fragment Shader
+				"#version 330 core\n"
+				"out vec4 fColor;\n"
+				"void main( void ) {\n"
+					"fColor = vec4( 1., 1., 1., 1. );\n"
+				"}\n",
+				GLR::ShaderCode::FROM_CODE ).
+				addUniform( "mvp", GLR::Shader::MAT4, GLR::Shader::SCALAR, & mvp );
+		}
+	}
+
+	// container
+	{
+		// C-SPHERE-GENERICAL-SURFACE
+		{
+			glr.container( "C-SPHERE-GENERICAL-SURFACE" ).
+				setVertexArray( "V-SPHERE-GENERICAL-SURFACE" ).
+				setShader( "S-SPHERE-GENERICAL-SURFACE" ).
+				build( );
+		}
+	}
+
+	p = v = m = glm::mat4( 1. );
 
 	glDisable( GL_DEPTH_TEST );
 	glDisable( GL_CULL_FACE );
-	glDepthFunc( GL_LESS );
-
-	m = v = p = glm::mat4( 1. );
-
-	nrm = glm::mat3( 1. );
-
-	GLR::VertexArray
-	&va = glr.vertices( "SDS-VERTICES" );
-
-	va.	setUsage( GL_STATIC_DRAW ).
-		attrib( "vertex", 3, 0 ) <<
-		GLR::VertexArray::Object( 0, 0, GL_POINTS );
-
-	glr.shader(
-		"SDS-SHADER",
-		//Vertex Shader
-		"#version 330 core\n"
-		"in vec3 vertex;\n"
-		"uniform mat4 mvp;\n"
-		"void main( void ) {\n"
-			"gl_Position  = vec4( vertex.x, vertex.y, 0., 1. );\n"
-		"}\n",
-
-		//Fragment Shader
-		"#version 330 core\n"
-		"out vec4 fColor;\n"
-		"void main( void ) {\n"
-			"fColor = vec4( 1., 1., 1., 1. );\n"
-		"}\n",
-		GLR::ShaderCode::FROM_CODE ).
-			addUniform( "mvp", GLR::Shader::MAT4, GLR::Shader::SCALAR, & mvp );
-
-	glr.container( "SDS-PROGRAM" ).
-		setVertexArray( "SDS-VERTICES" ).
-		setShader( "SDS-SHADER" ).
-		build( );
 }
 
 void
