@@ -35,7 +35,7 @@ tetrahedron(
 	tetrahedron.c = Triangle( p0, p3, p1, glm::vec3( 0,0,1 ) );
 	tetrahedron.d = Triangle( p3, p2, p1, glm::vec3( 1,1,0 ) );
 
-	tetrahedron . divide ( 5 );
+	tetrahedron . divide ( 3 );
 }
 
 Dummy::~Dummy ( ){
@@ -123,7 +123,7 @@ Dummy::init ( ) {
 	p = v = m = glm::mat4( 1. );
 
 	glEnable( GL_DEPTH_TEST );
-	glDisable( GL_CULL_FACE );
+	glEnable( GL_CULL_FACE );
 }
 
 void
@@ -133,13 +133,22 @@ Dummy::paint( ) {
 	angle = .015f * vcd->time;
 
 	glm::mat4
-	e = glm::mat4( 1. );
+	e = glm::mat4( 1. ),
+	f = inverse( m );
 
 	v = glm::translate( e, glm::vec3( 0.f, 0.f, -3.f ) );
-	m = glm::rotate( e, angle, glm::vec3( 0.f, 1.f, 0.f ) );
-	e = m;
-	m = glm::rotate( m, 7.f * vcd->mousex / vcd->width,  glm::vec3( glm::vec4( 0.f, 1.f, 0.f, 0.f ) ) );
-	m = glm::rotate( m, 7.f * vcd->mousey / vcd->height, glm::vec3( glm::vec4( 1.f, 0.f, 0.f, 0.f ) * glm::inverse( e ) ) );
+
+	m = glm::rotate( m, .001f, glm::vec3( 0.f, 1.f, 0.f ) );
+
+	glm::vec2
+	dAngle = .1f * vcd->dMouse;
+
+	if( abs( dAngle.x ) < abs( dAngle.y ) )
+
+		m = glm::rotate( m, dAngle.y, glm::vec3( glm::vec4( 1.f, 0.f, 0.f, 0.f ) ) );// * f;
+
+	else
+		m = glm::rotate( m, dAngle.x, glm::vec3( glm::vec4( 0.f, 1.f, 0.f, 0.f ) ) );// * f;
 
 	mvp = p * v * m;
 

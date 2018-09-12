@@ -66,10 +66,10 @@ Triangle {
 
 			t = new Triangle * [ 4 ];
 
-			t [ 0 ] = new Triangle ( glm::normalize( a ), glm::normalize( ab ), glm::normalize( ac ), col );
-			t [ 1 ] = new Triangle ( glm::normalize( b ), glm::normalize( bc ), glm::normalize( ba ), col );
-			t [ 2 ] = new Triangle ( glm::normalize( c ), glm::normalize( ca ), glm::normalize( cb ), col );
-			t [ 3 ] = new Triangle ( glm::normalize( ab2 ), glm::normalize( bc2 ), glm::normalize( ca2 ), col );
+			t [ 0 ] = new Triangle ( glm::normalize( a ), glm::normalize( ac ), glm::normalize( ab ), col );
+			t [ 1 ] = new Triangle ( glm::normalize( b ), glm::normalize( ba ), glm::normalize( bc ), col );
+			t [ 2 ] = new Triangle ( glm::normalize( c ), glm::normalize( cb ), glm::normalize( ca ), col );
+			t [ 3 ] = new Triangle ( glm::normalize( ca2 ), glm::normalize( bc2 ), glm::normalize( ab2 ), col );
 
 			t [ 0 ] -> divide ( p_count );
 			t [ 1 ] -> divide ( p_count );

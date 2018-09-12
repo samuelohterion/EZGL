@@ -166,6 +166,7 @@ GLWidget::paintGL( ) {
 
 		projects[ currentProject ]->paint( );
 	}
+	viewControlData.dMouse = glm::vec2( 0.f, 0.f );
 }
 
 void GLWidget::addGLProject( GLProject * p_glProject ) {
