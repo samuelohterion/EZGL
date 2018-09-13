@@ -539,7 +539,9 @@ SolarsSystem::init( ) {
 
 	glClearColor( .01f, .02f, .03f, 1. );
 
-	projection = view = model = glm::mat4( 1. );
+	projection = view = model = loc = glm::mat4( 1. );
+
+	view = glm::lookAt( glm::vec3( 0., 0., +5. + 150. * vcd->mousey / vcd->height ), glm::vec3( 0., 0., 0. ), glm::vec3( 0., 1., 0. ) );
 
 	lightC = V3( 1., 1., 1. );
 
@@ -552,8 +554,6 @@ SolarsSystem::paint( ) {
 
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-	view = glm::lookAt( glm::vec3( 0., 0., +5. + 150. * vcd->mousey / vcd->height ), glm::vec3( 0., 0., 0. ), glm::vec3( 0., 1., 0. ) );
-
 	dtime = 1.f * vcd->mousex / vcd->width;
 
 	tm += 5.f * log2f( 1.f + dtime );
@@ -564,7 +564,7 @@ SolarsSystem::paint( ) {
 
 	lightP = glm::vec4( 0.f, 0.f, 0.f, 1.f );
 
-	model = glm::mat4( 1. );
+	model = glm::mat4( 1.f );
 	model = glm::rotate( model, 35.f * vcd->mousey / vcd->height / 180.f * 3.1415f, glm::vec3( 1.f, 0.f, 0.0f ) );
 	// this is now the center
 

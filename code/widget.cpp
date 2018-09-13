@@ -112,8 +112,6 @@ GLWidget::mouseReleaseEvent( QMouseEvent *p_mouseEvent ) {
 void
 GLWidget::wheelEvent( QWheelEvent *p_wheelEvent ) {
 
-	viewControlData.dTicks = p_wheelEvent->delta( ) - viewControlData.ticks;
-
 	viewControlData.ticks = p_wheelEvent->delta( );
 
 	p_wheelEvent->accept( );
@@ -134,12 +132,12 @@ GLWidget::initializeGL( ) {
 	viewControlData.ticks = 0;
 
 	viewControlData.dMouse = glm::vec2( 0, 0 );
-	viewControlData.dTicks = 0.;
 
 	viewControlData.buttons = 0;
 	viewControlData.time    = 0;
 
 	glViewport( 0, 0, viewControlData.width, viewControlData.height );
+
 	if( projects.contains( currentProject ) ) {
 
 		projects[ currentProject ]->setViewControlData( & viewControlData );
@@ -152,6 +150,8 @@ GLWidget::resizeGL( int p_width, int p_height ) {
 
 	viewControlData.width = p_width;
 	viewControlData.height = p_height;
+
+	viewControlData.aspect = glm::vec2( p_width, p_height ) / float( p_width < p_height ? p_height : p_width );
 
 	viewControlData.mousex = viewControlData.width >> 1;
 	viewControlData.mousey = viewControlData.height >> 1;
@@ -170,7 +170,10 @@ GLWidget::paintGL( ) {
 
 		projects[ currentProject ]->paint( );
 	}
+
 	viewControlData.dMouse = glm::vec2( 0.f, 0.f );
+
+	viewControlData.ticks = 0;
 }
 
 void GLWidget::addGLProject( GLProject * p_glProject ) {

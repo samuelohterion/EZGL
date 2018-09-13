@@ -2072,11 +2072,9 @@ ViewControlData {
 	buttons;
 
 	GLfloat
-	time,
-	dTicks;
+	time;
 
 	glm::vec2
-	screen,
 	aspect,
 	dMouse;
 };

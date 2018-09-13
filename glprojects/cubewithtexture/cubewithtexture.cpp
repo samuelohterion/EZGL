@@ -252,7 +252,8 @@ CubeWithTexture::init( ) {
 				"out vec4 fColor;\n"
 				"void main( ) {\n"
 				"	fColor = texture( txCube, vs2fs.texCoord );\n"
-				"	fColor.xyz *= .85 + .15 * vs2fs.color;\n"
+				"	if( dot( fColor.xyz, fColor.xyz ) < .8 )\n"
+				"		fColor.xyz *= 1.1f * vs2fs.color;\n"
 				"	fColor.xyz *= dot( vs2fs.normalMV, vec3( 0, 0, 1 ) );\n"
 				"}\n",
 
@@ -287,8 +288,9 @@ CubeWithTexture::init( ) {
 
 	projection = view = model = glm::mat4( 1. );
 
-	view = glm::lookAt( glm::vec3( 0., 0., 4. ), glm::vec3( 0., 0., 0. ), glm::vec3( 0., 1., 0. ) );
+	model = glm::translate( model, glm::vec3( +0.f, +0.f, -2.f ) );
 
+	view = glm::lookAt( glm::vec3( 0., 0., 4. ), glm::vec3( 0., 0., 0. ), glm::vec3( 0., 1., 0. ) );
 }
 
 void
@@ -304,11 +306,35 @@ CubeWithTexture::paint( ) {
 	glEnable( GL_DEPTH_TEST );
 	glEnable( GL_CULL_FACE );
 
-	model = glm::mat4( 1. );
-	model = glm::translate( model, glm::vec3( +0.f, +0.f, -2.f ) );
-	model = glm::rotate( model, 2.f * 6.28f * vcd->mousex, glm::vec3( glm::vec4( 0, 1, 0, 0 ) ) );
-	model = glm::rotate( model, 2.f * 6.28f * vcd->mousey, glm::vec3( glm::vec4( 1, 0, 0, 0 ) ) );
-	//model = glm::rotate( view * model * inverse( view ), 1.f * vcd->time, glm::vec3( sinf( .1f * vcd->time ), cosf( .11f * vcd->time ), sinf( .12f * vcd->time ) ) );
+	if( vcd->buttons & 0x02 )
+
+		view = glm::translate( view, glm::vec3( 0.f, 0.f, .01f * vcd->dMouse.y ) );
+
+	if( vcd->ticks != 0 ) {
+
+		view = glm::translate( view, glm::vec3( 0.f, 0.f, .001f * vcd->ticks ) );
+
+		print( view );
+	}
+
+	glm::mat3
+	f = glm::mat3( inverse( model ) );
+
+	glm::vec2
+	dAngle = .01f * vcd->dMouse;
+
+	if( vcd->buttons & 0x01 ) {
+
+		if( 0 < abs( dAngle.y ) ) {
+
+			model = glm::rotate( model, -dAngle.y, f[ 0 ] );
+		}
+
+		if( 0 < abs( dAngle.x ) ) {
+
+			model = glm::rotate( model, +dAngle.x, f[ 1 ] );
+		}
+	}
 
 	glr.run( { "C-CUBE-WITH-TEXTURE-CUBE" } );
 }

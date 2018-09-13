@@ -15,7 +15,8 @@ public GLProject {
 		glm::mat4
 		model,
 		view,
-		projection;
+		projection,
+		loc;
 
 		glm::vec3
 		lightP,

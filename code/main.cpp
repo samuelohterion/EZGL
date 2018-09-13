@@ -108,7 +108,7 @@ main( int argc, char *argv[ ] ) {
 //	w.projects[ "YAS" ] = yetAnotherSphere;
 //	w.projects[ "SphereWithTexture" ] = sphereWithTexture;
 
-	w.slotSetGLProject( "Dummy" );
+	w.slotSetGLProject( "CubeWithTexture" );
 
 	w.show( );
 
