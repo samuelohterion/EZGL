@@ -24,7 +24,7 @@ SOURCES += \
 	glprojects/coordinateSystem/coordinatesystem.cpp \
 	glprojects/cubewithtexture/cubewithtexture.cpp \
 	glprojects/zbuffertexture/zbuffertexture.cpp \
-#	glprojects/cube/cube.cpp #\
+	glprojects/cube/cube.cpp \
 #	glprojects/funIn2D/funIn2D.cpp \
 #	glprojects/lighttest/lighttest.cpp \
 #	glprojects/sphere/sphere.cpp \
@@ -34,8 +34,8 @@ SOURCES += \
 #	glprojects/ballandlight/interaction.cpp \
 #	glprojects/texturetest/texturetest.cpp \
 #	glprojects/multisampling/multisampling.cpp \
-#	glprojects/sometext/sometext.cpp \
-#	glprojects/yetanothersphere/yetanothersphere.cpp \
+	glprojects/sometext/sometext.cpp \
+	glprojects/yetanothersphere/yetanothersphere.cpp \
 #	glprojects/spherewithtexture/spherewithtexture.cpp \
 	glprojects/solarsystem/solarsystem.cpp \
 	glprojects/dummy/dummy.cpp
@@ -51,7 +51,7 @@ HEADERS += \
 	glprojects/cubewithtexture/cubewithtexture.hpp \
 	glprojects/zbuffertexture/zbuffertexture.hpp \
 #	glprojects/multisampling/multisampling.hpp \
-#	glprojects/cube/cube.hpp \
+	glprojects/cube/cube.hpp \
 #	glprojects/funIn2D/funIn2D.hpp \
 #	glprojects/lighttest/lighttest.hpp \
 #	glprojects/sphere/sphere.hpp \
@@ -60,8 +60,8 @@ HEADERS += \
 #	glprojects/ballandlight/ballandlight.hpp \
 #	glprojects/ballandlight/interaction.h \
 #	glprojects/texturetest/texturetest.hpp \
-#	glprojects/sometext/sometext.hpp \
-#	glprojects/yetanothersphere/yetanothersphere.hpp \
+	glprojects/sometext/sometext.hpp \
+	glprojects/yetanothersphere/yetanothersphere.hpp \
 #	glprojects/spherewithtexture/spherewithtexture.hpp \
 	glprojects/solarsystem/solarsystem.hpp \
 	glprojects/dummy/dummy.hpp

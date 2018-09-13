@@ -7,7 +7,7 @@
 #include "glprojects/solarsystem/solarsystem.hpp"
 #include "glprojects/zbuffertexture/zbuffertexture.hpp"
 #include "glprojects/dummy/dummy.hpp"
-//#include "glprojects/cube/cube.hpp"
+#include "glprojects/cube/cube.hpp"
 //#include "glprojects/funIn2D/funIn2D.hpp"
 //#include "glprojects/lighttest/lighttest.hpp"
 //#include "glprojects/sphere/sphere.hpp"
@@ -16,8 +16,8 @@
 //#include "glprojects/ballandlight/ballandlight.hpp"
 //#include "glprojects/texturetest/texturetest.hpp"
 //#include "glprojects/multisampling/multisampling.hpp"
-//#include "glprojects/sometext/sometext.hpp"
-//#include "glprojects/yetanothersphere/yetanothersphere.hpp"
+#include "glprojects/sometext/sometext.hpp"
+#include "glprojects/yetanothersphere/yetanothersphere.hpp"
 //#include "glprojects/spherewithtexture/spherewithtexture.hpp"
 
 int
@@ -50,8 +50,8 @@ main( int argc, char *argv[ ] ) {
 	Dummy
 	* dummy = new Dummy( );
 
-//	Cube
-//	* cube = new Cube( "Cube" );
+	Cube
+	* cube = new Cube( "Cube" );
 
 //	FunIn2D
 //	* funIn2D = new FunIn2D( "FunIn2D" );
@@ -77,12 +77,11 @@ main( int argc, char *argv[ ] ) {
 //	MultiSampling
 //	* multiSampling = new MultiSampling( "MultiSampling" );
 
-//	SomeText
-//	* someText = new SomeText( );
+	SomeText
+	* someText = new SomeText( );
 
-//	YetAnotherSphere
-//	* yetAnotherSphere = new YetAnotherSphere( "YAS " );
-
+	YetAnotherSphere
+	* yetAnotherSphere = new YetAnotherSphere( "YAS " );
 
 //	SphereWithTexture
 //	* sphereWithTexture = new SphereWithTexture( );
@@ -95,7 +94,7 @@ main( int argc, char *argv[ ] ) {
 	w.addGLProject( solarsSystem );
 	w.addGLProject( zBufferTexture );
 //	w.addGLProject( yetAnotherSphere );
-//	w.projects[ "Cube" ] = cube;
+	w.projects[ "Cube" ] = cube;
 //	w.projects[ "FunIn2D" ] = funIn2D;
 //	w.projects[ "LightedCheckerboardCave" ] = lightedCheckerboardCave;
 //	w.projects[ "Sphere" ] = sphere;
@@ -104,11 +103,11 @@ main( int argc, char *argv[ ] ) {
 //	w.projects[ "BallAndLight" ] = ballAndLight;
 //	w.projects[ "TextureTest" ] = textureTest;
 //	w.projects[ "MultiSampling" ] = multiSampling;
-//	w.projects[ "SomeText" ] = someText;
-//	w.projects[ "YAS" ] = yetAnotherSphere;
+	w.projects[ "SomeText" ] = someText;
+	w.projects[ "YAS" ] = yetAnotherSphere;
 //	w.projects[ "SphereWithTexture" ] = sphereWithTexture;
 
-	w.slotSetGLProject( "CubeWithTexture" );
+	w.slotSetGLProject( "Cube" );
 
 	w.show( );
 

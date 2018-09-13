@@ -101,7 +101,7 @@ Cube::init( ) {
 					.0f << .0f << .0f << lightColors[ 6 ] <<
 					GLR::VertexArray::Object( 0, 7, GL_POINTS );
 		}
-		//
+		// V-CUBE
 		{
 			/*
 			*    2----3
@@ -374,9 +374,9 @@ Cube::init( ) {
 		{
 			glr.container( "C-CUBE" ).
 				setShader( "S-CUBE" ).
-				setVertexArray( "-CUBE" ).
+				setVertexArray( "V-CUBE" ).
 				addInTexture( "T-SOME-NICE-TEXTURE-CHECKERBOARD" ).
-				addInTexture( "-SOME-NICE-TEXTURE-ROBERTS-LIGHT-TEST" ).
+				addInTexture( "T-SOME-NICE-TEXTURE-ROBERTS-LIGHT-TEST" ).
 				build( );
 		}
 	}
@@ -469,5 +469,4 @@ Cube::resize( int p_width, int p_height ) {
 	ratio = 1.f * p_width / p_height;
 
 	projection = glm::perspective( 45.0f, ratio, 1.0f, 200.f );
-
 }

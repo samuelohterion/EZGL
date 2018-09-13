@@ -24,11 +24,11 @@ SomeText::init( ) {
 		{
 			glr.vertices( "VA-QUAD-3D" ).
 				setUsage( GL_STATIC_DRAW ).
-				attrib( "vertex", 3, 0 ). attrib( "normal", 3, 3 ) <<
+				attrib( "vertex", 0, 3 ). attrib( "normal", 3, 3 ) <<
 				-1.f << -1.f << 0.f <<       +0.f << +0.f << +1.f <<
 				+1.f << -1.f << 0.f <<       +0.f << +0.f << +1.f <<
 				+1.f << +1.f << 0.f <<       +0.f << +0.f << +1.f <<
-				-1.f << +1.f << 0.f <<       +0.f << +0.f << +1.f;// <<
+				-1.f << +1.f << 0.f <<       +0.f << +0.f << +1.f <<
 				GLR::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
 		}
 	}
@@ -98,7 +98,7 @@ SomeText::init( ) {
 		{
 			glr.texture(
 			"TX-CHARACTERS",
-			new GLR::Texture( "txChars", "../EZGL/glprojects/sometext/pix/characters.png" ) );
+			new GLR::Texture( "txChars", "../EZGL/pix/characters.png" ) );
 		}
 	}
 

@@ -22,22 +22,22 @@ YetAnotherSphere::init( ) {
 	{
 		// VERTEX-ARRAY-QUAD-3D
 		{
-			glr.vertices( "VA-QUAD-3D" ).
+			glr.vertices( "V-QUAD-3D" ).
 				setUsage( GL_STATIC_DRAW ).
-				attrib( "vertex", 3, 0 ). attrib( "normal", 3, 3 ) <<
+				attrib( "vertex", 0, 3 ). attrib( "normal", 3, 3 ) <<
 				-1.f << -1.f << 0.f <<       +0.f << +0.f << +1.f <<
 				+1.f << -1.f << 0.f <<       +0.f << +0.f << +1.f <<
 				+1.f << +1.f << 0.f <<       +0.f << +0.f << +1.f <<
 				-1.f << +1.f << 0.f <<       +0.f << +0.f << +1.f;// <<
 				//GLRenderer::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
 		}
-		// VA-YET-ANOTHER-SPHERE
+		// V-YET-ANOTHER-SPHERE
 		{
 			GLR::VertexArray
 			& va =
-				glr.vertices( "VA-YET-ANOTHER-SPHERE" ).
+				glr.vertices( "V-YET-ANOTHER-SPHERE" ).
 					setUsage( GL_STATIC_DRAW ).
-					attrib( "vertex", 3, 0 ).
+					attrib( "vertex", 0, 3 ).
 					attrib( "color", 3, 3 );
 
 			float
@@ -109,12 +109,12 @@ YetAnotherSphere::init( ) {
 	{
 		// INDEX-ARRAY-QUAD-3D
 		{
-			glr.indices( "IA-QUAD-3D" ).
+			glr.indices( "I-QUAD-3D" ).
 				setUsage( GL_STATIC_DRAW ) <<
 				0 << 1 << 2 << 3 <<
 				GLR::IndexArray::Object( 0, 4, GL_TRIANGLE_FAN );
 		}
-		// IA-YET-ANOTHER-SPHERE
+		// I-YET-ANOTHER-SPHERE
 
 		//     5
 		//   3   4
@@ -145,7 +145,7 @@ YetAnotherSphere::init( ) {
 		// 07    35    36    37    38    39    40    41
 
 		{
-			glr.indices( "IA-YET-ANOTHER-SPHERE" ).
+			glr.indices( "I-YET-ANOTHER-SPHERE" ).
 				setUsage( GL_STATIC_DRAW ) <<
 				0 << 1 << 3 <<
 				1 << 2 << 4 <<
@@ -157,10 +157,10 @@ YetAnotherSphere::init( ) {
 
 	// shaders
 	{
-		// SH-CHARACTER
+		// S-CHARACTER
 		{
 			glr.shader(
-				"SH-CHARACTER",
+				"S-CHARACTER",
 
 				// vertex shader
 				"#version 330 core\n"
@@ -202,10 +202,10 @@ YetAnotherSphere::init( ) {
 				addUniform( "proj",   GLR::Shader::MAT4, GLR::Shader::SCALAR, & projection ).
 				addUniform( "letter", GLR::Shader::VEC2, GLR::Shader::SCALAR, & letter );
 		}
-		// SH-YET-ANOTHER-SPHERE
+		// S-YET-ANOTHER-SPHERE
 		{
 			glr.shader(
-				"SH-YET-ANOTHER-SPHERE",
+				"S-YET-ANOTHER-SPHERE",
 
 				// vertex shader
 				"#version 330 core\n"
@@ -276,31 +276,31 @@ YetAnotherSphere::init( ) {
 
 	// textures
 	{
-		// TX-CHARACTERS
+		// T-CHARACTERS
 		{
 			glr.texture(
-			"TX-CHARACTERS",
-			new GLR::Texture( "txChars", "../EZGL/glprojects/sometext/pix/characters.png" ) );
+			"T-CHARACTERS",
+			new GLR::Texture( "txChars", "../EZGL/pix/characters.png" ) );
 		}
 	}
 
-	// programs
+	// containers
 	{
-		// PR-PRINT-A-CHARACTER
+		// C-PRINT-A-CHARACTER
 		{
-			glr.container( "PR-PRINT-A-CHARACTER" ).
-				setVertexArray( "VA-QUAD-3D" ).
-				setIndexArray( "IA-QUAD-3D" ).
-				setShader( "SH-CHARACTER" ).
-				addInTexture( "TX-CHARACTERS" ).
+			glr.container( "C-PRINT-A-CHARACTER" ).
+				setVertexArray( "V-QUAD-3D" ).
+				setIndexArray( "I-QUAD-3D" ).
+				setShader( "S-CHARACTER" ).
+				addInTexture( "T-CHARACTERS" ).
 				build( );
 		}
-		// PR-YET-ANOTHER-SPHERE
+		// C-YET-ANOTHER-SPHERE
 		{
-			glr.container( "PR-YET-ANOTHER-SPHERE" ).
-				setVertexArray( "VA-YET-ANOTHER-SPHERE" ).
-				setIndexArray( "IA-YET-ANOTHER-SPHERE" ).
-				setShader( "SH-YET-ANOTHER-SPHERE" ).
+			glr.container( "C-YET-ANOTHER-SPHERE" ).
+				setVertexArray( "V-YET-ANOTHER-SPHERE" ).
+				setIndexArray( "I-YET-ANOTHER-SPHERE" ).
+				setShader( "S-YET-ANOTHER-SPHERE" ).
 				build( );
 		}
 	}
@@ -322,7 +322,7 @@ YetAnotherSphere::paint( ) {
 	for( GLsizei i = -7; i <= 7; ++ i ) {
 
 		letter = glm::vec2( ( 8.f + i ) / 16.f, 11.f / 16.f );
-		glr.run( { "PR-PRINT-A-CHARACTER" } );
+		glr.run( { "C-PRINT-A-CHARACTER" } );
 
 		model = glm::translate( model, glm::vec3( 1., 0., 0. ) );
 		model = glm::rotate( model, -.15f / ( 8.f + i ) * vcd->time, glm::vec3( 1., 0., 0. ) );
@@ -337,7 +337,7 @@ YetAnotherSphere::paint( ) {
 	//glEnable( GL_DEPTH_TEST );
 	glDisable( GL_CULL_FACE );
 
-	glr.run( { "PR-YET-ANOTHER-SPHERE" } );
+	glr.run( { "C-YET-ANOTHER-SPHERE" } );
 }
 
 void
