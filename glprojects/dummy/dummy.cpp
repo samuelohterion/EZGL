@@ -35,7 +35,7 @@ tetrahedron(
 	tetrahedron.c = Triangle( p0, p3, p1, glm::vec3( 0,0,1 ) );
 	tetrahedron.d = Triangle( p3, p2, p1, glm::vec3( 1,1,0 ) );
 
-	tetrahedron . divide ( 3 );
+	tetrahedron . divide ( 7 );
 }
 
 Dummy::~Dummy ( ){
@@ -133,28 +133,61 @@ Dummy::paint( ) {
 	angle = .015f * vcd->time;
 
 	glm::mat4
-	e = glm::mat4( 1. ),
 	f = inverse( m );
 
-	v = glm::translate( e, glm::vec3( 0.f, 0.f, -3.f ) );
-
-	m = glm::rotate( m, .001f, glm::vec3( 0.f, 1.f, 0.f ) );
+	v = glm::translate( glm::mat4( 1. ), glm::vec3( 0.f, 0.f, -5.f ) );
 
 	glm::vec2
-	dAngle = .1f * vcd->dMouse;
+	dAngle = .01f * vcd->dMouse;
 
-	if( abs( dAngle.x ) < abs( dAngle.y ) )
+	if( 0 < abs( dAngle.y ) )
 
-		m = glm::rotate( m, dAngle.y, glm::vec3( glm::vec4( 1.f, 0.f, 0.f, 0.f ) ) );// * f;
+		m = glm::rotate( m, -dAngle.y, glm::vec3( f * glm::vec4( 1.f, 0.f, 0.f, 0.f ) ) );
 
-	else
-		m = glm::rotate( m, dAngle.x, glm::vec3( glm::vec4( 0.f, 1.f, 0.f, 0.f ) ) );// * f;
+	if( 0 < abs( dAngle.x ) )
+
+		m = glm::rotate( m, +dAngle.x, glm::vec3( f * glm::vec4( 0.f, 1.f, 0.f, 0.f ) ) );
+
+	m = glm::rotate( m, .01f, glm::vec3( f * glm::vec4( 0.f, 1.f, 0.f, 0.f ) ) );
+	m = glm::translate( m, glm::vec3( 0.f, 0.f, -2.f ) );
 
 	mvp = p * v * m;
 
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	glr.run( { "C-DUMMY-TRIANGLE" } );
+
+	m = glm::translate( m, glm::vec3( 0.f, 0.f, +4.f ) );
+
+	mvp = p * v * m;
+
+	glr.run( { "C-DUMMY-TRIANGLE" } );
+
+	m = glm::translate( m, glm::vec3( 0.f, -2.f, -2.f ) );
+
+	mvp = p * v * m;
+
+	glr.run( { "C-DUMMY-TRIANGLE" } );
+
+	m = glm::translate( m, glm::vec3( 0.f, +4.f, +0.f ) );
+
+	mvp = p * v * m;
+
+	glr.run( { "C-DUMMY-TRIANGLE" } );
+
+	m = glm::translate( m, glm::vec3( -2.f, -2.f, 0.f ) );
+
+	mvp = p * v * m;
+
+	glr.run( { "C-DUMMY-TRIANGLE" } );
+
+	m = glm::translate( m, glm::vec3( +4.f, +0.f, 0.f ) );
+
+	mvp = p * v * m;
+
+	glr.run( { "C-DUMMY-TRIANGLE" } );
+
+	m = glm::translate( m, glm::vec3( -2.f, +0.f, 0.f ) );
 }
 
 void
@@ -166,6 +199,8 @@ Dummy::resize( int p_width, int p_height ) {
 	ratio = w / h;
 
 	p = glm::perspective(  45.0f, ratio, 1.0f, 100.f );
+
+	print( p );
 
 	std::cout << std::endl;
 }
