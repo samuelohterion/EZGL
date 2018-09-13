@@ -123,71 +123,81 @@ Dummy::init ( ) {
 	p = v = m = glm::mat4( 1. );
 
 	glEnable( GL_DEPTH_TEST );
-	glEnable( GL_CULL_FACE );
+	glDisable( GL_CULL_FACE );
 }
 
 void
 Dummy::paint( ) {
 
-	float
-	angle = .015f * vcd->time;
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+	v = glm::translate( glm::mat4( 1. ), glm::vec3( 0.f, 0.f, -6.f ) );
+
+	glm::vec3 const
+	X = glm::vec3( 1, 0, 0 ),
+	Y = glm::vec3( 0, 1, 0 ),
+	Z = glm::vec3( 0, 0, 1 );
+
+	glm::mat3
+	f = glm::mat3( inverse( m ) );
 
 	glm::mat4
-	f = inverse( m );
-
-	v = glm::translate( glm::mat4( 1. ), glm::vec3( 0.f, 0.f, -5.f ) );
+	vp = p * v;
 
 	glm::vec2
 	dAngle = .01f * vcd->dMouse;
 
+	// f fixes the rotation axis to local Y
+	m = glm::rotate( m, .01f, f * Y );
+
+	// without f rotation around model Y
+	// m = glm::rotate( m, .01f, Y );
+
 	if( 0 < abs( dAngle.y ) )
 
-		m = glm::rotate( m, -dAngle.y, glm::vec3( f * glm::vec4( 1.f, 0.f, 0.f, 0.f ) ) );
+		m = glm::rotate( m, -dAngle.y, f[ 0 ] );
 
 	if( 0 < abs( dAngle.x ) )
 
-		m = glm::rotate( m, +dAngle.x, glm::vec3( f * glm::vec4( 0.f, 1.f, 0.f, 0.f ) ) );
+		m = glm::rotate( m, +dAngle.x, f[ 1 ] );
 
-	m = glm::rotate( m, .01f, glm::vec3( f * glm::vec4( 0.f, 1.f, 0.f, 0.f ) ) );
-	m = glm::translate( m, glm::vec3( 0.f, 0.f, -2.f ) );
+	m = glm::translate( m, -2.f * Z );
 
-	mvp = p * v * m;
-
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	mvp = vp * glm::rotate( m, + vcd->time, Z );
 
 	glr.run( { "C-DUMMY-TRIANGLE" } );
 
-	m = glm::translate( m, glm::vec3( 0.f, 0.f, +4.f ) );
+	m = glm::translate( m, +4.f * Z );
 
-	mvp = p * v * m;
-
-	glr.run( { "C-DUMMY-TRIANGLE" } );
-
-	m = glm::translate( m, glm::vec3( 0.f, -2.f, -2.f ) );
-
-	mvp = p * v * m;
+	mvp = vp * glm::rotate( m, - vcd->time, Z );
 
 	glr.run( { "C-DUMMY-TRIANGLE" } );
 
-	m = glm::translate( m, glm::vec3( 0.f, +4.f, +0.f ) );
+	m = glm::translate( m, -2.f * ( Y + Z ) );
 
-	mvp = p * v * m;
-
-	glr.run( { "C-DUMMY-TRIANGLE" } );
-
-	m = glm::translate( m, glm::vec3( -2.f, -2.f, 0.f ) );
-
-	mvp = p * v * m;
+	mvp = vp * glm::rotate( m, + vcd->time, Y );
 
 	glr.run( { "C-DUMMY-TRIANGLE" } );
 
-	m = glm::translate( m, glm::vec3( +4.f, +0.f, 0.f ) );
+	m = glm::translate( m, +4.f * Y );
 
-	mvp = p * v * m;
+	mvp = vp * glm::rotate( m, - vcd->time, Y );
 
 	glr.run( { "C-DUMMY-TRIANGLE" } );
 
-	m = glm::translate( m, glm::vec3( -2.f, +0.f, 0.f ) );
+	m = glm::translate( m, -2.f * ( X + Y ) );
+
+	mvp = vp * glm::rotate( m, + vcd->time, X );
+
+	glr.run( { "C-DUMMY-TRIANGLE" } );
+
+	m = glm::translate( m, +4.f * X );
+
+	mvp = vp * glm::rotate( m, - vcd->time, X );
+
+	glr.run( { "C-DUMMY-TRIANGLE" } );
+
+	m = glm::translate( m, -2.f * X );
 }
 
 void

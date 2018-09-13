@@ -53,13 +53,16 @@ Triangle {
 				return;
 			}
 
+			GLfloat
+			d = .2f;
+
 			glm::vec3
-			ab = 1.f * ( .51f * a + .49f * b ),
-			bc = 1.f * ( .51f * b + .49f * c ),
-			ca = 1.f * ( .51f * c + .49f * a ),
-			ba = 1.f * ( .49f * a + .51f * b ),
-			cb = 1.f * ( .49f * b + .51f * c ),
-			ac = 1.f * ( .49f * c + .51f * a ),
+			ab = 1.f * ( ( .5f + d ) * a + ( .5f - d ) * b ),
+			bc = 1.f * ( ( .5f + d ) * b + ( .5f - d ) * c ),
+			ca = 1.f * ( ( .5f + d ) * c + ( .5f - d ) * a ),
+			ba = 1.f * ( ( .5f - d ) * a + ( .5f + d ) * b ),
+			cb = 1.f * ( ( .5f - d ) * b + ( .5f + d ) * c ),
+			ac = 1.f * ( ( .5f - d ) * c + ( .5f + d ) * a ),
 			ab2 = 1.f * ( .5f * a + .5f * b ),
 			bc2 = 1.f * ( .5f * b + .5f * c ),
 			ca2 = 1.f * ( .5f * c + .5f * a );
@@ -90,8 +93,9 @@ Triangle {
 			else {
 
 //                p_va << glm::normalize( a ) << glm::normalize( b ) << glm::normalize( c );
-//				glm::vec3
-//				col( 1.f * rand( ) / RAND_MAX, 1.f * rand( ) / RAND_MAX, 1.f * rand( ) / RAND_MAX );
+				col += glm::vec3( 1.f * rand( ) / RAND_MAX, 1.f * rand( ) / RAND_MAX, 1.f * rand( ) / RAND_MAX );
+
+				col *= glm::vec3( .5 );
 
 				p_va << a << col << b << col << c << col;
 			}
