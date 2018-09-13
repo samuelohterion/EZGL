@@ -122,6 +122,8 @@ Dummy::init ( ) {
 
 	p = v = m = glm::mat4( 1. );
 
+	v = glm::translate( v, glm::vec3( 0.f, 0.f, -6.f ) );
+
 	glEnable( GL_DEPTH_TEST );
 	glDisable( GL_CULL_FACE );
 }
@@ -131,7 +133,9 @@ Dummy::paint( ) {
 
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-	v = glm::translate( glm::mat4( 1. ), glm::vec3( 0.f, 0.f, -6.f ) );
+	if( vcd->buttons & 0x02 )
+
+		v = glm::translate( v, glm::vec3( 0.f, 0.f, .01f * vcd->dMouse.y ) );
 
 	glm::vec3 const
 	X = glm::vec3( 1, 0, 0 ),
@@ -153,11 +157,11 @@ Dummy::paint( ) {
 	// without f rotation around model Y
 	// m = glm::rotate( m, .01f, Y );
 
-	if( 0 < abs( dAngle.y ) )
+	if( 0 < abs( dAngle.y ) && vcd->buttons & 0x01 )
 
 		m = glm::rotate( m, -dAngle.y, f[ 0 ] );
 
-	if( 0 < abs( dAngle.x ) )
+	if( 0 < abs( dAngle.x ) && vcd->buttons & 0x01 )
 
 		m = glm::rotate( m, +dAngle.x, f[ 1 ] );
 

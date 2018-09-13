@@ -84,6 +84,8 @@ GLWidget::mousePressEvent( QMouseEvent *p_mouseEvent ) {
 	viewControlData.mousey = height( ) - 1 - p_mouseEvent->pos( ).y( );
 	viewControlData.dMouse = glm::vec2( 0, 0 );
 
+	viewControlData.buttons = p_mouseEvent->buttons( );
+
 	p_mouseEvent->accept( );
 
 	if( !timer.isActive( ) )
@@ -97,6 +99,8 @@ GLWidget::mouseReleaseEvent( QMouseEvent *p_mouseEvent ) {
 	viewControlData.mousex = p_mouseEvent->pos( ).x( );
 	viewControlData.mousey = height( ) - 1 - p_mouseEvent->pos( ).y( );
 	viewControlData.dMouse = glm::vec2( 0, 0 );
+
+	viewControlData.buttons = p_mouseEvent->buttons( );
 
 	p_mouseEvent->accept( );
 
