@@ -541,7 +541,7 @@ SolarsSystem::init( ) {
 
 	projection = view = model = loc = glm::mat4( 1. );
 
-	view = glm::lookAt( glm::vec3( 0., 0., +5. + 150. * vcd->mousey / vcd->height ), glm::vec3( 0., 0., 0. ), glm::vec3( 0., 1., 0. ) );
+	view = glm::lookAt( glm::vec3( 0., 0., +50. ), glm::vec3( 0., 0., 0. ), glm::vec3( 0., 1., 0. ) );
 
 	lightC = V3( 1., 1., 1. );
 
@@ -565,7 +565,9 @@ SolarsSystem::paint( ) {
 	lightP = glm::vec4( 0.f, 0.f, 0.f, 1.f );
 
 	model = glm::mat4( 1.f );
-	model = glm::rotate( model, 35.f * vcd->mousey / vcd->height / 180.f * 3.1415f, glm::vec3( 1.f, 0.f, 0.0f ) );
+	model = glm::rotate( model, 60.f * vcd->mousey / vcd->height / 180.f * 3.1415f, glm::vec3( 1.f, 0.f, 0.0f ) );
+	model = glm::translate( model, ( +50.f - 100.f * vcd->mousey / vcd->height ) * glm::vec3( 0.f, 0.f, 1.0f ) );
+
 	// this is now the center
 
 	// store center
