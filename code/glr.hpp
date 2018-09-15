@@ -55,10 +55,149 @@ Named {
 		}
 };
 
+
+struct
+ViewControlData {
+
+	GLint
+	width,
+	height,
+	mousex,
+	mousey,
+	ticks;
+
+	GLuint
+	buttons;
+
+	GLfloat
+	time;
+
+	glm::vec2
+	aspect,
+	dMouse;
+};
+
 class
 GLR {
 
 	public :
+
+		class
+		CameraCenterView {
+
+			public :
+
+				CameraCenterView ( glm::mat4 const & p_model, glm::mat4 const & p_view, ViewControlData * p_vcd, glm::vec3 const & p_par = glm::vec3( .01f, .01f, .1f ) ) :
+				__model( p_model ),
+				__view( p_view ),
+				__loc( glm::mat3( inverse( __model ) ) ),
+				__vcd( p_vcd ),
+				__par( p_par ) {
+
+					work( );
+				}
+
+				~CameraCenterView ( ) {
+
+				}
+
+			private :
+
+				glm::mat4
+				__model,
+				__view;
+
+				glm::mat3
+				__loc;
+
+				ViewControlData
+				* __vcd;
+
+				glm::vec3
+				__par;
+
+			public :
+
+				CameraCenterView
+				& fixModel( glm::mat4 const & p_model ) {
+
+					__model = p_model;
+					__loc   = inverse( __model );
+
+					return *this;
+				}
+
+				void
+				rotate_around_x( GLfloat const & p_angle ) {
+
+					__model = glm::rotate( __model, p_angle, __loc[ 0 ] );
+				}
+
+				void
+				rotate_around_y( GLfloat const & p_angle ) {
+
+					__model = glm::rotate( __model, p_angle, __loc[ 1 ] );
+				}
+
+				void
+				rotate_around_z( GLfloat const & p_angle ) {
+
+					__model = glm::rotate( __model, p_angle, __loc[ 2 ] );
+				}
+
+				void
+				rotate_around( GLfloat const & p_angle, glm::vec3 const & p_axis ) {
+
+					__model = glm::rotate( __model, p_angle, p_axis * __loc );
+				}
+
+				glm::mat4
+				model( ) const {
+
+					return __model;
+				}
+
+				void
+				move( GLfloat const & dS ) {
+
+					__view = glm::translate( __view, glm::vec3( 0, 0, dS ) );
+				}
+
+				glm::mat4
+				view( ) const {
+
+					return __view;
+				}
+
+				void
+				work( ) {
+
+					glm::vec2
+					dAngle = glm::vec2( __par ) * __vcd->dMouse;
+
+					if ( __vcd->buttons & 0x02 )
+
+						move( __par.z * __vcd->dMouse.y );
+
+					if ( __vcd->ticks != 0 ) {
+
+						move( .1f * __par.z * __vcd->ticks );
+					}
+
+					if ( __vcd->buttons & 0x01 ) {
+
+						if( 0 < abs( dAngle.y ) ) {
+
+							rotate_around_x( - dAngle.y );
+						}
+
+						if( 0 < abs( dAngle.x ) ) {
+
+							rotate_around_y( + dAngle.x );
+						}
+					}
+				}
+		};
 
 		class
 		Texture :
@@ -2056,27 +2195,6 @@ GLR {
 				pr[ s ]->run( );
 			}
 		}
-};
-
-struct
-ViewControlData {
-
-	GLint
-	width,
-	height,
-	mousex,
-	mousey,
-	ticks;
-
-	GLuint
-	buttons;
-
-	GLfloat
-	time;
-
-	glm::vec2
-	aspect,
-	dMouse;
 };
 
 class GLProject :

@@ -407,35 +407,14 @@ Cube::paint( ) {
 
 	glr.run( { "C-SOME-NICE-TEXTURE-ROBERTS-LIGHT-TEST" } );
 
+	GLR::CameraCenterView
+	ccv( model, view, vcd );
+
+	model = ccv.model( );
+
+	view  = ccv.view( );
+
 	angle = vcd->time;
-
-	if( vcd->buttons & 0x02 )
-
-		view = glm::translate( view, glm::vec3( 0.f, 0.f, .1f * vcd->dMouse.y ) );
-
-	if( vcd->ticks != 0 ) {
-
-		view = glm::translate( view, glm::vec3( 0.f, 0.f, .01f * vcd->ticks ) );
-	}
-
-	glm::mat3
-	invModel = glm::mat3( inverse( model ) );
-
-	glm::vec2
-	dAngle = .01f * vcd->dMouse;
-
-	if( vcd->buttons & 0x01 ) {
-
-		if( 0 < abs( dAngle.y ) ) {
-
-			model = glm::rotate( model, -dAngle.y, invModel[ 0 ] );
-		}
-
-		if( 0 < abs( dAngle.x ) ) {
-
-			model = glm::rotate( model, +dAngle.x, invModel[ 1 ] );
-		}
-	}
 
 	model = glm::rotate( model, .0123f, normalize( glm::vec3( sinf( .1f * angle ), sinf( .21f ), sinf( .31f ) ) ) );
 

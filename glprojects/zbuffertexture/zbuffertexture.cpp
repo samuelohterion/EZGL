@@ -145,17 +145,19 @@ ZBufferTexture::init( ) {
 	}
 
 	p = v = m = glm::mat4( 1. );
+
+	v = glm::translate( v, glm::vec3( 0.f, 0.f, -2.f ) );
 }
 
 void
 ZBufferTexture::paint( ) {
 
-	float
-	angle = 2.15f * vcd->time;
+	GLR::CameraCenterView
+	ccv( m, v, vcd, glm::vec3( .02f, .02f, .1f ) );
 
-	v = glm::mat4( 1. );
-	v = glm::translate( glm::mat4( 1. ), glm::vec3( 0.f, 0.f, -5.f + 4.f * sinf( .32f * vcd->time ) ) );
-	v = glm::rotate( v, angle, glm::vec3( 0.1f, 1.f, 0.2f ) );
+	m = ccv.model( );
+
+	v  = ccv.view( );
 
 	mvp = p * v * m;
 

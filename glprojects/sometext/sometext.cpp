@@ -8,12 +8,6 @@ GLProject ( p_name, p_vcd ) {
 void
 SomeText::init( ) {
 
-	glClearColor( .11f, .13f, .12f, 1. );
-
-	projection = view = model = glm::mat4( 1. );
-
-	view = glm::lookAt( glm::vec3( 0., 0., 1. ), glm::vec3( 0., 0., 0. ), glm::vec3( 0., 1., 0. ) );
-
 	// frame buffer
 	{
 	}
@@ -114,6 +108,12 @@ SomeText::init( ) {
 				build( );
 		}
 	}
+
+	glClearColor( .11f, .13f, .12f, 1. );
+
+	projection = view = model = glm::mat4( 1. );
+
+	view = glm::lookAt( glm::vec3( 0., 0., 10. ), glm::vec3( 0., 0., 0. ), glm::vec3( 0., 1., 0. ) );
 }
 
 void
@@ -124,9 +124,17 @@ SomeText::paint( ) {
 
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-	model = glm::mat4( 1. );
+	GLR::CameraCenterView
+	ccv( model, view, vcd );
 
-	model = glm::translate( model, glm::vec3( -7., 0., -7. ) );
+	model = ccv.model( );
+
+	view  = ccv.view( );
+
+	glm::mat4
+	tmp = model;
+
+	model = glm::translate( model, glm::vec3( -7., 0., 0. ) );
 	model = glm::rotate( model, 7.1f * vcd->time, glm::vec3( 1., 0., 0. ) );
 
 	for( GLsizei i = -7; i <= 7; ++ i ) {
@@ -137,6 +145,8 @@ SomeText::paint( ) {
 		model = glm::translate( model, glm::vec3( 1., 0., 0. ) );
 		model = glm::rotate( model, -.15f / ( 8.f + i ) * vcd->time, glm::vec3( 1., 0., 0. ) );
 	}
+
+	model = tmp;
 }
 
 void

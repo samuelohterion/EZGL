@@ -306,35 +306,12 @@ CubeWithTexture::paint( ) {
 	glEnable( GL_DEPTH_TEST );
 	glEnable( GL_CULL_FACE );
 
-	if( vcd->buttons & 0x02 )
+	GLR::CameraCenterView
+	ccv( model, view, vcd, glm::vec3( .02f, .02f, .1f) );
 
-		view = glm::translate( view, glm::vec3( 0.f, 0.f, .01f * vcd->dMouse.y ) );
+	model = ccv.model( );
 
-	if( vcd->ticks != 0 ) {
-
-		view = glm::translate( view, glm::vec3( 0.f, 0.f, .001f * vcd->ticks ) );
-
-		print( view );
-	}
-
-	glm::mat3
-	f = glm::mat3( inverse( model ) );
-
-	glm::vec2
-	dAngle = .01f * vcd->dMouse;
-
-	if( vcd->buttons & 0x01 ) {
-
-		if( 0 < abs( dAngle.y ) ) {
-
-			model = glm::rotate( model, -dAngle.y, f[ 0 ] );
-		}
-
-		if( 0 < abs( dAngle.x ) ) {
-
-			model = glm::rotate( model, +dAngle.x, f[ 1 ] );
-		}
-	}
+	view  = ccv.view( );
 
 	glr.run( { "C-CUBE-WITH-TEXTURE-CUBE" } );
 }
