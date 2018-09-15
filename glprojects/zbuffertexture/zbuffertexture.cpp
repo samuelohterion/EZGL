@@ -155,6 +155,8 @@ ZBufferTexture::paint( ) {
 	GLR::CameraCenterView
 	ccv( m, v, vcd, glm::vec3( .02f, .02f, .1f ) );
 
+	ccv.reactOnMouse( );
+
 	m = ccv.model( );
 
 	v  = ccv.view( );

@@ -25,7 +25,7 @@ SOURCES += \
 	glprojects/cubewithtexture/cubewithtexture.cpp \
 	glprojects/zbuffertexture/zbuffertexture.cpp \
 	glprojects/cube/cube.cpp \
-#	glprojects/funIn2D/funIn2D.cpp \
+	glprojects/funIn2D/funIn2D.cpp \
 #	glprojects/lighttest/lighttest.cpp \
 #	glprojects/sphere/sphere.cpp \
 	glprojects/spheredynamicsurface/spheredynamicsurface.cpp \
@@ -38,6 +38,7 @@ SOURCES += \
 	glprojects/yetanothersphere/yetanothersphere.cpp \
 #	glprojects/spherewithtexture/spherewithtexture.cpp \
 	glprojects/solarsystem/solarsystem.cpp \
+	glprojects/spaceship/spaceship.cpp \
 	glprojects/dummy/dummy.cpp
 
 HEADERS += \
@@ -52,7 +53,7 @@ HEADERS += \
 	glprojects/zbuffertexture/zbuffertexture.hpp \
 #	glprojects/multisampling/multisampling.hpp \
 	glprojects/cube/cube.hpp \
-#	glprojects/funIn2D/funIn2D.hpp \
+	glprojects/funIn2D/funIn2D.hpp \
 #	glprojects/lighttest/lighttest.hpp \
 #	glprojects/sphere/sphere.hpp \
 	glprojects/spheredynamicsurface/spheredynamicsurface.hpp \
@@ -64,16 +65,13 @@ HEADERS += \
 	glprojects/yetanothersphere/yetanothersphere.hpp \
 #	glprojects/spherewithtexture/spherewithtexture.hpp \
 	glprojects/solarsystem/solarsystem.hpp \
+	glprojects/spaceship/spaceship.hpp \
 	glprojects/dummy/dummy.hpp
 
 FORMS += \
 	code/widget.ui
 
 DISTFILES += \
-	glprojects/cube/cube.vsh \
-	glprojects/cube/cube.fsh \
-	glprojects/cube/wall.vsh \
-	glprojects/cube/wall.fsh \
 	glprojects/funIn2D/fun1.vsh \
 	glprojects/funIn2D/fun1.fsh \
 	glprojects/robertslighttest2D/robertslighttest2D.vsh \

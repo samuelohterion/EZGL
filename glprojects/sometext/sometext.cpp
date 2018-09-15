@@ -16,7 +16,7 @@ SomeText::init( ) {
 	{
 		// VERTEX-ARRAY-QUAD-3D
 		{
-			glr.vertices( "VA-QUAD-3D" ).
+			glr.vertices( "V-QUAD-3D" ).
 				setUsage( GL_STATIC_DRAW ).
 				attrib( "vertex", 0, 3 ). attrib( "normal", 3, 3 ) <<
 				-1.f << -1.f << 0.f <<       +0.f << +0.f << +1.f <<
@@ -31,7 +31,7 @@ SomeText::init( ) {
 
 		// INDEX-ARRAY-QUAD-3D
 //		{
-//			glr.indices( "IA-QUAD-3D" ).
+//			glr.indices( "I-QUAD-3D" ).
 //				setUsage( GL_STATIC_DRAW ) <<
 //				0 << 1 << 2 << 3 <<
 //				GLRenderer::IndexArray::Object( 0, 4, GL_TRIANGLE_FAN );
@@ -39,10 +39,10 @@ SomeText::init( ) {
 	}
 	// shaders
 	{
-		// SH-CHARACTER
+		// S-CHARACTER
 		{
 			glr.shader(
-				"SH-CHARACTER",
+				"S-CHARACTER",
 
 				// vertex shader
 				"#version 330 core\n"
@@ -85,26 +85,24 @@ SomeText::init( ) {
 				addUniform( "letter", GLR::Shader::VEC2, GLR::Shader::SCALAR, & letter );
 		}
 	}
-
 	// textures
 	{
-		// TX-CHARACTERS
+		// T-CHARACTERS
 		{
 			glr.texture(
-			"TX-CHARACTERS",
+			"T-CHARACTERS",
 			new GLR::Texture( "txChars", "../EZGL/pix/characters.png" ) );
 		}
 	}
-
-	// programs
+	// containers
 	{
-		// PR-PRINT-A-CHARACTER
+		// C-PRINT-A-CHARACTER
 		{
-			glr.container( "PR-PRINT-A-CHARACTER" ).
-				setVertexArray( "VA-QUAD-3D" ).
-//				setIndexArray( "IA-QUAD-3D" ).
-				setShader( "SH-CHARACTER" ).
-				addInTexture( "TX-CHARACTERS" ).
+			glr.container( "C-PRINT-A-CHARACTER" ).
+				setVertexArray( "V-QUAD-3D" ).
+//				setIndexArray( "I-QUAD-3D" ).
+				setShader( "S-CHARACTER" ).
+				addInTexture( "T-CHARACTERS" ).
 				build( );
 		}
 	}
@@ -124,11 +122,26 @@ SomeText::paint( ) {
 
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
+	// use a camera center view
 	GLR::CameraCenterView
 	ccv( model, view, vcd );
 
+	// set parameters:
+	// x,y : delta angle for rotation around y respective x axis
+	// z   : delta s for moving in z-direction
+	// with respect to either vcd->time or vcd->dMouse
+	ccv.setParam( glm::vec3( .01f, .01f, .5f ) );
+
+	// now react on mouse input
+	ccv.reactOnMouse( );
+
+	// add additional rotation around z
+	ccv.rotate_around_z( .01f );
+
+	// get new model matrix
 	model = ccv.model( );
 
+	// get new view matrix
 	view  = ccv.view( );
 
 	glm::mat4
@@ -140,7 +153,7 @@ SomeText::paint( ) {
 	for( GLsizei i = -7; i <= 7; ++ i ) {
 
 		letter = glm::vec2( ( 8.f + i ) / 16.f, 11.f / 16.f );
-		glr.run( { "PR-PRINT-A-CHARACTER" } );
+		glr.run( { "C-PRINT-A-CHARACTER" } );
 
 		model = glm::translate( model, glm::vec3( 1., 0., 0. ) );
 		model = glm::rotate( model, -.15f / ( 8.f + i ) * vcd->time, glm::vec3( 1., 0., 0. ) );

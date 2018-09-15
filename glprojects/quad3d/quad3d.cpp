@@ -87,17 +87,36 @@ Quad3D::init( ) {
 
 	glDisable( GL_DEPTH_TEST );
 	glDisable( GL_CULL_FACE );
+
+	v = glm::translate( v, glm::vec3( 0.f, 0.f, -4.f ) );
 }
 
 void
 Quad3D::paint( ) {
 
-	float
-	angle = 2.15f * vcd->time;
+	// ----------------------------------------------------------
+	// use a camera center view
+	GLR::CameraCenterView
+	ccv( m, v, vcd );
 
-	v = glm::mat4( 1. );
-	v = glm::translate( glm::mat4( 1. ), glm::vec3( 0.f, 0.f, -4.f ) );
-	v = glm::rotate( v, angle, glm::vec3( 0.f, 1.f, 0.f ) );
+	// set parameters:
+	// x,y : delta angle for rotation around y respective x axis
+	// z   : delta s for moving in z-direction
+	// with respect to either vcd->time or vcd->dMouse
+	ccv.setParam( glm::vec3( .01f, .01f, .05f ) );
+
+	// now react on mouse input
+	ccv.reactOnMouse( );
+
+	// add additional rotation around y
+	ccv.rotate_around_y( .01f );
+
+	// get new model matrix
+	m = ccv.model( );
+
+	// get new view matrix
+	v  = ccv.view( );
+	// ----------------------------------------------------------
 
 	mvp = p * v * m;
 

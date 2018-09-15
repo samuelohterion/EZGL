@@ -133,37 +133,23 @@ Dummy::paint( ) {
 
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-	if( vcd->buttons & 0x02 )
-
-		v = glm::translate( v, glm::vec3( 0.f, 0.f, .01f * vcd->dMouse.y ) );
-
 	glm::vec3 const
 	X = glm::vec3( 1, 0, 0 ),
 	Y = glm::vec3( 0, 1, 0 ),
 	Z = glm::vec3( 0, 0, 1 );
 
-	glm::mat3
-	f = glm::mat3( inverse( m ) );
+	GLR::CameraCenterView
+	ccv( m, v, vcd );
+
+	ccv.reactOnMouse( );
+
+	ccv.rotate_around_y( .01f );
+
+	m = ccv.model( );
+	v = ccv.view( );
 
 	glm::mat4
 	vp = p * v;
-
-	glm::vec2
-	dAngle = .01f * vcd->dMouse;
-
-	// f fixes the rotation axis to local Y
-	m = glm::rotate( m, .01f, f * Y );
-
-	// without f rotation around model Y
-	// m = glm::rotate( m, .01f, Y );
-
-	if( 0 < abs( dAngle.y ) && vcd->buttons & 0x01 )
-
-		m = glm::rotate( m, -dAngle.y, f[ 0 ] );
-
-	if( 0 < abs( dAngle.x ) && vcd->buttons & 0x01 )
-
-		m = glm::rotate( m, +dAngle.x, f[ 1 ] );
 
 	m = glm::translate( m, -2.f * Z );
 
@@ -212,5 +198,5 @@ Dummy::resize( int p_width, int p_height ) {
 	h = p_height,
 	ratio = w / h;
 
-	p = glm::perspective(  45.0f, ratio, 1.0f, 100.f );
+	p = glm::perspective(  45.0f, ratio, .1f, 50.f );
 }

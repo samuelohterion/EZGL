@@ -8,7 +8,7 @@
 #include "glprojects/zbuffertexture/zbuffertexture.hpp"
 #include "glprojects/dummy/dummy.hpp"
 #include "glprojects/cube/cube.hpp"
-//#include "glprojects/funIn2D/funIn2D.hpp"
+#include "glprojects/funIn2D/funIn2D.hpp"
 //#include "glprojects/lighttest/lighttest.hpp"
 //#include "glprojects/sphere/sphere.hpp"
 #include "glprojects/spheredynamicsurface/spheredynamicsurface.hpp"
@@ -18,6 +18,7 @@
 //#include "glprojects/multisampling/multisampling.hpp"
 #include "glprojects/sometext/sometext.hpp"
 #include "glprojects/yetanothersphere/yetanothersphere.hpp"
+#include "glprojects/spaceship/spaceship.hpp"
 //#include "glprojects/spherewithtexture/spherewithtexture.hpp"
 
 int
@@ -53,8 +54,8 @@ main( int argc, char *argv[ ] ) {
 	Cube
 	* cube = new Cube( "Cube" );
 
-//	FunIn2D
-//	* funIn2D = new FunIn2D( "FunIn2D" );
+	FunIn2D
+	* funIn2D = new FunIn2D( "FunIn2D" );
 
 //	LightedCheckerboardCave
 //	* lightedCheckerboardCave = new LightedCheckerboardCave( "LightedCheckerboardCave" );
@@ -86,6 +87,9 @@ main( int argc, char *argv[ ] ) {
 //	SphereWithTexture
 //	* sphereWithTexture = new SphereWithTexture( );
 
+	SpaceShip
+	* spaceShip = new SpaceShip( );
+
 	w.addGLProject( dummy );
 	w.addGLProject( triangle2D );
 	w.addGLProject( quad3D );
@@ -95,7 +99,7 @@ main( int argc, char *argv[ ] ) {
 	w.addGLProject( zBufferTexture );
 //	w.addGLProject( yetAnotherSphere );
 	w.projects[ "Cube" ] = cube;
-//	w.projects[ "FunIn2D" ] = funIn2D;
+	w.projects[ "FunIn2D" ] = funIn2D;
 //	w.projects[ "LightedCheckerboardCave" ] = lightedCheckerboardCave;
 //	w.projects[ "Sphere" ] = sphere;
 	w.addGLProject( sphereDynamicalSurface );
@@ -105,9 +109,10 @@ main( int argc, char *argv[ ] ) {
 //	w.projects[ "MultiSampling" ] = multiSampling;
 	w.projects[ "SomeText" ] = someText;
 	w.projects[ "YAS" ] = yetAnotherSphere;
+	w.projects[ "SpaceShip" ] = spaceShip;
 //	w.projects[ "SphereWithTexture" ] = sphereWithTexture;
 
-	w.slotSetGLProject( "SomeText" );
+	w.slotSetGLProject( "SpaceShip" );
 
 	w.show( );
 

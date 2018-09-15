@@ -6,12 +6,15 @@ precision highp int;
 uniform float
 time;
 
-in vec2
-vVerts,
-vVertsNormed;
+in VS2FS {
+
+	vec2
+	vertex,
+	vertexNormed;
+} vs2fs;
 
 out vec4
-fCol;
+fColor;
 
 void
 main( void ) {
@@ -25,13 +28,11 @@ main( void ) {
 	rot = mat2( c, s, -s, c );
 
 	vec2
-	v = rot * vVertsNormed;
+	v = rot * vs2fs.vertexNormed;
 
 	vec2
-	col2d = cos( ( 201. + 200 * sin( 0.11 * time ) ) * vVertsNormed / pow( dot( vVertsNormed, vVertsNormed ), sin( .1 * time ) ) );
+	col2d = cos( ( 201. + 200 * sin( 0.11 * time ) ) * vs2fs.vertexNormed / pow( dot( vs2fs.vertexNormed, vs2fs.vertexNormed ), sin( .1 * time ) ) );
 
-	fCol = vec4( col2d.x, col2d.x + col2d.y, col2d.x * col2d.y, 1. );
-	fCol = abs( v.x ) < .707 && abs( v.y ) < .707 ? fCol : 1. - fCol;
-//	fCol = vec4( .5 + .5 * vVerts, 0, 1 );
-//	fCol /= fCol.a;
+	fColor = vec4( col2d.x, col2d.x + col2d.y, col2d.x * col2d.y, 1. );
+	fColor = abs( v.x ) < .707 && abs( v.y ) < .707 ? fColor : 1. - fColor;
 }

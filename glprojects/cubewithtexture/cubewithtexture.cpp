@@ -306,12 +306,29 @@ CubeWithTexture::paint( ) {
 	glEnable( GL_DEPTH_TEST );
 	glEnable( GL_CULL_FACE );
 
+	// ----------------------------------------------------------
+	// use a camera center view
 	GLR::CameraCenterView
-	ccv( model, view, vcd, glm::vec3( .02f, .02f, .1f) );
+	ccv( model, view, vcd );
 
+	// set parameters:
+	// x,y : delta angle for rotation around y respective x axis
+	// z   : delta s for moving in z-direction
+	// with respect to either vcd->time or vcd->dMouse
+	ccv.setParam( glm::vec3( .01f, .01f, .05f ) );
+
+	// now react on mouse input
+	ccv.reactOnMouse( );
+
+	// add additional rotation around z
+	ccv.rotate_around_z( .01f );
+
+	// get new model matrix
 	model = ccv.model( );
 
+	// get new view matrix
 	view  = ccv.view( );
+	// ----------------------------------------------------------
 
 	glr.run( { "C-CUBE-WITH-TEXTURE-CUBE" } );
 }

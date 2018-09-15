@@ -69,7 +69,7 @@ CoordinateSystem::init( ) {
 				"in VS2GS { vec4 vertex, mvv; } vs2gs[ ];\n"
 				"out GS2FS { vec4 color; } gs2fs;\n"
 				"void main( void ) {\n"
-					"gs2fs.color  = vec4( max( vec3( 0. ), vs2gs[ 0 ].mvv.xyz - vs2gs[ 1 ].mvv.xyz ), 1. );\n"
+					"gs2fs.color  = vec4( max( vec3( .5 ), vec3( 1. ) ), 1. );\n"
 					"gl_Position  = gl_in[ 0 ].gl_Position;\n"
 					"EmitVertex( );\n"
 					"gs2fs.color  = vec4( max( vec3( 0. ), vs2gs[ 1 ].mvv.xyz - vs2gs[ 0 ].mvv.xyz ), 1. );\n"
@@ -107,24 +107,59 @@ CoordinateSystem::init( ) {
 	glEnable( GL_CULL_FACE );
 
 	projection = view = model = glm::mat4( 1. );
+
+	view = glm::lookAt( glm::vec3( +0.f, +0.5f, +4.f ), glm::vec3( +0.f, +0.f, +0.f ), normalize( glm::vec3( +0.f, +1.f, +0.f ) ) );
 }
 
 void
 CoordinateSystem::paint( ) {
 
-	float
-	angle = .31f * vcd->time;
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-	view = glm::translate( glm::mat4( 1. ), glm::vec3( 0.f, 0.f, -2.f ) );
-	view = glm::rotate( view, angle, glm::vec3( .5f * sinf( .2f * angle ), 1.f, 0.f ) );
+	glm::mat4
+	tmpV = view,
+	tmpM = model;
+
+	model = glm::mat4( 1 );
+
+	view = glm::lookAt( glm::vec3( +0.f, +0.5f, +4.f ), glm::vec3( +0.f, +0.f, +0.f ), normalize( glm::vec3( +0.f, +1.f, +0.f ) ) );
 
 	modelView = view * model;
 
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
 	glr.run( { "C-COORDINATE-SYSTEM" } );
 
-	print( modelView * glm::vec4( 0., 0., 1., 1. ) );
+	model = tmpM;
+
+	view = tmpV;
+
+	// ----------------------------------------------------------
+	// use a camera center view
+	GLR::CameraCenterView
+	ccv( model, view, vcd );
+
+	// set parameters:
+	// x,y : delta angle for rotation around y respective x axis
+	// z   : delta s for moving in z-direction
+	// with respect to either vcd->time or vcd->dMouse
+	// default: dx: .01f  dy: .01f  dz: .1f
+	// ccv.setParam( glm::vec3( .01f, .01f, .1f ) );
+
+	// now react on mouse input
+	ccv.reactOnMouse( );
+
+	// add additional rotation around z
+	// ccv.rotate_around_z( .01f );
+
+	// get new model matrix
+	model = ccv.model( );
+
+	// get new view matrix
+	view  = ccv.view( );
+	// ----------------------------------------------------------
+
+	modelView = view * model;
+
+	glr.run( { "C-COORDINATE-SYSTEM" } );
 
 	std::cout << std::endl;
 }

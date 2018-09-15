@@ -94,7 +94,6 @@ GLR {
 				__vcd( p_vcd ),
 				__par( p_par ) {
 
-					work( );
 				}
 
 				~CameraCenterView ( ) {
@@ -169,8 +168,20 @@ GLR {
 					return __view;
 				}
 
+				glm::vec3
+				param( ) const {
+
+					return __par;
+				}
+
 				void
-				work( ) {
+				setParam( glm::vec3 const & p_par = glm::vec3( .01f, .01f, .1f ) ) {
+
+					__par = p_par;
+				}
+
+				void
+				reactOnMouse( ) {
 
 					glm::vec2
 					dAngle = glm::vec2( __par ) * __vcd->dMouse;
@@ -197,6 +208,37 @@ GLR {
 						}
 					}
 				}
+		};
+
+		class
+		SpaceShipView {
+
+			public :
+
+				SpaceShipView ( glm::mat4 const & p_model, glm::mat4 const & p_view, ViewControlData * p_vcd ) :
+				__model( p_model ),
+				__view( p_view ),
+				__vcd( p_vcd ) {
+
+				}
+
+				~SpaceShipView ( ) {
+
+				}
+
+			private :
+
+				glm::mat4
+				__model,
+				__view;
+
+				glm::mat3
+				__loc;
+
+				ViewControlData
+				* __vcd;
+
+			public :
 		};
 
 		class

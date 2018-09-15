@@ -175,7 +175,6 @@ public GLProject {
 
 		void
 		resize( int p_width, int p_height );
-
 };
 
 #endif // COLOREDTRIANGLE3D_HPP

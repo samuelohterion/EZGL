@@ -21,7 +21,7 @@ Triangle2D::init( ) {
 
 	// vertex arrays
 	{
-		// V-SIMPLE-TRIANGLE
+		// V-TRIANGLE-2D
 		{
 			glr.vertices( "V-TRIANGLE-2D" ).
 				setUsage( GL_STATIC_DRAW ).
