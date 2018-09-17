@@ -38,7 +38,8 @@ SOURCES += \
 	glprojects/yetanothersphere/yetanothersphere.cpp \
 #	glprojects/spherewithtexture/spherewithtexture.cpp \
 	glprojects/solarsystem/solarsystem.cpp \
-	glprojects/spaceship/spaceship.cpp \
+	glprojects/space/space.cpp \
+	glprojects/objloader/objloader.cpp \
 	glprojects/dummy/dummy.cpp
 
 HEADERS += \
@@ -65,7 +66,8 @@ HEADERS += \
 	glprojects/yetanothersphere/yetanothersphere.hpp \
 #	glprojects/spherewithtexture/spherewithtexture.hpp \
 	glprojects/solarsystem/solarsystem.hpp \
-	glprojects/spaceship/spaceship.hpp \
+	glprojects/space/space.hpp \
+	glprojects/objloader/objloader.cpp \
 	glprojects/dummy/dummy.hpp
 
 FORMS += \

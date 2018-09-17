@@ -18,7 +18,8 @@
 //#include "glprojects/multisampling/multisampling.hpp"
 #include "glprojects/sometext/sometext.hpp"
 #include "glprojects/yetanothersphere/yetanothersphere.hpp"
-#include "glprojects/spaceship/spaceship.hpp"
+#include "glprojects/space/space.hpp"
+#include "glprojects/objloader/objloader.hpp"
 //#include "glprojects/spherewithtexture/spherewithtexture.hpp"
 
 int
@@ -87,8 +88,11 @@ main( int argc, char *argv[ ] ) {
 //	SphereWithTexture
 //	* sphereWithTexture = new SphereWithTexture( );
 
-	SpaceShip
-	* spaceShip = new SpaceShip( );
+	Space
+	* space = new Space( );
+
+	ObjLoader
+	* objLoader = new ObjLoader( "ObjLoader" );
 
 	w.addGLProject( dummy );
 	w.addGLProject( triangle2D );
@@ -109,10 +113,11 @@ main( int argc, char *argv[ ] ) {
 //	w.projects[ "MultiSampling" ] = multiSampling;
 	w.projects[ "SomeText" ] = someText;
 	w.projects[ "YAS" ] = yetAnotherSphere;
-	w.projects[ "SpaceShip" ] = spaceShip;
+	w.projects[ "Space" ] = space;
 //	w.projects[ "SphereWithTexture" ] = sphereWithTexture;
 
-	w.slotSetGLProject( "SpaceShip" );
+	w.slotSetGLProject( "Space" );
+	w.projects[ "ObjLoader" ] = objLoader;
 
 	w.show( );
 
