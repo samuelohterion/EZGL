@@ -39,8 +39,8 @@ SOURCES += \
 #	glprojects/spherewithtexture/spherewithtexture.cpp \
 	glprojects/solarsystem/solarsystem.cpp \
 	glprojects/space/space.cpp \
-	glprojects/objloader/objloader.cpp \
-	glprojects/dummy/dummy.cpp
+	glprojects/dummy/dummy.cpp \
+    glprojects/objloader/objloader.cpp
 
 HEADERS += \
 	code/widget.hpp \
@@ -67,8 +67,8 @@ HEADERS += \
 #	glprojects/spherewithtexture/spherewithtexture.hpp \
 	glprojects/solarsystem/solarsystem.hpp \
 	glprojects/space/space.hpp \
-	glprojects/objloader/objloader.cpp \
-	glprojects/dummy/dummy.hpp
+	glprojects/dummy/dummy.hpp \
+    code/objimporter.hpp
 
 FORMS += \
 	code/widget.ui

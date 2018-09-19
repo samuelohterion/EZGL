@@ -11,7 +11,53 @@
 #include <regex>
 
 class
-OLContent {
+ObjLoaderMaterial {
+
+	public :
+
+		ObjLoaderMaterial ( ) {
+
+		}
+
+		~ ObjLoaderMaterial ( ) {
+
+		}
+
+	public :
+
+		std::string
+		filename;
+}
+
+class
+ObjLoaderContent {
+
+	public :
+
+		class ObjLoaderObject :
+		public Named {
+
+			public :
+
+				ObjLoaderObject ( CStr & p_name ) :
+				Named( p_name ) {
+
+
+				}
+
+				~ ObjLoaderObject ( );
+
+			public :
+
+				Str
+				texure;
+
+				std::vector< GLfloat >
+				v,
+				vt,
+				vn;
+
+		};
 
 	public :
 
@@ -33,21 +79,9 @@ OLContent {
 				std::string
 				name;
 
-				//std::map< std::string, Group >
+				std::map< std::string, std::string >
+				object;
 		};
-};
-
-class
-OLObject {
-
-	public :
-
-		OLObject ( );
-
-		~ OLObject ( );
-
-	public :
-
 };
 
 class Obj :

@@ -220,7 +220,7 @@ GLProject ( p_name, p_vcd ) {
 
 	obj = new Obj( p_name + "-001" );
 
-	obj->load( "../EZGL/obj/sphereship.obj" );
+	obj->load( "../EZGL/obj/cube4.obj" );
 }
 
 ObjLoader::~ ObjLoader ( ) {
