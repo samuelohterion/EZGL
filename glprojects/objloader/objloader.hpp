@@ -10,6 +10,46 @@
 #include <algorithm>
 #include <regex>
 
+class
+OLContent {
+
+	public :
+
+		class
+		Object {
+
+			public :
+
+				Object ( ) {
+
+				}
+
+				~ Object ( ) {
+
+				}
+
+			public :
+
+				std::string
+				name;
+
+				//std::map< std::string, Group >
+		};
+};
+
+class
+OLObject {
+
+	public :
+
+		OLObject ( );
+
+		~ OLObject ( );
+
+	public :
+
+};
+
 class Obj :
 public Named {
 

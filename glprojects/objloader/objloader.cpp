@@ -1,6 +1,8 @@
 #include "objloader.hpp"
 #include "../../code/glmprinter.hpp"
 
+
+
 Obj:: Obj ( CStr const & p_name) :
 Named ( p_name ) {
 
@@ -49,7 +51,7 @@ Obj:: load ( CStr & p_filename ) {
 			}
 			else if( arg == "v" ) {
 
-				std::cout << "v: " << vertexId ++ << std::endl;
+				std::cout << "v[" << vertexId ++ << "]:\n";
 
 				GLfloat
 				p;
@@ -68,7 +70,7 @@ Obj:: load ( CStr & p_filename ) {
 			}
 			else if( arg == "vt" ) {
 
-				std::cout << "vt: " << textureId ++ << std::endl;
+				std::cout << "vt[" << textureId ++ << "]:\n";
 
 				GLfloat
 				p;
@@ -83,7 +85,7 @@ Obj:: load ( CStr & p_filename ) {
 			}
 			else if( arg == "vn" ) {
 
-				std::cout << "vn: " << normalId ++ << std::endl;
+				std::cout << "vn[" << normalId ++ << "]\n";
 
 				GLfloat
 				p;
@@ -102,7 +104,7 @@ Obj:: load ( CStr & p_filename ) {
 			}
 			else if( arg == "f" ) {
 
-				std::cout << "face: " << faceId ++ << std::endl;
+				std::cout << "face[" << faceId ++ << "]:\n";
 
 				std::regex
 				re_v   ( "([0-9]+)[:space:]+([0-9]+)[:space:]+([0-9]+)" ),
@@ -123,38 +125,38 @@ Obj:: load ( CStr & p_filename ) {
 
 					if ( std::regex_search ( loc, sm, re_vtn ) ) {
 
-						std::cout << "  vertex: " << vertexID ++ << std::endl;
+						std::cout << "  vertex[" << vertexID ++ << "]:\n";
 
 						std::string
 						v  = sm[ 1 ].str( ),
 						vt = sm[ 2 ].str( ),
 						vn = sm[ 3 ].str( );
 
-						std::cout << "    v: " << v << "\n    vt: " << vt << "\n    vn: " << vn << std::endl;
+						std::cout << "    v:  " << v << "\n    vt: " << vt << "\n    vn: " << vn << std::endl;
 					}
 					else if ( std::regex_search ( loc, sm, re_vn ) ) {
 
-						std::cout << "  vertex: " << vertexID ++ << std::endl;
+						std::cout << "  vertex[" << vertexID ++ << "]:\n";
 
 						std::string
 						v  = sm[ 1 ].str( ),
 						vn = sm[ 2 ].str( );
 
-						std::cout << "    v: " << v << "\n    vn: " << vn << std::endl;
+						std::cout << "    v:  " << v << "\n    vn: " << vn << std::endl;
 					}
 					else if ( std::regex_search ( loc, sm, re_vt ) ) {
 
-						std::cout << "  vertex: " << vertexID ++ << std::endl;
+						std::cout << "  vertex[" << vertexID ++ << "]:\n";
 
 						std::string
 						v  = sm[ 1 ].str( ),
 						vt = sm[ 2 ].str( );
 
-						std::cout << "    v: " << v << "\n    vt: " << vt << std::endl;
+						std::cout << "    v:  " << v << "\n    vt: " << vt << std::endl;
 					}
 					else {
 
-						std::cout << "  vertex: " << vertexID ++ << std::endl;
+							std::cout << "  vertex[" << vertexID ++ << "]:\n";
 
 						GLint
 						i = atoi( loc.c_str ( ) );
@@ -163,8 +165,8 @@ Obj:: load ( CStr & p_filename ) {
 
 						while( iss >> i ) {
 
-							std::cout << "  vertex: " << vertexID ++ << std::endl;
-							std::cout << "    v: " << i << std::endl;
+							std::cout << "  vertex[" << vertexID ++ << "]:\n";
+							std::cout << "    v:  " << i << std::endl;
 						}
 					}
 				}
@@ -180,12 +182,12 @@ Obj:: load ( CStr & p_filename ) {
 			}
 			else if( arg == "o" ) {
 
-				GLint
-				s = -1;
+				Str
+				s;
 
 				iss >> s;
 
-				std::cout << "smoothing factor: " << s << std::endl;
+				std::cout << "object: " << s << std::endl;
 			}
 			else if( arg == "#" ) {
 
@@ -218,7 +220,7 @@ GLProject ( p_name, p_vcd ) {
 
 	obj = new Obj( p_name + "-001" );
 
-	obj->load( "../EZGL/obj/cube.obj" );
+	obj->load( "../EZGL/obj/sphereship.obj" );
 }
 
 ObjLoader::~ ObjLoader ( ) {
