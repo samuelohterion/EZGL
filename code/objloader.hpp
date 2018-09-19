@@ -1,0 +1,4 @@
+#ifndef OBJLOADER_HPP
+#define OBJLOADER_HPP
+
+#endif // OBJLOADER_HPP
