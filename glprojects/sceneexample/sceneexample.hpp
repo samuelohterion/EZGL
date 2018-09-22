@@ -1,5 +1,5 @@
-#ifndef OBJLOADER_HPP
-#define OBJLOADER_HPP
+#ifndef SCENEEXAMPLE_HPP
+#define SCENEEXAMPLE_HPP
 
 #include "../../code/glr.hpp"
 #include "../../code/glmprinter.hpp"
@@ -187,14 +187,14 @@ public Named {
 		load( CStr & p_filename );
 };
 
-class ObjLoader :
+class SceneExample :
 public GLProject {
 
 	public:
 
-		ObjLoader ( CStr const & p_name = "ObjLoader", ViewControlData * p_vcd = nullptr );
+		SceneExample ( CStr const & p_name = "ObjLoader", ViewControlData * p_vcd = nullptr );
 
-		~ ObjLoader ( );
+		~ SceneExample ( );
 
 	public:
 
@@ -218,4 +218,4 @@ public GLProject {
 		resize ( int p_width, int p_height );
 };
 
-#endif // OBJLOADER_HPP
+#endif // SCENEEXAMPLE_HPP

@@ -1,4 +1,4 @@
-#include "objloader.hpp"
+#include "sceneexample.hpp"
 #include "../../code/glmprinter.hpp"
 
 
@@ -215,7 +215,7 @@ Obj:: load ( CStr & p_filename ) {
 	return true;
 }
 
-ObjLoader::ObjLoader ( const CStr & p_name, ViewControlData *p_vcd ) :
+SceneExample::SceneExample ( const CStr & p_name, ViewControlData *p_vcd ) :
 GLProject ( p_name, p_vcd ) {
 
 	obj = new Obj( p_name + "-001" );
@@ -223,13 +223,13 @@ GLProject ( p_name, p_vcd ) {
 	obj->load( "../EZGL/obj/cube4.obj" );
 }
 
-ObjLoader::~ ObjLoader ( ) {
+SceneExample::~ SceneExample ( ) {
 
 	delete obj;
 }
 
 void
-ObjLoader::init( ) {
+SceneExample::init( ) {
 
 	// frame buffer
 	{
@@ -266,13 +266,13 @@ ObjLoader::init( ) {
 }
 
 void
-ObjLoader:: paint ( ) {
+SceneExample:: paint ( ) {
 
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 }
 
 void
-ObjLoader:: resize( int p_width, int p_height ) {
+SceneExample:: resize( int p_width, int p_height ) {
 
 	// get aspect ratio
 	float

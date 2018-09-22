@@ -19,7 +19,7 @@
 #include "glprojects/sometext/sometext.hpp"
 #include "glprojects/yetanothersphere/yetanothersphere.hpp"
 #include "glprojects/space/space.hpp"
-#include "glprojects/objloader/objloader.hpp"
+#include "glprojects/sceneexample/sceneexample.hpp"
 //#include "glprojects/spherewithtexture/spherewithtexture.hpp"
 
 int
@@ -91,8 +91,8 @@ main( int argc, char *argv[ ] ) {
 	Space
 	* space = new Space( );
 
-	ObjLoader
-	* objLoader = new ObjLoader( "ObjLoader" );
+	SceneExample
+	* objLoader = new SceneExample( "SceneExample" );
 
 	w.addGLProject( dummy );
 	w.addGLProject( triangle2D );
