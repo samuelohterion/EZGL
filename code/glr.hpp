@@ -55,7 +55,6 @@ Named {
 		}
 };
 
-
 struct
 ViewControlData {
 
@@ -276,31 +275,31 @@ GLR {
 			public :
 
 				Texture(
-					CStr p_name,
-					GLenum p_target	= GL_TEXTURE_2D,
-					GLint p_level = 0,
-					GLint p_internal_format = GL_RGBA32F,
-					GLint p_min_filter = GL_NEAREST,
-					GLint p_mag_filter = GL_NEAREST,
-					GLint p_wrap_t = GL_CLAMP_TO_EDGE,
-					GLint p_wrap_s = GL_CLAMP_TO_EDGE,
-					GLenum p_format = GL_RGBA,
-					GLenum p_type = GL_FLOAT,
-					GLsizei p_width = 32,
-					GLsizei p_height = 32 ) :
-					Named( p_name ),
-					target( p_target ),
-					level( p_level ),
-					internal_format( p_internal_format ),
-					min_filter( p_min_filter ),
-					mag_filter( p_mag_filter ),
-					wrap_s( p_wrap_s ),
-					wrap_t( p_wrap_t ),
-					format( p_format ),
-					type( p_type ),
-					width( p_width ),
-					height( p_height ),
-					id( 0 ) {
+				CStr p_name,
+				GLenum p_target	= GL_TEXTURE_2D,
+				GLint p_level = 0,
+				GLint p_internal_format = GL_RGBA32F,
+				GLint p_min_filter = GL_NEAREST,
+				GLint p_mag_filter = GL_NEAREST,
+				GLint p_wrap_t = GL_CLAMP_TO_EDGE,
+				GLint p_wrap_s = GL_CLAMP_TO_EDGE,
+				GLenum p_format = GL_RGBA,
+				GLenum p_type = GL_FLOAT,
+				GLsizei p_width = 32,
+				GLsizei p_height = 32 ) :
+				Named( p_name ),
+				target( p_target ),
+				level( p_level ),
+				internal_format( p_internal_format ),
+				min_filter( p_min_filter ),
+				mag_filter( p_mag_filter ),
+				wrap_s( p_wrap_s ),
+				wrap_t( p_wrap_t ),
+				format( p_format ),
+				type( p_type ),
+				width( p_width ),
+				height( p_height ),
+				id( 0 ) {
 
 					glGenTextures( 1, &id );
 					glBindTexture( target, id );
@@ -324,20 +323,20 @@ GLR {
 				}
 
 				Texture(
-					CStr p_name, CStr p_filename ) :
-					Named( p_name ),
-					target( GL_TEXTURE_2D ),
-					level( 0 ),
-					internal_format( GL_RGBA32F ),
-					min_filter( GL_NEAREST ),
-					mag_filter( GL_NEAREST ),
-					wrap_s( GL_CLAMP_TO_EDGE ),
-					wrap_t( GL_CLAMP_TO_EDGE ),
-					format( GL_RGBA ),
-					type( GL_FLOAT ),
-					width( 0 ),
-					height( 0 ),
-					id( 0 ) {
+				CStr p_name, CStr p_filename ) :
+				Named( p_name ),
+				target( GL_TEXTURE_2D ),
+				level( 0 ),
+				internal_format( GL_RGBA32F ),
+				min_filter( GL_NEAREST ),
+				mag_filter( GL_NEAREST ),
+				wrap_s( GL_CLAMP_TO_EDGE ),
+				wrap_t( GL_CLAMP_TO_EDGE ),
+				format( GL_RGBA ),
+				type( GL_FLOAT ),
+				width( 0 ),
+				height( 0 ),
+				id( 0 ) {
 
 					QImage
 					imgFromFile;
@@ -821,13 +820,13 @@ GLR {
 
 						std::string const
 						shaderTypeString =
-							__type == GL_FRAGMENT_SHADER
-								? "FRAGMENT"
-								: __type == GL_GEOMETRY_SHADER
-									? "GEOMETRY"
-									: __type == GL_FRAGMENT_SHADER
-										? "FRAGMENT"
-										: "UNKNOWN";
+						__type == GL_FRAGMENT_SHADER
+						? "FRAGMENT"
+						: __type == GL_GEOMETRY_SHADER
+						? "GEOMETRY"
+						: __type == GL_FRAGMENT_SHADER
+						? "FRAGMENT"
+						: "UNKNOWN";
 
 						std::cout << "ERROR::SHADER::" << shaderTypeString << "::COMPILATION_FAILED\n" << __infoLog << std::endl;
 
@@ -914,7 +913,7 @@ GLR {
 				__infoLog( nullptr ) {
 
 					if( __vertexShader && __fragmentShader &&
-						__vertexShader->ok( ) && __fragmentShader->ok( ) ) {
+					__vertexShader->ok( ) && __fragmentShader->ok( ) ) {
 
 						__id = glCreateProgram( );
 						glAttachShader( __id, __vertexShader->id( ) );
@@ -947,7 +946,7 @@ GLR {
 				__success( 0 ) {
 
 					if( __vertexShader && __fragmentShader &&
-						__vertexShader->ok( ) && __fragmentShader->ok( ) ) {
+					__vertexShader->ok( ) && __fragmentShader->ok( ) ) {
 
 						__id = glCreateProgram( );
 						glAttachShader( __id, __vertexShader->id( ) );
@@ -987,7 +986,7 @@ GLR {
 				__infoLog( nullptr ) {
 
 					if( __vertexShader && __geometryShader && __fragmentShader &&
-						__vertexShader->ok( ) && __geometryShader->ok( ) && __fragmentShader->ok( ) ) {
+					__vertexShader->ok( ) && __geometryShader->ok( ) && __fragmentShader->ok( ) ) {
 
 						__id = glCreateProgram( );
 						glAttachShader( __id, __vertexShader->id( ) );
@@ -1022,7 +1021,7 @@ GLR {
 				__success( 0 ) {
 
 					if( __vertexShader && __geometryShader && __fragmentShader &&
-						__vertexShader->ok( ) && __geometryShader->ok( ) && __fragmentShader->ok( ) ) {
+					__vertexShader->ok( ) && __geometryShader->ok( ) && __fragmentShader->ok( ) ) {
 
 						__id = glCreateProgram( );
 						glAttachShader( __id, __vertexShader->id( ) );
@@ -1237,9 +1236,9 @@ GLR {
 								case IVEC2 : {
 
 									glUniform2i(
-										uLoc,
-										( static_cast< GLint * >( u.second->data ) )[ 0 ],
-										( static_cast< GLint * >( u.second->data ) )[ 1 ] );
+									uLoc,
+									( static_cast< GLint * >( u.second->data ) )[ 0 ],
+									( static_cast< GLint * >( u.second->data ) )[ 1 ] );
 
 									break;
 								}
@@ -1247,10 +1246,10 @@ GLR {
 								case IVEC3 : {
 
 									glUniform3i(
-										uLoc,
-										( static_cast< GLint * >( u.second->data ) )[ 0 ],
-										( static_cast< GLint * >( u.second->data ) )[ 1 ],
-										( static_cast< GLint * >( u.second->data ) )[ 2 ] );
+									uLoc,
+									( static_cast< GLint * >( u.second->data ) )[ 0 ],
+									( static_cast< GLint * >( u.second->data ) )[ 1 ],
+									( static_cast< GLint * >( u.second->data ) )[ 2 ] );
 
 									break;
 								}
@@ -1258,11 +1257,11 @@ GLR {
 								case IVEC4 : {
 
 									glUniform4i(
-										uLoc,
-										( static_cast< GLint * >( u.second->data ) )[ 0 ],
-										( static_cast< GLint * >( u.second->data ) )[ 1 ],
-										( static_cast< GLint * >( u.second->data ) )[ 2 ],
-										( static_cast< GLint * >( u.second->data ) )[ 3 ] );
+									uLoc,
+									( static_cast< GLint * >( u.second->data ) )[ 0 ],
+									( static_cast< GLint * >( u.second->data ) )[ 1 ],
+									( static_cast< GLint * >( u.second->data ) )[ 2 ],
+									( static_cast< GLint * >( u.second->data ) )[ 3 ] );
 
 									break;
 								}
@@ -1270,9 +1269,9 @@ GLR {
 								case UVEC2 : {
 
 									glUniform2ui(
-										uLoc,
-										( static_cast< GLuint * >( u.second->data ) )[ 0 ],
-										( static_cast< GLuint * >( u.second->data ) )[ 1 ] );
+									uLoc,
+									( static_cast< GLuint * >( u.second->data ) )[ 0 ],
+									( static_cast< GLuint * >( u.second->data ) )[ 1 ] );
 
 									break;
 								}
@@ -1280,10 +1279,10 @@ GLR {
 								case UVEC3 : {
 
 									glUniform3ui(
-										uLoc,
-										( static_cast< GLuint * >( u.second->data ) )[ 0 ],
-										( static_cast< GLuint * >( u.second->data ) )[ 1 ],
-										( static_cast< GLuint * >( u.second->data ) )[ 2 ] );
+									uLoc,
+									( static_cast< GLuint * >( u.second->data ) )[ 0 ],
+									( static_cast< GLuint * >( u.second->data ) )[ 1 ],
+									( static_cast< GLuint * >( u.second->data ) )[ 2 ] );
 
 									break;
 								}
@@ -1291,11 +1290,11 @@ GLR {
 								case UVEC4 : {
 
 									glUniform4ui(
-										uLoc,
-										( static_cast< GLuint * >( u.second->data ) )[ 0 ],
-										( static_cast< GLuint * >( u.second->data ) )[ 1 ],
-										( static_cast< GLuint * >( u.second->data ) )[ 2 ],
-										( static_cast< GLuint * >( u.second->data ) )[ 3 ] );
+									uLoc,
+									( static_cast< GLuint * >( u.second->data ) )[ 0 ],
+									( static_cast< GLuint * >( u.second->data ) )[ 1 ],
+									( static_cast< GLuint * >( u.second->data ) )[ 2 ],
+									( static_cast< GLuint * >( u.second->data ) )[ 3 ] );
 
 									break;
 								}
@@ -1303,9 +1302,9 @@ GLR {
 								case VEC2 : {
 
 									glUniform2f(
-										uLoc,
-										( static_cast< GLfloat * >( u.second->data ) )[ 0 ],
-										( static_cast< GLfloat * >( u.second->data ) )[ 1 ] );
+									uLoc,
+									( static_cast< GLfloat * >( u.second->data ) )[ 0 ],
+									( static_cast< GLfloat * >( u.second->data ) )[ 1 ] );
 
 									break;
 								}
@@ -1313,10 +1312,10 @@ GLR {
 								case VEC3 : {
 
 									glUniform3f(
-										uLoc,
-										( static_cast< GLfloat * >( u.second->data ) )[ 0 ],
-										( static_cast< GLfloat * >( u.second->data ) )[ 1 ],
-										( static_cast< GLfloat * >( u.second->data ) )[ 2 ] );
+									uLoc,
+									( static_cast< GLfloat * >( u.second->data ) )[ 0 ],
+									( static_cast< GLfloat * >( u.second->data ) )[ 1 ],
+									( static_cast< GLfloat * >( u.second->data ) )[ 2 ] );
 
 									break;
 								}
@@ -1324,11 +1323,11 @@ GLR {
 								case VEC4 : {
 
 									glUniform4f(
-										uLoc,
-										( static_cast< GLfloat * >( u.second->data ) )[ 0 ],
-										( static_cast< GLfloat * >( u.second->data ) )[ 1 ],
-										( static_cast< GLfloat * >( u.second->data ) )[ 2 ],
-										( static_cast< GLfloat * >( u.second->data ) )[ 3 ] );
+									uLoc,
+									( static_cast< GLfloat * >( u.second->data ) )[ 0 ],
+									( static_cast< GLfloat * >( u.second->data ) )[ 1 ],
+									( static_cast< GLfloat * >( u.second->data ) )[ 2 ],
+									( static_cast< GLfloat * >( u.second->data ) )[ 3 ] );
 
 									break;
 								}
@@ -1873,38 +1872,38 @@ GLR {
 						GLenum const
 						drawBuffers[ 0x20 ] = {
 
-							GL_COLOR_ATTACHMENT0,
-							GL_COLOR_ATTACHMENT1,
-							GL_COLOR_ATTACHMENT2,
-							GL_COLOR_ATTACHMENT3,
-							GL_COLOR_ATTACHMENT4,
-							GL_COLOR_ATTACHMENT5,
-							GL_COLOR_ATTACHMENT6,
-							GL_COLOR_ATTACHMENT7,
-							GL_COLOR_ATTACHMENT8,
-							GL_COLOR_ATTACHMENT9,
-							GL_COLOR_ATTACHMENT10,
-							GL_COLOR_ATTACHMENT11,
-							GL_COLOR_ATTACHMENT12,
-							GL_COLOR_ATTACHMENT13,
-							GL_COLOR_ATTACHMENT14,
-							GL_COLOR_ATTACHMENT15,
-							GL_COLOR_ATTACHMENT16,
-							GL_COLOR_ATTACHMENT17,
-							GL_COLOR_ATTACHMENT18,
-							GL_COLOR_ATTACHMENT19,
-							GL_COLOR_ATTACHMENT20,
-							GL_COLOR_ATTACHMENT21,
-							GL_COLOR_ATTACHMENT22,
-							GL_COLOR_ATTACHMENT23,
-							GL_COLOR_ATTACHMENT24,
-							GL_COLOR_ATTACHMENT25,
-							GL_COLOR_ATTACHMENT26,
-							GL_COLOR_ATTACHMENT27,
-							GL_COLOR_ATTACHMENT28,
-							GL_COLOR_ATTACHMENT29,
-							GL_COLOR_ATTACHMENT30,
-							GL_COLOR_ATTACHMENT31
+						GL_COLOR_ATTACHMENT0,
+						GL_COLOR_ATTACHMENT1,
+						GL_COLOR_ATTACHMENT2,
+						GL_COLOR_ATTACHMENT3,
+						GL_COLOR_ATTACHMENT4,
+						GL_COLOR_ATTACHMENT5,
+						GL_COLOR_ATTACHMENT6,
+						GL_COLOR_ATTACHMENT7,
+						GL_COLOR_ATTACHMENT8,
+						GL_COLOR_ATTACHMENT9,
+						GL_COLOR_ATTACHMENT10,
+						GL_COLOR_ATTACHMENT11,
+						GL_COLOR_ATTACHMENT12,
+						GL_COLOR_ATTACHMENT13,
+						GL_COLOR_ATTACHMENT14,
+						GL_COLOR_ATTACHMENT15,
+						GL_COLOR_ATTACHMENT16,
+						GL_COLOR_ATTACHMENT17,
+						GL_COLOR_ATTACHMENT18,
+						GL_COLOR_ATTACHMENT19,
+						GL_COLOR_ATTACHMENT20,
+						GL_COLOR_ATTACHMENT21,
+						GL_COLOR_ATTACHMENT22,
+						GL_COLOR_ATTACHMENT23,
+						GL_COLOR_ATTACHMENT24,
+						GL_COLOR_ATTACHMENT25,
+						GL_COLOR_ATTACHMENT26,
+						GL_COLOR_ATTACHMENT27,
+						GL_COLOR_ATTACHMENT28,
+						GL_COLOR_ATTACHMENT29,
+						GL_COLOR_ATTACHMENT30,
+						GL_COLOR_ATTACHMENT31
 						};
 
 						FrameBuffer
@@ -2059,7 +2058,7 @@ GLR {
 		sh;
 
 		std::map< CStr, Container * >
-		pr;
+		co;
 
 		FrameBuffer
 		*currentFrameBuffer;
@@ -2082,48 +2081,48 @@ GLR {
 
 	public :
 
-		GLR( ) {
+		GLR ( ) {
 
 		}
 
-		~GLR( ) {
+		~GLR ( ) {
 
-			for( auto s : sh )
+			for ( auto s : sh )
 
 				delete s.second;
 
-			for( auto t : tx )
+			for ( auto t : tx )
 
 				delete t.second;
 
-			for( auto v : va )
+			for ( auto v : va )
 
 				delete v.second;
 
-			for( auto f : fb )
+			for ( auto f : fb )
 
 				delete f.second;
 
-			for( auto p : pr )
+			for ( auto c : co )
 
-				delete p.second;
+				delete c.second;
 		}
 
 		VertexArray
-		&vertices( CStr p_name ) {
+		& vertices ( CStr p_name ) {
 
-			if( va.find( p_name ) == va.cend( ) ) {
+			if( va.find ( p_name ) == va.cend ( ) ) {
 
-				va[ p_name ] = new VertexArray( p_name );
+				va[ p_name ] = new VertexArray ( p_name );
 			}
 
 			currentVertexArray = va[ p_name ];
 
-			return *currentVertexArray;
+			return * currentVertexArray;
 		}
 
 		IndexArray
-		&indices( CStr p_name ) {
+		& indices ( CStr & p_name ) {
 
 			if( ia.find( p_name ) == ia.cend( ) ) {
 
@@ -2132,15 +2131,15 @@ GLR {
 
 			currentIndexArray = ia[ p_name ];
 
-			return *currentIndexArray;
+			return * currentIndexArray;
 		}
 
 		FrameBuffer
-		& frameBuffer( CStr p_name ) {
+		& frameBuffer ( CStr & p_name ) {
 
-			if( fb.find( p_name ) == fb.cend( ) ) {
+			if ( fb.find ( p_name ) == fb.cend ( ) ) {
 
-				fb[ p_name ] = new FrameBuffer( p_name );
+				fb[ p_name ] = new FrameBuffer ( p_name );
 			}
 
 			currentFrameBuffer = fb[ p_name ];
@@ -2149,7 +2148,7 @@ GLR {
 		}
 
 		Texture
-		&texture( CStr p_name, Texture *p_texture ) {
+		& texture ( CStr & p_name, Texture * p_texture ) {
 
 			tx[ p_name ] = p_texture;
 
@@ -2157,85 +2156,117 @@ GLR {
 		}
 
 		Shader
-		&shader( CStr &p_name, CStr &p_vertexText, CStr &p_fragmentText, ShaderCode::CreationMethod const &p_method ) {
+		& shader( CStr & p_name, CStr & p_vertexText, CStr & p_fragmentText, ShaderCode::CreationMethod const & p_method ) {
 
-			if( sh.find( p_name ) == sh.cend( ) ) {
+			if ( sh.find ( p_name ) == sh.cend ( ) ) {
 
-				sh[ p_name ] = new Shader( p_name, p_vertexText, p_fragmentText, p_method );
+				sh[ p_name ] = new Shader ( p_name, p_vertexText, p_fragmentText, p_method );
 			}
 
 			currentShader = sh[ p_name ];
 
-			return *currentShader;
+			return * currentShader;
 		}
 
 		Shader
-		&shader( CStr &p_name, CStr &p_vertexText, CStr &p_fragmentText, ShaderCode::CreationMethod const &p_method, std::vector< GLuint > const &p_locId, std::vector< Str > const &p_names ){
+		& shader( CStr & p_name, CStr & p_vertexText, CStr & p_fragmentText, ShaderCode::CreationMethod const & p_method, std::vector < GLuint > const & p_locId, std::vector < Str > const & p_names ){
 
-			if( sh.find( p_name ) == sh.cend( ) ) {
+			if ( sh.find ( p_name ) == sh.cend ( ) ) {
 
-				sh[ p_name ] = new Shader( p_name, p_vertexText, p_fragmentText, p_method, p_locId, p_names );
+				sh[ p_name ] = new Shader ( p_name, p_vertexText, p_fragmentText, p_method, p_locId, p_names );
 			}
 
 			currentShader = sh[ p_name ];
 
-			return *currentShader;
+			return * currentShader;
 		}
 
 		Shader
-		&shader( CStr &p_name, CStr &p_vertexText, CStr &p_geometryText, CStr &p_fragmentText, ShaderCode::CreationMethod const &p_method ) {
+		& shader( CStr & p_name, CStr & p_vertexText, CStr & p_geometryText, CStr & p_fragmentText, ShaderCode::CreationMethod const & p_method ) {
 
-			if( sh.find( p_name ) == sh.cend( ) ) {
+			if ( sh.find ( p_name ) == sh.cend ( ) ) {
 
-				sh[ p_name ] = new Shader( p_name, p_vertexText, p_geometryText, p_fragmentText, p_method );
+				sh[ p_name ] = new Shader ( p_name, p_vertexText, p_geometryText, p_fragmentText, p_method );
 			}
 
 			currentShader = sh[ p_name ];
 
-			return *currentShader;
+			return * currentShader;
 		}
 
 		Shader
-		&shader( CStr &p_name, CStr &p_vertexText, CStr &p_geometryText, CStr &p_fragmentText, ShaderCode::CreationMethod const &p_method, std::vector< GLuint > const &p_locId, std::vector< Str > const &p_names ) {
+		& shader ( CStr & p_name, CStr & p_vertexText, CStr & p_geometryText, CStr & p_fragmentText, ShaderCode::CreationMethod const & p_method, std::vector < GLuint > const & p_locId, std::vector< Str > const & p_names ) {
 
-			if( sh.find( p_name ) == sh.cend( ) ) {
+			if ( sh.find ( p_name ) == sh.cend ( ) ) {
 
-				sh[ p_name ] = new Shader( p_name, p_vertexText, p_geometryText, p_fragmentText, p_method, p_locId, p_names );
+				sh[ p_name ] = new Shader ( p_name, p_vertexText, p_geometryText, p_fragmentText, p_method, p_locId, p_names );
 			}
 
 			currentShader = sh[ p_name ];
 
-			return *currentShader;
+			return * currentShader;
 		}
 
 		Shader
-		&shader( CStr &p_name ) {
+		& shader( CStr & p_name ) {
 
 			currentShader = sh[ p_name ];
 
-			return *currentShader;
+			return * currentShader;
 		}
 
 		Container
-		&container( CStr p_name ) {
+		& container ( CStr p_name ) {
 
-			if( pr.find( p_name ) == pr.cend( ) ) {
+			if ( co.find ( p_name ) == co.cend ( ) ) {
 
-				pr[ p_name ] = new Container( p_name, this );
+				co[ p_name ] = new Container ( p_name, this );
 			}
 
-			currentProgram = pr[ p_name ];
+			currentProgram = co[ p_name ];
 
-			return *currentProgram;
+			return * currentProgram;
 		}
 
 		void
-		run( std::initializer_list< CStr > const & p_prg  ) {
+		run ( std::initializer_list< CStr > const & p_containers ) {
 
-			for( auto s : p_prg ) {
+			for ( auto c : p_containers ) {
 
-				pr[ s ]->run( );
+				co[ c ]->run ( );
 			}
+		}
+
+		void
+		run ( std::vector < Str > const & p_containers  ) {
+
+			for ( auto c : p_containers ) {
+
+				co[ c ]->run ( );
+			}
+		}
+};
+
+class
+GLRRef {
+
+	public :
+
+		GLRRef ( GLR & p_glr ) :
+		__glr ( p_glr ) {
+		}
+
+	private :
+
+		GLR
+		& __glr;
+
+	public :
+
+		GLR
+		& glr ( ) const {
+
+			return __glr;
 		}
 };
 
@@ -2278,7 +2309,7 @@ public Named {
 		void
 		resizeViewport( int p_width, int p_height ) {
 
-			for( auto & p : glr.pr ) {
+			for( auto & p : glr.co ) {
 
 				p.second->resize( p_width, p_height );
 			}

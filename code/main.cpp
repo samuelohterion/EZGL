@@ -92,7 +92,7 @@ main( int argc, char *argv[ ] ) {
 	* space = new Space( );
 
 	SceneExample
-	* objLoader = new SceneExample( "SceneExample" );
+	* sceneExample = new SceneExample( "SceneExample" );
 
 	w.addGLProject( dummy );
 	w.addGLProject( triangle2D );
@@ -115,9 +115,9 @@ main( int argc, char *argv[ ] ) {
 	w.projects[ "YAS" ] = yetAnotherSphere;
 	w.projects[ "Space" ] = space;
 //	w.projects[ "SphereWithTexture" ] = sphereWithTexture;
+	w.projects[ "SceneExample" ] = sceneExample;
 
-	w.slotSetGLProject( "Space" );
-	w.projects[ "ObjLoader" ] = objLoader;
+	w.slotSetGLProject( "SceneExample" );
 
 	w.show( );
 

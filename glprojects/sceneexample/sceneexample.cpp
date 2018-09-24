@@ -1,8 +1,7 @@
 #include "sceneexample.hpp"
 #include "../../code/glmprinter.hpp"
 
-
-
+/*
 Obj:: Obj ( CStr const & p_name) :
 Named ( p_name ) {
 
@@ -108,9 +107,9 @@ Obj:: load ( CStr & p_filename ) {
 
 				std::regex
 				re_v   ( "([0-9]+)[:space:]+([0-9]+)[:space:]+([0-9]+)" ),
-				re_vt  ( "([0-9]+)[:space:]*/[:space:]*([0-9]+)" ),
-				re_vn  ( "([0-9]+)[:space:]*/[:space:]*/[:space:]*([0-9]+)" ),
-				re_vtn ( "([0-9]+)[:space:]*/[:space:]*([0-9]+)[:space:]*/[:space:]*([0-9]+)" );
+				re_vt  ( "([0-9]+)[:space:]* /[:space:]*([0-9]+)" ),
+				re_vn  ( "([0-9]+)[:space:]* /[:space:]* /[:space:]*([0-9]+)" ),
+				re_vtn ( "([0-9]+)[:space:]* /[:space:]*([0-9]+)[:space:]* /[:space:]*([0-9]+)" );
 
 				std::smatch
 				sm;
@@ -214,22 +213,21 @@ Obj:: load ( CStr & p_filename ) {
 
 	return true;
 }
+*/
 
-SceneExample::SceneExample ( const CStr & p_name, ViewControlData *p_vcd ) :
+SceneExample::SceneExample ( CStr & p_name, ViewControlData * p_vcd ) :
 GLProject ( p_name, p_vcd ) {
 
-	obj = new Obj( p_name + "-001" );
-
-	obj->load( "../EZGL/obj/cube4.obj" );
+	scene = new Scene ( "Scene", glr );
 }
 
 SceneExample::~ SceneExample ( ) {
 
-	delete obj;
+	delete scene;
 }
 
 void
-SceneExample::init( ) {
+SceneExample::init ( ) {
 
 	// frame buffer
 	{
@@ -255,29 +253,48 @@ SceneExample::init( ) {
 	{
 	}
 
+	scene->fromObjFile ( "../EZGL/obj/sphereshiptri.obj" );
+
 	glClearColor( .01f, .02f, .03f, 1. );
 
-	projection = model = glm::mat4( 1. );
+	scene->projection = scene->view = scene->model = glm::mat4 ( 1. );
 
-	//view = obj->view;
+	scene->model = glm::translate( scene->model, V3 ( 0, -2, 0 ) );
+	scene->view  = glm::translate( scene->view,  V3 ( 0, 0, -4 ) );
 
-	glEnable( GL_DEPTH_TEST );
-	glEnable( GL_CULL_FACE );
+	glEnable ( GL_DEPTH_TEST );
+	glEnable ( GL_CULL_FACE );
 }
 
 void
 SceneExample:: paint ( ) {
 
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+	GLR::CameraCenterView
+	ccv( scene->model, scene->view, vcd, glm::vec3 ( .02f, .02f, .1f ) );
+
+	ccv.reactOnMouse ( );
+
+	ccv.rotate_around_y ( .001f );
+
+	scene->model = ccv.model ( );
+
+	scene->view  = ccv.view ( );
+
+//	scene->lightPos = V3 ( scene->model * V4( V3 ( 0., 4., 2. ), 1 ) );
+	scene->lightPos = V3 ( 2.f, 2.f, 2.f );
+
+	glr.run ( scene->objektNames ( ) );
 }
 
 void
-SceneExample:: resize( int p_width, int p_height ) {
+SceneExample:: resize ( int p_width, int p_height ) {
 
 	// get aspect ratio
 	float
 	ratio = ( 1.f * p_width / p_height );
 
 	// create a projection matrix
-	projection = glm::perspective( 30.f * 3.14159f / 180.f, ratio, 1.0f, 300.f );
+	scene->projection = glm::perspective( 30.f * 3.14159f / 180.f, ratio, 1.0f, 300.f );
 }
