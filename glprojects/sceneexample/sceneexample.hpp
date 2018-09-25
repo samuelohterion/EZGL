@@ -10,6 +10,7 @@
 #include <map>
 #include <algorithm>
 #include <regex>
+#include <unistd.h>
 /*
 class
 ObjLoaderMaterial {
@@ -305,33 +306,274 @@ SHADERS [ 3 ][ 2 ] =
 };
 
 class
-Material {
+Material :
+public
+Named {
 
 	public :
 
-	Material ( ) {
+		Material ( CStr & p_name ) :
+		Named( p_name ) {
 
-	}
+		}
 
-	~ Material ( ) {
+		~ Material ( ) {
 
 	}
 
 	public :
 
-	V3
-	ambient,
-	diffuse,
-	specular;
+		GLfloat
+		Ns,
+		Ni,
+		d,
+		illum;
 
-	public :
-
-	bool
-	fromMTLFile( CStr & p_filename ) {
-
-		return true;
-	}
+		V3
+		Ka,
+		Kd,
+		Ks,
+		Ke;
 };
+
+enum
+TypeOfIndices {
+
+	TOI_UNKOWN,
+	TOI_VERTEX_ONLY,
+	TOI_VERTEX_TEXTURE,
+	TOI_VERTEX_NORMAL,
+	TOI_VERTEX_TEXTURE_NORMAL
+};
+
+class
+Element {
+
+	public :
+
+		Element ( ) {
+		}
+
+	public :
+
+		virtual CStr
+		etype ( ) const {
+
+			return "void";
+		}
+};
+
+class
+Line :
+public
+Element {
+
+	public :
+
+		Line ( GLuint * const p_vMem ) :
+		Element ( ),
+		from( p_vMem[ 0 ] ),
+		to( p_vMem[ 1 ] ) {
+		}
+
+	public :
+
+		GLuint
+		from,
+		to;
+
+		CStr
+		etype ( ) const {
+
+			return "LINE";
+		}
+};
+
+template < typename T >
+void
+copyMem ( T * p_dst, T * p_src, std::size_t const & p_size ) {
+
+	T
+	* end = p_dst + p_size;
+
+	while ( p_dst != end ) {
+
+		* p_dst = * p_src;
+		++ p_dst;
+		++ p_src;
+	}
+}
+
+template < typename T, unsigned int S >
+void
+copyMem ( T * p_dst, T * p_src ) {
+
+	T
+	* end = p_dst + S;
+
+	while ( p_dst != end ) {
+
+		* p_dst = * p_src;
+		++ p_dst;
+		++ p_src;
+	}
+}
+
+class
+Face :
+public
+Element {
+
+	public :
+
+		Face ( TypeOfIndices const & p_toi ) :
+		Element ( ),
+		toi ( p_toi ) {
+		}
+
+	public :
+
+		TypeOfIndices
+		toi;
+
+	public :
+
+		CStr
+		etype ( ) const {
+
+			return "FACE";
+		}
+
+		virtual CStr
+		ftype ( ) const {
+
+			return "UNKNOWN";
+		}
+};
+
+class
+Triangle :
+public
+Face {
+
+	public :
+
+		Triangle ( GLuint * p_vMem, GLuint * p_vtMem, GLuint * p_vnMem, TypeOfIndices const & p_toi ) :
+		Face ( p_toi ) {
+
+			copyMem < GLuint, 3 > ( vId, p_vMem );
+
+			if ( toi == TOI_VERTEX_TEXTURE || toi == TOI_VERTEX_TEXTURE_NORMAL ) {
+
+				copyMem < GLuint, 3 > ( vtId, p_vtMem );
+			}
+
+			if ( toi == TOI_VERTEX_NORMAL || toi == TOI_VERTEX_TEXTURE_NORMAL ) {
+
+				copyMem < GLuint, 3 > ( vnId, p_vnMem );
+			}
+		}
+
+	public :
+
+		GLuint
+		vId[ 3 ],
+		vtId[ 3 ],
+		vnId[ 3 ];
+
+	public :
+
+		virtual CStr
+		ftype ( ) const {
+
+			return "TRIANGLE";
+		}
+};
+
+class
+Quad :
+public
+Face {
+
+	public :
+
+		Quad ( GLuint * p_vMem, GLuint * p_vtMem, GLuint * p_vnMem, TypeOfIndices const & p_toi ) :
+		Face ( p_toi ) {
+
+			copyMem < GLuint, 4 > ( vId, p_vMem );
+
+			if ( toi == TOI_VERTEX_TEXTURE || toi == TOI_VERTEX_TEXTURE_NORMAL ) {
+
+				copyMem < GLuint, 4 > ( vtId, p_vtMem );
+			}
+
+			if ( toi == TOI_VERTEX_NORMAL || toi == TOI_VERTEX_TEXTURE_NORMAL ) {
+
+				copyMem < GLuint, 4 > ( vnId, p_vnMem );
+			}
+		}
+
+	public :
+
+		GLuint
+		vId[ 4 ],
+		vtId[ 4 ],
+		vnId[ 4 ];
+
+	public :
+
+		CStr
+		ftype ( ) const {
+
+			return "QUAD";
+		}
+};
+
+class
+TriangleFan :
+public
+Face {
+
+	public :
+
+		TriangleFan (
+			GLuint * p_vMem,
+			GLuint * p_vtMem,
+			GLuint * p_vnMem,
+			std::size_t const & p_size,
+			TypeOfIndices const & p_toi ) :
+		Face ( p_toi ),
+		vId ( new GLuint[ p_size ] ),
+		vtId ( toi == TOI_VERTEX_TEXTURE || toi == TOI_VERTEX_TEXTURE_NORMAL ? new GLuint[ p_size ] : nullptr ),
+		vnId ( toi == TOI_VERTEX_NORMAL  || toi == TOI_VERTEX_TEXTURE_NORMAL ? new GLuint[ p_size ] : nullptr ) {
+
+			copyMem < GLuint > ( vId, p_vMem, p_size );
+
+			if ( toi == TOI_VERTEX_TEXTURE || toi == TOI_VERTEX_TEXTURE_NORMAL ) {
+
+				copyMem < GLuint > ( vtId, p_vtMem, p_size );
+			}
+
+			if ( toi == TOI_VERTEX_NORMAL || toi == TOI_VERTEX_TEXTURE_NORMAL ) {
+
+				copyMem < GLuint > ( vnId, p_vnMem, p_size );
+			}
+		}
+
+	public :
+
+		CStr
+		etype ( ) const {
+
+			return "TRIANGLE_FAN";
+		}
+
+		GLuint
+		* vId,
+		* vtId,
+		* vnId;
+};
+
 
 class
 Objekt :
@@ -357,13 +599,11 @@ GLRRef {
 		M4
 		model;
 
-		Material
-		material;
+		Str
+		materialName;
 
-		std::vector < std::size_t >
-		vId,
-		vtId,
-		vnId;
+		std::vector < Element * >
+		elements;
 };
 
 class
@@ -398,12 +638,21 @@ public GLRRef {
 		std::map < CStr, Objekt * >
 		objekts;
 
+		std::map < CStr, Material * >
+		materials;
+
 		Str
 		currObjektName,
-		currGroupName;
+		currGroupName,
+		currMaterialName,
+		currPathOrig,
+		currPathObj;
 
 		Objekt
 		* currObjekt;
+
+		Material
+		* currMaterial;
 
 		M4
 		projection,
@@ -434,7 +683,7 @@ public GLRRef {
 
 				GLR::VertexArray
 				& va = glr ( ).vertices ( vaName );
-
+/*
 				if ( 0 < obj.vnId.size ( ) ) {
 
 					if ( 0 < obj.vtId.size ( ) ) {
@@ -493,7 +742,7 @@ public GLRRef {
 						}
 					}
 				}
-
+*/
 				va <<
 					GLR::VertexArray::Object( 0, va.vertexCount ( ), GL_TRIANGLES );
 
@@ -532,8 +781,153 @@ public GLRRef {
 			return * this;
 		}
 
+		void
+		changeDir ( CStr & p_path ) const {
+
+			chdir ( p_path.c_str ( ) );
+		}
+
+		Str
+		currentPath ( ) const {
+
+			char
+			fn[ 0x200 ];
+
+			getcwd( fn, 0x200 );
+
+			return Str ( fn );
+		}
+
+		void
+		extractPath ( Str & p_path, CStr & p_filename ) const {
+
+			std::size_t
+			lof = p_filename.find_last_of( "/\\" );
+
+			p_path = p_filename.substr( 0, lof );
+		}
+
+		void
+		extractPathAndFile ( Str & p_path, Str & p_file, CStr & p_filename ) const {
+
+			std::size_t
+			lof = p_filename.find_last_of( "/\\" );
+
+			p_path = p_filename.substr( 0, lof );
+			p_file = p_filename.substr( lof + 1 );
+		}
+
+		bool
+		fromMTLFile ( CStr & p_filename ) {
+
+			std::ifstream
+			file ( p_filename );
+
+			if ( ! file.is_open ( ) ) {
+
+				std::cout << "Couldn't find file " << p_filename << ".\n exit...\n";
+
+				return false;
+			}
+
+			while ( file.good ( ) ) {
+
+				std::string
+				line,
+				arg;
+
+				std::getline ( file, line );
+
+				std::istringstream
+				iss ( line, std::istringstream::in );
+
+				while ( iss >> arg ) {
+
+					if ( arg == "newmtl" ) {
+
+						iss >> currMaterialName;
+
+						std::cout << "new material " << currMaterialName << std::endl;
+
+						currMaterial = new Material ( currMaterialName );
+
+						materials[ currMaterialName ] = currMaterial;
+					}
+					else if( arg == "#" ) {
+
+						Str
+						s = "comment";
+
+						std::cout << "comment:";
+
+						while( iss >> s )
+
+							std::cout << " " << s;
+					}
+					else if( arg == "Ns" ) {
+
+						iss >> currMaterial->Ns;
+					}
+					else if( arg == "Ni" ) {
+
+						iss >> currMaterial->Ni;
+					}
+					else if( arg == "d" ) {
+
+						iss >> currMaterial->d;
+					}
+					else if( arg == "illum" ) {
+
+						iss >> currMaterial->illum;
+					}
+					else if( arg == "Ka" ) {
+
+						iss >> currMaterial->Ka.x;
+						iss >> currMaterial->Ka.y;
+						iss >> currMaterial->Ka.z;
+					}
+					else if( arg == "Ks" ) {
+
+						iss >> currMaterial->Ks.x;
+						iss >> currMaterial->Ks.y;
+						iss >> currMaterial->Ks.z;
+					}
+					else if( arg == "Kd" ) {
+
+						iss >> currMaterial->Kd.x;
+						iss >> currMaterial->Kd.y;
+						iss >> currMaterial->Kd.z;
+					}
+					else if( arg == "Ke" ) {
+
+						iss >> currMaterial->Ke.x;
+						iss >> currMaterial->Ke.y;
+						iss >> currMaterial->Ke.z;
+					}
+				}
+			}
+
+			file.close ( );
+
+			build ( );
+
+			return true;
+		}
+
 		bool
 		fromObjFile ( CStr & p_filename ) {
+
+			Str
+			pathToObj,
+			fileStrObj;
+
+			currPathOrig = currentPath ( );
+
+			extractPathAndFile( pathToObj, fileStrObj, p_filename );
+
+			changeDir ( pathToObj );
+
+			currPathObj = currentPath ( );
 
 			clear ( );
 
@@ -544,14 +938,21 @@ public GLRRef {
 
 				std::cout << "couldn't find file " << p_filename << ".\n exit...\n";
 
+				changeDir ( currPathOrig );
+
 				return false;
 			}
 
+//			GLuint
+//			faceId = 0,
+//			vertexId = 0,
+//			normalId = 0,
+//			textureId = 0;
+
 			GLuint
-			faceId = 0,
-			vertexId = 0,
-			normalId = 0,
-			textureId = 0;
+			vMem[ 0x400 ],
+			vtMem[ 0x400 ],
+			vnMem[ 0x400 ];
 
 			while ( file.good ( ) ) {
 
@@ -572,8 +973,14 @@ public GLRRef {
 
 						std::cout << "trying to load material file  " << mtllib << std::endl;
 
-//						Material
-//						m ( mtllib );
+						if( ! fromMTLFile( mtllib ) ) {
+
+							std::cout << "material file  " << mtllib << " not found. " << std::endl;
+
+							changeDir ( currPathOrig );
+
+							return false;
+						}
 					}
 					else if( arg == "v" ) {
 
@@ -630,123 +1037,78 @@ public GLRRef {
 					}
 					else if( arg == "f" ) {
 
-//						std::cout << "face[" << faceId ++ << "]:\n";
+						if ( ! currObjekt ) {
 
-						std::regex
-						re_v   ( "([0-9]+)[:space:]+([0-9]+)[:space:]+([0-9]+)" ),
-						re_vt  ( "([0-9]+)[:space:]*/[:space:]*([0-9]+)" ),
-						re_vn  ( "([0-9]+)[:space:]*/[:space:]*/[:space:]*([0-9]+)" ),
-						re_vtn ( "([0-9]+)[:space:]*/[:space:]*([0-9]+)[:space:]*/[:space:]*([0-9]+)" );
+							std::cout << "Sorry! But no Object defined for vertices. Exit ...\n";
 
-						std::smatch
-						sm;
-
-						std::string
-						loc;
+							exit ( 1 );
+						}
 
 						GLuint
 						vertexID = 0;
 
-						while( iss >> loc ) {
+						Str
+						loc;
 
-							if ( std::regex_search ( loc, sm, re_vtn ) ) {
+						TypeOfIndices
+						toi = TOI_UNKOWN;
 
-//								std::cout << "  vertex[" << vertexID ++ << "]:\n";
+						while ( iss >> loc ) {
 
-								std::string
-								vStr  = sm[ 1 ].str ( ),
-								vtStr = sm[ 2 ].str ( ),
-								vnStr = sm[ 3 ].str ( );
+							GLint
+							firstSlash  = loc.find_first_of( "/" ),
+							secondSlash = loc.find_first_of( "/", firstSlash + 1 );
 
-//								std::cout <<
-//									"    v:  " << vStr <<
-//									"\n    vt: " << vtStr <<
-//									"\n    vn: " << vnStr << std::endl;
+							if ( vertexID == 0 )
+								toi =
+									secondSlash < 0
+										? firstSlash < 0
+											? TOI_VERTEX_ONLY
+											: TOI_VERTEX_TEXTURE
+										: firstSlash == secondSlash - 1
+											? TOI_VERTEX_NORMAL
+											: TOI_VERTEX_TEXTURE_NORMAL;
 
-								if ( ! currObjekt ) {
+							switch ( toi ) {
 
-									std::cout <<
-										"no Object defined for vertices.\n";
+								case TOI_VERTEX_ONLY : {
 
-									exit ( 1 );
+									vMem[ vertexID ] = std::stoi( loc.substr( 0, firstSlash ) );
+
+									break;
+								}
+								case TOI_VERTEX_TEXTURE : {
+
+									vMem[ vertexID ]  = std::stoi( loc.substr( 0, firstSlash ) );
+									vtMem[ vertexID ] = std::stoi( loc.substr( firstSlash + 1 ) );
+
+									break;
+								}
+								case TOI_VERTEX_NORMAL : {
+
+									vMem[ vertexID ] = std::stoi( loc.substr( 0, firstSlash ) );
+									vnMem[ vertexID ] = std::stoi( loc.substr( secondSlash ) );
+
+									break;
+								}
+								case TOI_VERTEX_TEXTURE_NORMAL : {
+
+									vMem[ vertexID ] = std::stoi( loc.substr( 0, firstSlash ) );
+									vtMem[ vertexID ] = std::stoi( loc.substr( firstSlash + 1 ) );
+									vnMem[ vertexID ] = std::stoi( loc.substr( secondSlash ) );
+
+									break;
 								}
 
-								currObjekt->vId.push_back ( atoi ( vStr.c_str ( ) ) );
-								currObjekt->vtId.push_back ( atoi ( vtStr.c_str ( ) ) );
-								currObjekt->vnId.push_back ( atoi ( vnStr.c_str ( ) ) );
+								default : break;
 							}
-							else if ( std::regex_search ( loc, sm, re_vn ) ) {
 
-//								std::cout << "  vertex[" << vertexID ++ << "]:\n";
+							vertexID ++;
+						}
 
-								std::string
-								vStr  = sm[ 1 ].str( ),
-								vnStr = sm[ 2 ].str( );
+						if ( vertexID < 4 ) {
 
-//								std::cout <<
-//									"    v:  " << vStr <<
-//									"\n    vn: " << vnStr << std::endl;
-
-								if ( ! currObjekt ) {
-
-									std::cout <<
-										"no Object defined for vertices.\n";
-
-									exit ( 1 );
-								}
-
-								currObjekt->vId.push_back ( atoi ( vStr.c_str ( ) ) );
-								currObjekt->vnId.push_back ( atoi ( vnStr.c_str ( ) ) );
-							}
-							else if ( std::regex_search ( loc, sm, re_vt ) ) {
-
-//								std::cout << "  vertex[" << vertexID ++ << "]:\n";
-
-								std::string
-								vStr  = sm[ 1 ].str( ),
-								vtStr = sm[ 2 ].str( );
-
-//								std::cout <<
-//									"    v:  " << vStr <<
-//									"\n    vt: " << vtStr << std::endl;
-
-								if ( ! currObjekt ) {
-
-									std::cout <<
-										"no Object defined for vertices.\n";
-
-									exit ( 1 );
-								}
-
-								currObjekt->vId.push_back ( atoi ( vStr.c_str ( ) ) );
-								currObjekt->vtId.push_back ( atoi ( vtStr.c_str ( ) ) );
-							}
-							else {
-
-//								std::cout << "  vertex[" << vertexID ++ << "]:\n";
-
-								GLint
-								i = atoi( loc.c_str ( ) );
-
-//								std::cout << "    v: " << i << std::endl;
-
-								if ( ! currObjekt ) {
-
-									std::cout <<
-										"no Object defined for vertices.\n";
-
-									exit ( 1 );
-								}
-
-								currObjekt->vId.push_back ( i );
-
-								while( iss >> i ) {
-
-//									std::cout << "    v:  " << i << std::endl;
-
-									currObjekt->vId.push_back ( i );
-								}
-							}
+							currObjekt->elements.push_back( new Triangle( vMem, vtMem, vnMem, toi ) );
 						}
 					}
 					else if( arg == "s" ) {
@@ -771,7 +1133,7 @@ public GLRRef {
 
 						objekts[ s ] = currObjekt;
 					}
-					else if( arg == "g" ) {
+/*					else if( arg == "g" ) {
 
 						Str
 						s;
@@ -784,14 +1146,17 @@ public GLRRef {
 
 						objekts[ s ] = currObjekt;
 					}
+*/
 					else if( arg == "#" ) {
 
 						Str
 						s = "comment";
 
-						iss >> s;
+						std::cout << "comment:";
 
-						std::cout << "comment: " << s << std::endl;
+						while( iss >> s )
+
+							std::cout << " " << s;
 					}
 					else if( arg == "usemtl" ) {
 
@@ -808,6 +1173,8 @@ public GLRRef {
 			file.close ( );
 
 			build ( );
+
+			changeDir ( currPathOrig );
 
 			return true;
 		}

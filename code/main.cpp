@@ -6,7 +6,7 @@
 #include "glprojects/cubewithtexture/cubewithtexture.hpp"
 #include "glprojects/solarsystem/solarsystem.hpp"
 #include "glprojects/zbuffertexture/zbuffertexture.hpp"
-#include "glprojects/dummy/dummy.hpp"
+//#include "glprojects/dummy/dummy.hpp"
 #include "glprojects/cube/cube.hpp"
 #include "glprojects/funIn2D/funIn2D.hpp"
 //#include "glprojects/lighttest/lighttest.hpp"
@@ -49,8 +49,8 @@ main( int argc, char *argv[ ] ) {
 	ZBufferTexture
 	* zBufferTexture = new ZBufferTexture( "ZBufferTexture" );
 
-	Dummy
-	* dummy = new Dummy( );
+//	Dummy
+//	* dummy = new Dummy( );
 
 	Cube
 	* cube = new Cube( "Cube" );
@@ -94,7 +94,7 @@ main( int argc, char *argv[ ] ) {
 	SceneExample
 	* sceneExample = new SceneExample( "SceneExample" );
 
-	w.addGLProject( dummy );
+//	w.addGLProject( dummy );
 	w.addGLProject( triangle2D );
 	w.addGLProject( quad3D );
 	w.addGLProject( coordinateSystem );

@@ -253,7 +253,7 @@ SceneExample::init ( ) {
 	{
 	}
 
-	scene->fromObjFile ( "../EZGL/obj/sphereshiptri.obj" );
+	scene->fromObjFile ( "../obj/cube6Quads.obj" );
 
 	glClearColor( .01f, .02f, .03f, 1. );
 
@@ -283,7 +283,7 @@ SceneExample:: paint ( ) {
 	scene->view  = ccv.view ( );
 
 //	scene->lightPos = V3 ( scene->model * V4( V3 ( 0., 4., 2. ), 1 ) );
-	scene->lightPos = V3 ( 2.f, 2.f, 2.f );
+	scene->lightPos = V3 ( 2.f, 1.f, 0.f );
 
 	glr.run ( scene->objektNames ( ) );
 }
