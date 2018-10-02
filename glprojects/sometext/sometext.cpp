@@ -1,6 +1,6 @@
 #include "sometext.hpp"
 
-SomeText::SomeText( const CStr &p_name, ViewControlData *p_vcd ) :
+SomeText::SomeText ( const CStr &p_name, ViewControlData * p_vcd ) :
 GLProject ( p_name, p_vcd ) {
 
 }

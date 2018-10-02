@@ -25,6 +25,7 @@ SHADERS [ 3 ][ 2 ] =
 		"uniform mat4 model;\n"
 		"uniform mat4 view;\n"
 		"uniform mat4 projection;\n"
+
 		"out VS2FS {\n"
 		"	vec3 v;\n"
 		"	vec2 vt;\n"
@@ -47,6 +48,14 @@ SHADERS [ 3 ][ 2 ] =
 		"	vec2 vt;\n"
 		"	vec3 vn;\n"
 		"} vs2fs;\n"
+		"uniform float Ns;\n"
+		"uniform float Ni;\n"
+		"uniform float d;\n"
+		"uniform vec3 Ka;\n"
+		"uniform vec3 Kd;\n"
+		"uniform vec3 Ks;\n"
+		"uniform vec3 Ke;\n"
+		"uniform sampler2D map_Kd;\n"
 		"uniform vec3 light;\n"
 		"out vec4 fColor;\n"
 		"void main( ) {\n"
@@ -128,18 +137,33 @@ SHADERS [ 3 ][ 2 ] =
 };
 
 class Material :
-public Named {
+public Named,
+public GLRRef {
 
 	public :
 
-		Material ( CStr & p_name ) :
-		Named( p_name ) {
+		Material ( CStr & p_name, GLR & p_glr ) :
+		Named ( p_name ),
+		GLRRef ( p_glr ),
+		Ns ( 1. ),
+		Ni ( 1. ),
+		d ( 1. ),
+		illum( 2 ),
+		Ka ( 0., 0., 0. ),
+		Kd ( 0., 0., 0. ),
+		Ks ( 0., 0., 0. ),
+		Ke ( 0., 0., 0. ),
+		map_Ka ( "" ),
+		map_Kd ( "" ),
+		map_Ks ( "" ),
+		map_Ke ( "" ) {
 
 		}
 
 		~ Material ( ) {
 
-	}
+			// delete shader;
+		}
 
 	public :
 
@@ -154,6 +178,22 @@ public Named {
 		Kd,
 		Ks,
 		Ke;
+
+		Str
+		map_Ka,
+		map_Kd,
+		map_Ks,
+		map_Ke;
+	};
+
+enum
+TypeOfIndices {
+
+	TOI_UNKOWN,
+	TOI_VERTEX_ONLY,
+	TOI_VERTEX_TEXTURE,
+	TOI_VERTEX_NORMAL,
+	TOI_VERTEX_TEXTURE_NORMAL
 };
 
 template < typename T, unsigned int S >
@@ -170,7 +210,6 @@ copyMem ( T * p_dst, T * p_src ) {
 		++ p_src;
 	}
 }
-
 
 class Scene :
 public Named,
@@ -203,6 +242,9 @@ public GLRRef {
 		std::map < CStr, Material * >
 		materials;
 
+		std::vector < Str >
+		surfaces;
+
 		Str
 		currObjektName,
 		currGroupName,
@@ -210,11 +252,14 @@ public GLRRef {
 		currPathOrig,
 		currPathObj;
 
-		Objekt
-		* currObjekt;
-
 		Material
 		* currMaterial;
+
+		GLR::Container
+		* currContainer;
+
+		GLR::VertexArray
+		* currVertexArray;
 
 		M4
 		projection,
@@ -229,6 +274,7 @@ public GLRRef {
 		Scene
 		& build ( ) {
 
+/*
 			for( auto o : objekts ) {
 
 				Objekt
@@ -305,7 +351,7 @@ public GLRRef {
 					}
 				}
 */
-				va <<
+/*				va <<
 					GLR::VertexArray::Object( 0, va.vertexCount ( ), GL_TRIANGLES );
 
 				Str
@@ -328,55 +374,22 @@ public GLRRef {
 					setShader ( shaderName ).
 					build ( );
 			}
+*/
+
+
 
 			return * this;
 		}
 
 		Scene
 		& clear ( ) {
-
+/*
 			for ( auto o : objekts ) {
 
 				delete o.second;
 			}
-
+*/
 			return * this;
-		}
-
-		void
-		changeDir ( CStr & p_path ) const {
-
-			chdir ( p_path.c_str ( ) );
-		}
-
-		Str
-		currentPath ( ) const {
-
-			char
-			fn[ 0x200 ];
-
-			getcwd( fn, 0x200 );
-
-			return Str ( fn );
-		}
-
-		void
-		extractPath ( Str & p_path, CStr & p_filename ) const {
-
-			std::size_t
-			lof = p_filename.find_last_of( "/\\" );
-
-			p_path = p_filename.substr( 0, lof );
-		}
-
-		void
-		extractPathAndFile ( Str & p_path, Str & p_file, CStr & p_filename ) const {
-
-			std::size_t
-			lof = p_filename.find_last_of( "/\\" );
-
-			p_path = p_filename.substr( 0, lof );
-			p_file = p_filename.substr( lof + 1 );
 		}
 
 		bool
@@ -411,7 +424,7 @@ public GLRRef {
 
 						std::cout << "new material " << currMaterialName << std::endl;
 
-						currMaterial = new Material ( currMaterialName );
+						currMaterial = new Material ( currMaterialName, glr ( ) );
 
 						materials[ currMaterialName ] = currMaterial;
 					}
@@ -466,18 +479,64 @@ public GLRRef {
 						iss >> currMaterial->Ke.y;
 						iss >> currMaterial->Ke.z;
 					}
+					else if( arg == "map_Ka" ) {
+
+						iss >> currMaterial->map_Ka;
+					}
+					else if( arg == "map_Ks" ) {
+
+						iss >> currMaterial->map_Ks;
+					}
+					else if( arg == "map_Kd" ) {
+
+						iss >> currMaterial->map_Kd;
+					}
+					else if( arg == "map_Ke" ) {
+
+						iss >> currMaterial->map_Ke;
+					}
 				}
 			}
 
 			file.close ( );
 
-			build ( );
+			glr ( ).shader (
+				"S-VVTVN",
+				SHADERS[ 0 ][ 0 ],
+				SHADERS[ 0 ][ 1 ],
+				GLR::ShaderCode::FROM_CODE ).
+				addUniform( "model",      GLR::Shader::MAT4, GLR::Shader::SCALAR, & model ).
+				addUniform( "view",       GLR::Shader::MAT4, GLR::Shader::SCALAR, & view ).
+				addUniform( "projection", GLR::Shader::MAT4, GLR::Shader::SCALAR, & projection ).
+				addUniform( "lightPos",   GLR::Shader::VEC3, GLR::Shader::SCALAR, & lightPos ).
+				addUniform( "Ka", GLR::Shader::VEC3, GLR::Shader::SCALAR, nullptr ).
+				addUniform( "Kd", GLR::Shader::VEC3, GLR::Shader::SCALAR, nullptr ).
+				addUniform( "Ks", GLR::Shader::VEC3, GLR::Shader::SCALAR, nullptr ).
+				addUniform( "Ke", GLR::Shader::VEC3, GLR::Shader::SCALAR, nullptr ).
+				addUniform( "Ns", GLR::Shader::FLOAT, GLR::Shader::SCALAR, nullptr ).
+				addUniform( "Ni", GLR::Shader::FLOAT, GLR::Shader::SCALAR, nullptr ).
+				addUniform( "d",  GLR::Shader::FLOAT, GLR::Shader::SCALAR, nullptr );
+
+			for ( auto m : materials ) {
+
+				if ( m.second->map_Kd != "" ) {
+
+					glr ( ).texture(
+						"T-" + m.second->name ( ),
+						new GLR::Texture (
+							"map_Kd",
+						m.second->map_Kd ) );
+				}
+			}
 
 			return true;
 		}
 
 		bool
 		fromObjFile ( CStr & p_filename ) {
+
+			currContainer = nullptr;
+			currVertexArray = nullptr;
 
 			Str
 			pathToObj,
@@ -505,16 +564,22 @@ public GLRRef {
 				return false;
 			}
 
+			GLuint
+			firstVertexOfSurface = 0,
+			vertexCount = 0;
+
+			TypeOfIndices
+			toi = TOI_UNKOWN;
 //			GLuint
 //			faceId = 0,
 //			vertexId = 0,
 //			normalId = 0,
 //			textureId = 0;
 
-			GLuint
-			vMem[ 0x400 ],
-			vtMem[ 0x400 ],
-			vnMem[ 0x400 ];
+//			GLuint
+//			vMem[ 0x400 ],
+//			vtMem[ 0x400 ],
+//			vnMem[ 0x400 ];
 
 			while ( file.good ( ) ) {
 
@@ -599,79 +664,173 @@ public GLRRef {
 					}
 					else if( arg == "f" ) {
 
-						if ( ! currObjekt ) {
+						if ( ! currContainer ) {
 
-							std::cout << "Sorry! But no Object defined for vertices. Exit ...\n";
+							std::cout << "Sorry! But no container defined for faces. Exit ...\n";
+
+							exit ( 1 );
+						}
+
+						if ( ! currVertexArray ) {
+
+							std::cout << "Sorry! But no vertex array defined for storing vertices. Exit ...\n";
 
 							exit ( 1 );
 						}
 
 						GLuint
-						vertexID = 0;
+						vId0, vId1, vId2,
+						vtId0, vtId1, vtId2,
+						vnId0, vnId1, vnId2;
 
 						Str
 						loc;
 
-						TypeOfIndices
-						toi = TOI_UNKOWN;
+						iss >> loc;
 
-						while ( iss >> loc ) {
+						GLint
+						firstSlash  = loc.find_first_of( "/" ),
+						secondSlash = loc.find_first_of( "/", firstSlash + 1 );
 
-							GLint
-							firstSlash  = loc.find_first_of( "/" ),
-							secondSlash = loc.find_first_of( "/", firstSlash + 1 );
+						if ( toi == TOI_UNKOWN )
+							toi = secondSlash < 0
+								? firstSlash < 0
+									? TOI_VERTEX_ONLY
+									: TOI_VERTEX_TEXTURE
+								: firstSlash == secondSlash - 1
+									? TOI_VERTEX_NORMAL
+									: TOI_VERTEX_TEXTURE_NORMAL;
 
-							if ( vertexID == 0 )
-								toi =
-									secondSlash < 0
-										? firstSlash < 0
-											? TOI_VERTEX_ONLY
-											: TOI_VERTEX_TEXTURE
-										: firstSlash == secondSlash - 1
-											? TOI_VERTEX_NORMAL
-											: TOI_VERTEX_TEXTURE_NORMAL;
+						switch ( toi ) {
 
-							switch ( toi ) {
+							case TOI_VERTEX_ONLY : {
 
-								case TOI_VERTEX_ONLY : {
+								vId0 = std::stoi( loc );
 
-									vMem[ vertexID ] = std::stoi( loc.substr( 0, firstSlash ) );
+								iss >> loc;
+								vId1 = std::stoi( loc );
 
-									break;
-								}
-								case TOI_VERTEX_TEXTURE : {
+								iss >> loc;
+								vId2 = std::stoi( loc );
 
-									vMem[ vertexID ]  = std::stoi( loc.substr( 0, firstSlash ) );
-									vtMem[ vertexID ] = std::stoi( loc.substr( firstSlash + 1 ) );
+								* currVertexArray <<
+									v[ 3 * vId0 - 3 ] << v[ 3 * vId0 - 2 ] << v[ 3 * vId0 - 1 ] <<
+									v[ 3 * vId1 - 3 ] << v[ 3 * vId1 - 2 ] << v[ 3 * vId1 - 1 ] <<
+									v[ 3 * vId2 - 3 ] << v[ 3 * vId2 - 2 ] << v[ 3 * vId2 - 1 ];
 
-									break;
-								}
-								case TOI_VERTEX_NORMAL : {
-
-									vMem[ vertexID ] = std::stoi( loc.substr( 0, firstSlash ) );
-									vnMem[ vertexID ] = std::stoi( loc.substr( secondSlash ) );
-
-									break;
-								}
-								case TOI_VERTEX_TEXTURE_NORMAL : {
-
-									vMem[ vertexID ] = std::stoi( loc.substr( 0, firstSlash ) );
-									vtMem[ vertexID ] = std::stoi( loc.substr( firstSlash + 1 ) );
-									vnMem[ vertexID ] = std::stoi( loc.substr( secondSlash ) );
-
-									break;
-								}
-
-								default : break;
+								break;
 							}
+							case TOI_VERTEX_TEXTURE : {
 
-							vertexID ++;
+								vId0  = std::stoi( loc.substr( 0, firstSlash ) );
+								vtId0 = std::stoi( loc.substr( firstSlash + 1 ) );
+
+								iss >> loc;
+								vId1  = std::stoi( loc.substr( 0, firstSlash ) );
+								vtId1 = std::stoi( loc.substr( firstSlash + 1 ) );
+
+								iss >> loc;
+								vId2  = std::stoi( loc.substr( 0, firstSlash ) );
+								vtId2 = std::stoi( loc.substr( firstSlash + 1 ) );
+
+								vId0 = 3 * vId0 - 3;
+								vId1 = 3 * vId1 - 3;
+								vId2 = 3 * vId2 - 3;
+
+								vtId0 = 2 * vtId0 - 2;
+								vtId1 = 2 * vtId1 - 2;
+
+								* currVertexArray <<
+									v[  vId0  ] << v[  vId0  + 1 ] << v[ vId0 + 2 ] <<
+									vt[ vtId0 ] << vt[ vtId0 + 1 ] <<
+
+									v[  vId1  ] << v[  vId1  + 1 ] << v[ vId1 + 2 ] <<
+									vt[ vtId1 ] << vt[ vtId1 + 1 ] <<
+
+									v[  vId2  ] << v[  vId2  + 1 ] << v[ vId2 + 2 ] <<
+									vt[ vtId2 ] << vt[ vtId2 + 1 ];
+
+									break;
+								}
+							case TOI_VERTEX_NORMAL : {
+
+								vId0  = std::stoi( loc.substr( 0, firstSlash ) );
+								vnId0 = std::stoi( loc.substr( secondSlash + 1 ) );
+
+								iss >> loc;
+								vId1  = std::stoi( loc.substr( 0, firstSlash ) );
+								vnId1 = std::stoi( loc.substr( secondSlash + 1 ) );
+
+								iss >> loc;
+								vId2  = std::stoi( loc.substr( 0, firstSlash ) );
+								vnId2 = std::stoi( loc.substr( secondSlash + 1 ) );
+
+								vId0 = 3 * vId0 - 3;
+								vId1 = 3 * vId1 - 3;
+								vId2 = 3 * vId2 - 3;
+
+								vnId0 = 3 * vnId0 - 3;
+								vnId1 = 3 * vnId1 - 3;
+								vnId2 = 3 * vnId2 - 3;
+
+								* currVertexArray <<
+									v[  vId0  ] << v[  vId0  + 1 ] << v[  vId0  + 2 ] <<
+									vn[ vnId0 ] << vn[ vnId0 + 1 ] << vn[ vnId0 + 2 ] <<
+
+									v[  vId1  ] << v[  vId1  + 1 ] << v[  vId1  + 2 ] <<
+									vn[ vnId1 ] << vn[ vnId1 + 1 ] << vn[ vnId1 + 2 ] <<
+
+									v[  vId2  ] << v[  vId2  + 1 ] << v[  vId2  + 2 ] <<
+									vn[ vnId2 ] << vn[ vnId2 + 1 ] << vn[ vnId2 + 2 ];
+
+								break;
+							}
+							case TOI_VERTEX_TEXTURE_NORMAL : {
+
+								vId0  = std::stoi( loc.substr( 0, firstSlash ) );
+								vtId0 = std::stoi( loc.substr( firstSlash + 1, secondSlash ) );
+								vnId0 = std::stoi( loc.substr( secondSlash + 1 ) );
+
+								iss >> loc;
+								vId1  = std::stoi( loc.substr( 0, firstSlash ) );
+								vtId1 = std::stoi( loc.substr( firstSlash + 1, secondSlash ) );
+								vnId1 = std::stoi( loc.substr( secondSlash + 1 ) );
+
+								iss >> loc;
+								vId2  = std::stoi( loc.substr( 0, firstSlash ) );
+								vtId2 = std::stoi( loc.substr( firstSlash + 1, secondSlash ) );
+								vnId2 = std::stoi( loc.substr( secondSlash + 1 ) );
+
+								vId0 = 3 * vId0 - 3;
+								vId1 = 3 * vId1 - 3;
+								vId2 = 3 * vId2 - 3;
+
+								vtId0 = 2 * vtId0 - 2;
+								vtId1 = 2 * vtId1 - 2;
+
+								vnId0 = 3 * vnId0 - 3;
+								vnId1 = 3 * vnId1 - 3;
+								vnId2 = 3 * vnId2 - 3;
+
+								* currVertexArray <<
+									v[  vId0  ] << v[  vId0  + 1 ] << v[  vId0  + 2 ] <<
+									vt[ vtId0 ] << vt[ vtId0 + 1 ] <<
+									vn[ vnId0 ] << vn[ vnId0 + 1 ] << vn[ vnId0 + 2 ] <<
+
+									v[  vId1  ] << v[  vId1  + 1 ] << v[  vId1  + 2 ] <<
+									vt[ vtId1 ] << vt[ vtId1 + 1 ] <<
+									vn[ vnId1 ] << vn[ vnId1 + 1 ] << vn[ vnId1 + 2 ] <<
+
+									v[  vId2  ] << v[  vId2  + 1 ] << v[  vId2  + 2 ] <<
+									vt[ vtId2 ] << vt[ vtId2 + 1 ] <<
+									vn[ vnId2 ] << vn[ vnId2 + 1 ] << vn[ vnId2 + 2 ];
+
+								break;
+							}
+							default : break;
 						}
 
-						if ( vertexID < 4 ) {
-
-							currObjekt->elements.push_back( new Triangle( vMem, vtMem, vnMem, toi ) );
-						}
+						vertexCount += 3;
 					}
 					else if( arg == "s" ) {
 
@@ -684,16 +843,9 @@ public GLRRef {
 					}
 					else if( arg == "o" ) {
 
-						Str
-						s;
+						iss >> currObjektName;
 
-						iss >> s;
-
-						std::cout << "object: " << s << std::endl;
-
-						currObjekt = new Objekt ( s, glr ( ) );
-
-						objekts[ s ] = currObjekt;
+						std::cout << "new object: " << currObjektName << std::endl;
 					}
 /*					else if( arg == "g" ) {
 
@@ -723,11 +875,77 @@ public GLRRef {
 					else if( arg == "usemtl" ) {
 
 						Str
-						s = "no material";
+						s;
 
 						iss >> s;
 
-						std::cout << "material: " << s << std::endl;
+						std::cout << "new surface: " << s << std::endl;
+
+						if ( currContainer && currVertexArray ) {
+
+							( * currVertexArray ) <<
+								GLR::VertexArray::Object ( firstVertexOfSurface, vertexCount, GL_TRIANGLES );
+
+							currVertexArray->attrib ( "v", 0, 3 );
+
+							switch ( toi ) {
+
+								case TOI_VERTEX_ONLY : {
+
+									currContainer->setShader ( "S-V" );
+
+									break;
+								}
+								case TOI_VERTEX_NORMAL : {
+
+									currVertexArray->attrib ( "vn", 3, 3 );
+									currContainer->setShader ( "S-VVN" );
+
+									break;
+								}
+								case TOI_VERTEX_TEXTURE : {
+
+									currVertexArray->attrib ( "vt", 3, 2 );
+									currContainer->setShader ( "S-VVT" );
+
+									break;
+								}
+								case TOI_VERTEX_TEXTURE_NORMAL : {
+
+									currVertexArray->attrib ( "vt", 3, 2 );
+									currVertexArray->attrib ( "vn", 5, 3 );
+									currContainer->setShader ( "S-VVTVN" );
+
+									break;
+								}
+								default : {
+
+									break;
+								}
+							}
+
+							currContainer->setVertexArray ( "V-" + currGroupName );
+
+							currContainer->setShader ( "S-illum2" );
+
+							firstVertexOfSurface += vertexCount;
+
+							toi = TOI_UNKOWN;
+						}
+						else {
+
+							firstVertexOfSurface = 0;
+						}
+
+						vertexCount = 0;
+
+						currGroupName = currObjektName + s;
+
+						surfaces.push_back ( "C-" + currGroupName );
+
+						currContainer = & glr ( ).container ( "C-" + currGroupName );
+
+						currVertexArray = & glr ( ).vertices ( "V-" + currGroupName );
 					}
 				}
 			}
@@ -744,15 +962,7 @@ public GLRRef {
 		std::vector < Str >
 		objektNames ( ) {
 
-			std::vector < Str >
-			r;
-
-			for ( auto o : objekts ) {
-
-				r.push_back( "C-" + o.second->name ( ) );
-			}
-
-			return r;
+			return surfaces;
 		}
 };
 

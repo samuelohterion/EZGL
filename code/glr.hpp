@@ -38,20 +38,31 @@ Named {
 
 	private :
 
-		CStr
+		Str
 		__name;
 
 	public :
 
-		Named( CStr const & p_name ) :
-		__name( p_name ) {
+		Named ( CStr const & p_name = "NONAME" ) :
+		__name ( p_name ) {
+
+		}
+
+		Named ( Named const & p_name ) :
+		__name ( p_name.name ( ) ) {
 
 		}
 
 		CStr
-		name( ) const {
+		name ( ) const {
 
 			return __name;
+		}
+
+		void
+		rename ( CStr & p_name ) {
+
+			__name = p_name;
 		}
 };
 
@@ -81,93 +92,93 @@ GLR {
 
 	public :
 
-		class
-		CameraCenterView {
+	class
+	CameraCenterView {
 
-			public :
+		public :
 
-				CameraCenterView ( glm::mat4 const & p_model, glm::mat4 const & p_view, ViewControlData * p_vcd, glm::vec3 const & p_par = glm::vec3( .01f, .01f, .1f ) ) :
-				__model( p_model ),
-				__view( p_view ),
-				__loc( glm::mat3( inverse( __model ) ) ),
-				__vcd( p_vcd ),
-				__par( p_par ) {
+		CameraCenterView ( glm::mat4 const & p_model, glm::mat4 const & p_view, ViewControlData * p_vcd, glm::vec3 const & p_par = glm::vec3( .01f, .01f, .1f ) ) :
+		__model( p_model ),
+		__view( p_view ),
+		__loc( glm::mat3( inverse( __model ) ) ),
+		__vcd( p_vcd ),
+		__par( p_par ) {
 
-				}
+		}
 
-				~CameraCenterView ( ) {
+		~CameraCenterView ( ) {
 
-				}
+		}
 
-			private :
+		private :
 
-				glm::mat4
-				__model,
-				__view;
+		glm::mat4
+		__model,
+		__view;
 
-				glm::mat3
-				__loc;
+		glm::mat3
+		__loc;
 
-				ViewControlData
-				* __vcd;
+		ViewControlData
+		* __vcd;
 
-				glm::vec3
-				__par;
+		glm::vec3
+		__par;
 
-			public :
+		public :
 
-				CameraCenterView
-				& fixModel( glm::mat4 const & p_model ) {
+		CameraCenterView
+		& fixModel( glm::mat4 const & p_model ) {
 
-					__model = p_model;
-					__loc   = inverse( __model );
+			__model = p_model;
+			__loc   = inverse( __model );
 
-					return *this;
-				}
+			return *this;
+		}
 
-				void
-				rotate_around_x( GLfloat const & p_angle ) {
+		void
+		rotate_around_x( GLfloat const & p_angle ) {
 
-					__model = glm::rotate( __model, p_angle, __loc[ 0 ] );
-				}
+			__model = glm::rotate( __model, p_angle, __loc[ 0 ] );
+		}
 
-				void
-				rotate_around_y( GLfloat const & p_angle ) {
+		void
+		rotate_around_y( GLfloat const & p_angle ) {
 
-					__model = glm::rotate( __model, p_angle, __loc[ 1 ] );
-				}
+			__model = glm::rotate( __model, p_angle, __loc[ 1 ] );
+		}
 
-				void
-				rotate_around_z( GLfloat const & p_angle ) {
+		void
+		rotate_around_z( GLfloat const & p_angle ) {
 
-					__model = glm::rotate( __model, p_angle, __loc[ 2 ] );
-				}
+			__model = glm::rotate( __model, p_angle, __loc[ 2 ] );
+		}
 
-				void
-				rotate_around( GLfloat const & p_angle, glm::vec3 const & p_axis ) {
+		void
+		rotate_around( GLfloat const & p_angle, glm::vec3 const & p_axis ) {
 
-					__model = glm::rotate( __model, p_angle, p_axis * __loc );
-				}
+			__model = glm::rotate( __model, p_angle, p_axis * __loc );
+		}
 
-				glm::mat4
-				model( ) const {
+		glm::mat4
+		model( ) const {
 
-					return __model;
-				}
+			return __model;
+		}
 
-				void
-				move( GLfloat const & dS ) {
+		void
+		move( GLfloat const & dS ) {
 
-					__view = glm::translate( __view, glm::vec3( 0, 0, dS ) );
-				}
+			__view = glm::translate( __view, glm::vec3( 0, 0, dS ) );
+		}
 
-				glm::mat4
-				view( ) const {
+		glm::mat4
+			view( ) const {
 
-					return __view;
-				}
+				return __view;
+			}
 
-				glm::vec3
+			glm::vec3
 				param( ) const {
 
 					return __par;
@@ -207,108 +218,107 @@ GLR {
 						}
 					}
 				}
-		};
+	};
 
-		class
-		SpaceShipView {
+	class
+	SpaceShipView {
 
-			public :
+		public :
 
-				SpaceShipView ( glm::mat4 const & p_model, glm::mat4 const & p_view, ViewControlData * p_vcd ) :
-				__model( p_model ),
-				__view( p_view ),
-				__vcd( p_vcd ) {
+		SpaceShipView ( glm::mat4 const & p_model, glm::mat4 const & p_view, ViewControlData * p_vcd ) :
+		__model( p_model ),
+		__view( p_view ),
+		__vcd( p_vcd ) {
 
-				}
+		}
 
-				~SpaceShipView ( ) {
+		~SpaceShipView ( ) {
 
-				}
+		}
 
-			private :
+		private :
 
-				glm::mat4
-				__model,
-				__view;
+		glm::mat4
+		__model,
+		__view;
 
-				glm::mat3
-				__loc;
+		glm::mat3
+		__loc;
 
-				ViewControlData
-				* __vcd;
+		ViewControlData
+		* __vcd;
 
-			public :
-		};
+		public :
+	};
 
-		class
-		Texture :
-		public Named {
+	class Texture :
+	public Named {
 
-			public :
+		public :
 
-				GLenum
-				target;
+		GLenum
+		target;
 
-				GLuint
-				level;
+		GLuint
+		level;
 
-				GLint
-				internal_format;
+		GLint
+		internal_format;
 
-				GLint
-				min_filter,
-				mag_filter,
-				wrap_s,
-				wrap_t;
+		GLint
+		min_filter,
+		mag_filter,
+		wrap_s,
+		wrap_t;
 
-				GLenum
-				format,
-				type;
+		GLenum
+		format,
+		type;
 
-				GLsizei
-				width,
-				height;
+		GLsizei
+		width,
+		height;
 
-				GLuint
-				id;
+		GLuint
+		id;
 
-			public :
+		public :
 
-				Texture(
-				CStr p_name,
-				GLenum p_target	= GL_TEXTURE_2D,
-				GLint p_level = 0,
-				GLint p_internal_format = GL_RGBA32F,
-				GLint p_min_filter = GL_NEAREST,
-				GLint p_mag_filter = GL_NEAREST,
-				GLint p_wrap_t = GL_CLAMP_TO_EDGE,
-				GLint p_wrap_s = GL_CLAMP_TO_EDGE,
-				GLenum p_format = GL_RGBA,
-				GLenum p_type = GL_FLOAT,
-				GLsizei p_width = 32,
-				GLsizei p_height = 32 ) :
-				Named( p_name ),
-				target( p_target ),
-				level( p_level ),
-				internal_format( p_internal_format ),
-				min_filter( p_min_filter ),
-				mag_filter( p_mag_filter ),
-				wrap_s( p_wrap_s ),
-				wrap_t( p_wrap_t ),
-				format( p_format ),
-				type( p_type ),
-				width( p_width ),
-				height( p_height ),
-				id( 0 ) {
+		Texture(
+		CStr p_name,
+		GLenum p_target	= GL_TEXTURE_2D,
+		GLint p_level = 0,
+		GLint p_internal_format = GL_RGBA32F,
+		GLint p_min_filter = GL_NEAREST,
+		GLint p_mag_filter = GL_NEAREST,
+		GLint p_wrap_t = GL_CLAMP_TO_EDGE,
+		GLint p_wrap_s = GL_CLAMP_TO_EDGE,
+		GLenum p_format = GL_RGBA,
+		GLenum p_type = GL_FLOAT,
+		GLsizei p_width = 32,
+		GLsizei p_height = 32 ) :
+		Named( p_name ),
+		target( p_target ),
+		level( p_level ),
+		internal_format( p_internal_format ),
+		min_filter( p_min_filter ),
+		mag_filter( p_mag_filter ),
+		wrap_s( p_wrap_s ),
+		wrap_t( p_wrap_t ),
+		format( p_format ),
+		type( p_type ),
+		width( p_width ),
+		height( p_height ),
+		id( 0 ) {
 
-					glGenTextures( 1, &id );
-					glBindTexture( target, id );
+			glGenTextures( 1, &id );
+			glBindTexture( target, id );
 
-					//glTexStorage2D( target, 0, GL_RG32F, simWidth, simHeight );
-					glTexParameteri( target, GL_TEXTURE_MIN_FILTER, min_filter );
-					glTexParameteri( target, GL_TEXTURE_MAG_FILTER, mag_filter );
-					glTexParameteri( target, GL_TEXTURE_WRAP_S, wrap_s );
-					glTexParameteri( target, GL_TEXTURE_WRAP_T, wrap_t );
+			//glTexStorage2D( target, 0, GL_RG32F, simWidth, simHeight );
+			glTexParameteri( target, GL_TEXTURE_MIN_FILTER, min_filter );
+				glTexParameteri( target, GL_TEXTURE_MAG_FILTER, mag_filter );
+				glTexParameteri( target, GL_TEXTURE_WRAP_S, wrap_s );
+				glTexParameteri( target, GL_TEXTURE_WRAP_T, wrap_t );
 
 					if( format == GL_DEPTH_COMPONENT ) {
 
@@ -320,39 +330,39 @@ GLR {
 					glTexImage2D( target, level, internal_format, width, height, 0, format, type, nullptr );
 
 					glBindTexture( GL_TEXTURE_2D, 0 );
+		}
+
+		Texture(
+		CStr p_name, CStr p_filename ) :
+		Named( p_name ),
+		target( GL_TEXTURE_2D ),
+		level( 0 ),
+		internal_format( GL_RGBA32F ),
+		min_filter( GL_NEAREST ),
+		mag_filter( GL_NEAREST ),
+		wrap_s( GL_CLAMP_TO_EDGE ),
+		wrap_t( GL_CLAMP_TO_EDGE ),
+		format( GL_RGBA ),
+		type( GL_FLOAT ),
+		width( 0 ),
+		height( 0 ),
+		id( 0 ) {
+
+			QImage
+			imgFromFile;
+
+			if( ! imgFromFile.load( QString( p_filename.c_str( ) ) ) ) {
+
+					std::cerr << "error loading " << p_filename << std::endl ;
+					exit( 1 );
 				}
 
-				Texture(
-				CStr p_name, CStr p_filename ) :
-				Named( p_name ),
-				target( GL_TEXTURE_2D ),
-				level( 0 ),
-				internal_format( GL_RGBA32F ),
-				min_filter( GL_NEAREST ),
-				mag_filter( GL_NEAREST ),
-				wrap_s( GL_CLAMP_TO_EDGE ),
-				wrap_t( GL_CLAMP_TO_EDGE ),
-				format( GL_RGBA ),
-				type( GL_FLOAT ),
-				width( 0 ),
-				height( 0 ),
-				id( 0 ) {
+				QImage
+				GL_formatted_image;
 
-					QImage
-					imgFromFile;
+				GL_formatted_image = QGLWidget::convertToGLFormat( imgFromFile );
 
-					if( ! imgFromFile.load( QString( p_filename.c_str( ) ) ) ) {
-
-						std::cerr << "error loading " << p_filename << std::endl ;
-						exit( 1 );
-					}
-
-					QImage
-					GL_formatted_image;
-
-					GL_formatted_image = QGLWidget::convertToGLFormat( imgFromFile );
-
-					if( GL_formatted_image.isNull( ) ) {
+				if( GL_formatted_image.isNull( ) ) {
 
 						std::cerr << "error GL_formatted_image" << std::endl ;
 
@@ -373,30 +383,30 @@ GLR {
 					glTexImage2D( target, level, internal_format, width, height, 0, format, GL_UNSIGNED_BYTE, GL_formatted_image.bits( ) );
 
 					glBindTexture( GL_TEXTURE_2D, 0 );
-				}
+		}
 
-				~Texture( ) {
+		~Texture( ) {
 
-					glDeleteTextures( 1, &id );
-				}
+			glDeleteTextures( 1, &id );
+		}
 
-				void
-				bind( ) {
+		void
+		bind( ) {
 
-					glBindTexture( target, id );
-				}
+			glBindTexture( target, id );
+		}
 
-				void
-				release( ) {
+		void
+			release( ) {
 
-					glBindTexture( target, 0 );
-				}
+				glBindTexture( target, 0 );
+			}
 
-				void
-				resize( GLuint p_width, GLuint p_height ) {
+			void
+			resize( GLuint p_width, GLuint p_height ) {
 
-					width = p_width;
-					height = p_height;
+				width = p_width;
+				height = p_height;
 
 					glBindTexture( target, id );
 
@@ -404,301 +414,297 @@ GLR {
 					glTexImage2D( target, level, internal_format, width, height, 0, format, type, nullptr );
 
 					glBindTexture( GL_TEXTURE_2D, 0 );
+			}
+	};
+
+	class RenderBuffer :
+	public Named {
+
+		private:
+
+		GLuint
+		__id;
+
+		GLenum
+		__storageType;
+
+		public :
+
+		GLsizei
+		width,
+		height;
+
+		public :
+
+		RenderBuffer( CStr & p_name, GLenum const & p_storageType ) :
+		Named( p_name ),
+		__id( 0 ),
+		__storageType( p_storageType ) {
+
+			glGenRenderbuffers( 1, & __id );
+		}
+
+		~RenderBuffer( ) {
+
+			glDeleteRenderbuffers( 1, & __id);
+		}
+
+		void
+		bind( ) {
+
+			glBindRenderbuffer( GL_RENDERBUFFER, __id );
+		}
+
+		GLuint
+		id( ) const {
+
+			return __id;
+		}
+
+		void
+		release( ) {
+
+			glBindFramebuffer( GL_RENDERBUFFER, 0 );
+		}
+
+		void
+		resize( GLsizei p_width, GLsizei p_height ) {
+
+			width = p_width;
+			height = p_height;
+
+				glBindRenderbuffer( GL_RENDERBUFFER, __id );
+
+				glRenderbufferStorage( GL_RENDERBUFFER, __storageType, p_width, p_height );
+
+				//glTexStorage2D( target, 0, GL_RG32F, width, height );
+				//glTexImage2D( target, level, internal_format, width, height, 0, format, type, nullptr );
+
+				glBindRenderbuffer( GL_RENDERBUFFER, 0 );
+		}
+	};
+
+	class IndexArray :
+	public Named {
+
+		public :
+
+		GLuint
+		iaoId,
+		iboId,
+		stride;
+
+		GLenum
+		usage;
+
+		class Object {
+
+			public:
+
+				Object( GLint p_offs, GLint p_size, GLenum p_mode ) :
+				offs( p_offs ),
+				size( p_size ),
+				mode( p_mode ) {
+
 				}
-		};
 
-		class
-		RenderBuffer :
-		public
-		Named {
-
-			private:
-
-				GLuint
-				__id;
+				GLint
+				offs,
+				size;
 
 				GLenum
-				__storageType;
-
-			public :
-
-				GLsizei
-				width,
-				height;
-
-			public :
-
-				RenderBuffer( CStr & p_name, GLenum const & p_storageType ) :
-				Named( p_name ),
-				__id( 0 ),
-				__storageType( p_storageType ) {
-
-					glGenRenderbuffers( 1, & __id );
-				}
-
-				~RenderBuffer( ) {
-
-					glDeleteRenderbuffers( 1, & __id);
-				}
-
-				void
-				bind( ) {
-
-					glBindRenderbuffer( GL_RENDERBUFFER, __id );
-				}
-
-				GLuint
-				id( ) const {
-
-					return __id;
-				}
-
-				void
-				release( ) {
-
-					glBindFramebuffer( GL_RENDERBUFFER, 0 );
-				}
-
-				void
-				resize( GLsizei p_width, GLsizei p_height ) {
-
-					width = p_width;
-					height = p_height;
-
-					glBindRenderbuffer( GL_RENDERBUFFER, __id );
-
-					glRenderbufferStorage( GL_RENDERBUFFER, __storageType, p_width, p_height );
-
-					//glTexStorage2D( target, 0, GL_RG32F, width, height );
-					//glTexImage2D( target, level, internal_format, width, height, 0, format, type, nullptr );
-
-					glBindRenderbuffer( GL_RENDERBUFFER, 0 );
-				}
+				mode;
 		};
 
-		class
-		IndexArray :
-		public Named {
+		std::vector< GLushort >
+		arr;
 
-			public :
+		std::vector< Object >
+		obj;
 
-				GLuint
-				iaoId,
-				iboId,
-				stride;
+		public :
 
-				GLenum
-				usage;
+		IndexArray( CStr &p_name ) :
+		Named( p_name ),
+		iaoId( 0 ),
+		iboId( 0 ),
+		stride( 0 ),
+		usage( GL_STATIC_DRAW ) {
 
-				class Object {
-
-					public:
-
-						Object( GLint p_offs, GLint p_size, GLenum p_mode ) :
-						offs( p_offs ),
-						size( p_size ),
-						mode( p_mode ) {
-
-						}
-
-					GLint
-					offs,
-					size;
-
-					GLenum
-					mode;
-				};
-
-				std::vector< GLushort >
-				arr;
-
-				std::vector< Object >
-				obj;
-
-			public :
-
-				IndexArray( CStr &p_name ) :
-				Named( p_name ),
-				iaoId( 0 ),
-				iboId( 0 ),
-				stride( 0 ),
-				usage( GL_STATIC_DRAW ) {
-
-					glGenVertexArrays( 1, &iaoId );
+			glGenVertexArrays( 1, &iaoId );
 //					glBindVertexArray( vaoId );
 
-					glGenBuffers( 1, &iboId );
+			glGenBuffers( 1, &iboId );
 //					glBindBuffer( GL_ARRAY_BUFFER, vboId );
 //					glBufferData( GL_ARRAY_BUFFER, sizeof( float ) * arr.size( ), arr.data( ), GL_STATIC_DRAW );
 
 //					glBindVertexArray( 0 );
+		}
+
+		~IndexArray( ) {
+
+		}
+
+		IndexArray
+		& operator << ( GLushort const & p_value ) {
+
+			arr.push_back( p_value );
+
+			return *this;
+		}
+
+		IndexArray
+		& operator << ( Object const & p_object ) {
+
+			obj.push_back( p_object );
+
+				return *this;
+		}
+
+
+		IndexArray
+			&setUsage( GLenum const & p_usage ) {
+
+				usage = p_usage;
+
+				return *this;
+			}
+
+			int
+			indexCount( ) {
+
+				return arr.size( );
+			}
+
+			void
+			bind( ) {
+
+				glBindVertexArray( iaoId );
+				glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, iboId );
+			}
+
+			void
+			release( ) {
+
+				glBindVertexArray( 0 );
+				glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
+			}
+	};
+
+	class VertexArray :
+	public Named {
+
+		public :
+
+			GLuint
+			vaoId,
+			vboId,
+			stride;
+
+			GLenum
+			usage;
+
+			struct Attr {
+
+				GLsizei offs;
+				GLuint size;
+			};
+
+			class Object {
+
+				public:
+
+				Object( GLsizei p_offs, GLuint p_size, GLenum p_mode ) :
+				offs( p_offs ),
+				size( p_size ),
+				mode( p_mode ) {
+
 				}
 
-				~IndexArray( ) {
-
-				}
-
-				IndexArray
-				& operator << ( GLushort const & p_value ) {
-
-					arr.push_back( p_value );
-
-					return *this;
-				}
-
-				IndexArray
-				& operator << ( Object const & p_object ) {
-
-					obj.push_back( p_object );
-
-					return *this;
-				}
-
-
-				IndexArray
-				&setUsage( GLenum const & p_usage ) {
-
-					usage = p_usage;
-
-					return *this;
-				}
-
-				int
-				indexCount( ) {
-
-					return arr.size( );
-				}
-
-				void
-				bind( ) {
-
-					glBindVertexArray( iaoId );
-					glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, iboId );
-				}
-
-				void
-				release( ) {
-
-					glBindVertexArray( 0 );
-					glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
-				}
-		};
-
-		class
-		VertexArray :
-		public Named {
-
-			public :
+				GLsizei
+				offs;
 
 				GLuint
-				vaoId,
-				vboId,
-				stride;
+				size;
 
 				GLenum
-				usage;
+				mode;
+			};
 
-				struct Attr {
+			std::map< CStr, Attr >
+			attr;
 
-					GLsizei offs;
-					GLuint size;
-				};
+			std::vector< GLfloat >
+			arr;
 
-				class Object {
+			std::vector< Object >
+			obj;
 
-					public:
+		public :
 
-						Object( GLsizei p_offs, GLuint p_size, GLenum p_mode ) :
-						offs( p_offs ),
-						size( p_size ),
-						mode( p_mode ) {
+			VertexArray( CStr &p_name ) :
+			Named( p_name ),
+			vaoId( 0 ),
+			vboId( 0 ),
+			stride( 0 ),
+			usage( GL_STATIC_DRAW ) {
 
-						}
+				glGenVertexArrays( 1, &vaoId );
 
-					GLsizei
-					offs;
+				glGenBuffers( 1, &vboId );
+			}
 
-					GLuint
-					size;
+			~VertexArray( ) {
 
-					GLenum
-					mode;
-				};
+			}
 
-				std::map< CStr, Attr >
-				attr;
+			VertexArray
+			&operator << ( GLfloat const & p_value ) {
 
-				std::vector< GLfloat >
-				arr;
+				arr.push_back( p_value );
 
-				std::vector< Object >
-				obj;
+				return *this;
+			}
 
-			public :
+			VertexArray
+			&operator << ( Object const & p_object ) {
 
-				VertexArray( CStr &p_name ) :
-				Named( p_name ),
-				vaoId( 0 ),
-				vboId( 0 ),
-				stride( 0 ),
-				usage( GL_STATIC_DRAW ) {
+				obj.push_back( p_object );
 
-					glGenVertexArrays( 1, &vaoId );
+				return *this;
+			}
 
-					glGenBuffers( 1, &vboId );
-				}
+			VertexArray
+			&operator << ( glm::vec2 const & p_value ) {
 
-				~VertexArray( ) {
+				arr.push_back( p_value.x );
+				arr.push_back( p_value.y );
 
-				}
+				return *this;
+			}
 
-				VertexArray
-				&operator << ( GLfloat const & p_value ) {
+			VertexArray
+			&operator << ( glm::vec3 const & p_value ) {
 
-					arr.push_back( p_value );
-
-					return *this;
-				}
-
-				VertexArray
-				&operator << ( Object const & p_object ) {
-
-					obj.push_back( p_object );
-
-					return *this;
-				}
-
-				VertexArray
-				&operator << ( glm::vec2 const & p_value ) {
-
-					arr.push_back( p_value.x );
-					arr.push_back( p_value.y );
-
-					return *this;
-				}
-
-				VertexArray
-				&operator << ( glm::vec3 const & p_value ) {
-
-					arr.push_back( p_value.r );
-					arr.push_back( p_value.g );
+				arr.push_back( p_value.r );
+				arr.push_back( p_value.g );
 					arr.push_back( p_value.b );
 
 					return *this;
-				}
+			}
 
-				VertexArray
-				&operator << ( glm::vec4 const & p_value ) {
+			VertexArray
+			&operator << ( glm::vec4 const & p_value ) {
 
-					arr.push_back( p_value.r );
+				arr.push_back( p_value.r );
 					arr.push_back( p_value.g );
 					arr.push_back( p_value.b );
 					arr.push_back( p_value.a );
 
 					return *this;
-				}
+			}
 
-				VertexArray
+			VertexArray
 				& attrib( std::string const & p_name, GLsizei const &p_offset, GLuint const &p_size ) {
 
 					attr[ p_name ].offs = p_offset;
@@ -737,80 +743,80 @@ GLR {
 					glBindVertexArray( 0 );
 					glBindBuffer( GL_ARRAY_BUFFER, 0 );
 				}
-		};
+	};
 
-		class
-		ShaderCode {
+	class
+	ShaderCode {
 
-			public :
+		public :
 
-				enum
-				CreationMethod {
+			enum
+			CreationMethod {
 
-					FROM_CODE,
-					FROM_FILE
-				};
+				FROM_CODE,
+				FROM_FILE
+			};
 
-			public :
+		public :
 
-				ShaderCode( GLenum p_shaderType, CStr &p_text, CreationMethod const &p_method ) :
-				__type( p_shaderType ),
-				__infoLog( nullptr ) {
+			ShaderCode( GLenum p_shaderType, CStr &p_text, CreationMethod const &p_method ) :
+			__type( p_shaderType ),
+			__infoLog( nullptr ) {
 
-					if( p_method == FROM_CODE ) {
+				if( p_method == FROM_CODE ) {
 
-						createFromCode( p_text );
+					createFromCode( p_text );
 
-						return;
-					}
-
-					createFromFile( p_text );
+					return;
 				}
 
-				~ShaderCode( ) {
+				createFromFile( p_text );
+			}
 
-					glDeleteShader( __id );
+			~ShaderCode( ) {
 
-					if( __infoLog ) {
+				glDeleteShader( __id );
 
-						delete __infoLog;
-					}
+				if( __infoLog ) {
+
+					delete __infoLog;
 				}
+			}
 
-			private :
+		private :
 
-				GLenum
-				__type;			// GL_VERTEX_SHADER or GL_FRAGMENT_SHADER
+			GLenum
+			__type;			// GL_VERTEX_SHADER or GL_FRAGMENT_SHADER
 
-				GLint
-				__success;
+			GLint
+			__success;
 
-				std::string
-				__fname,
-				__code;
+			std::string
+			__fname,
+			__code;
 
-				GLuint
-				__id;
+			GLuint
+			__id;
 
-				GLchar
-				*__infoLog;
+			GLchar
+			*__infoLog;
 
-			private :
+		private :
 
-				bool
-				createFromCode( CStr &p_code ) {
+			bool
+			createFromCode( CStr &p_code ) {
 
-					__code = p_code;
+				__code = p_code;
 
-					GLchar const
-					*cStr = p_code.c_str( );
+				GLchar const
+				*cStr = p_code.c_str( );
 
-					__id = glCreateShader( __type );
+				__id = glCreateShader( __type );
 
-					glShaderSource( __id, 1, &cStr, nullptr );
-					glCompileShader( __id );
+				glShaderSource( __id, 1, &cStr, nullptr );
+				glCompileShader( __id );
 
-					glGetShaderiv( __id, GL_COMPILE_STATUS, &__success );
+				glGetShaderiv( __id, GL_COMPILE_STATUS, &__success );
 
 					if( !__success ) {
 
@@ -834,335 +840,338 @@ GLR {
 					}
 
 					return true;
-				}
+			}
 
-				bool
-				createFromFile( CStr &p_fileName ) {
+			bool
+			createFromFile( CStr &p_fileName ) {
 
-					try {
+				try {
 
-						std::ifstream
-						ifs( p_fileName.c_str( ) );
+					std::ifstream
+					ifs( p_fileName.c_str( ) );
 
-						std::stringstream
-						ss;
+					std::stringstream
+					ss;
 
-						ss << ifs.rdbuf( );
+					ss << ifs.rdbuf( );
 
-						ifs.close( );
+					ifs.close( );
 
-						std::cout << ss.str( ) << std::endl;
+					std::cout << ss.str( ) << std::endl;
 
 						return createFromCode( ss.str( ) );
-					}
-					catch( std::exception p_exception  ) {
+				}
+				catch( std::exception p_exception  ) {
 
-						std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
-					}
-
-					return true;
+					std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
 				}
 
-			public :
+				return true;
+			}
 
-				Str
-				code( ) const {
+		public :
 
-					return __code;
-				}
+			Str
+			code( ) const {
 
-				GLuint
-				id( ) const {
+				return __code;
+			}
 
-					return __id;
-				}
+			GLuint
+			id( ) const {
 
-				Str
-				fileName( ) const {
+				return __id;
+			}
 
-					return __fname;
-				}
+			Str
+			fileName( ) const {
 
-				bool
-				ok( ) const {
+				return __fname;
+			}
 
-					return __success;
-				}
+			bool
+			ok( ) const {
 
-				GLenum
+				return __success;
+			}
+
+			GLenum
 				type( ) const {
 
 					return __type;
 				}
-		};
+	};
 
-		class
-		Shader :
-		public
-		Named {
+	class
+	Shader :
+	public
+	Named {
 
-			public :
+		public :
 
-				Shader( CStr &p_name, CStr &p_vertexText, CStr &p_fragmentText, ShaderCode::CreationMethod const &p_method ) :
-				Named( p_name ),
-				__vertexShader( new ShaderCode( GL_VERTEX_SHADER, p_vertexText, p_method ) ),
-				__geometryShader( nullptr ),
-				__fragmentShader( new ShaderCode( GL_FRAGMENT_SHADER, p_fragmentText, p_method ) ),
-				__success( 0 ),
-				__id( 0 ),
-				__infoLog( nullptr ) {
+			Shader( CStr &p_name, CStr &p_vertexText, CStr &p_fragmentText, ShaderCode::CreationMethod const &p_method ) :
+			Named( p_name ),
+			__vertexShader( new ShaderCode( GL_VERTEX_SHADER, p_vertexText, p_method ) ),
+			__geometryShader( nullptr ),
+			__fragmentShader( new ShaderCode( GL_FRAGMENT_SHADER, p_fragmentText, p_method ) ),
+			__success( 0 ),
+			__id( 0 ),
+			__infoLog( nullptr ) {
 
-					if( __vertexShader && __fragmentShader &&
-					__vertexShader->ok( ) && __fragmentShader->ok( ) ) {
+				if( __vertexShader && __fragmentShader &&
+				__vertexShader->ok( ) && __fragmentShader->ok( ) ) {
 
-						__id = glCreateProgram( );
-						glAttachShader( __id, __vertexShader->id( ) );
-						glAttachShader( __id, __fragmentShader->id( ) );
+					__id = glCreateProgram( );
+					glAttachShader( __id, __vertexShader->id( ) );
+					glAttachShader( __id, __fragmentShader->id( ) );
 
-						glLinkProgram( __id );
+					glLinkProgram( __id );
 
-						glGetProgramiv( __id, GL_LINK_STATUS, &__success );
+					glGetProgramiv( __id, GL_LINK_STATUS, &__success );
 
-						if( !__success ) {
+					if( !__success ) {
 
-							__infoLog = new GLchar[ 0x200 ];
+						__infoLog = new GLchar[ 0x200 ];
 
-							glGetProgramInfoLog( __id, 0x200, nullptr, __infoLog );
-							std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << __infoLog << std::endl;
+						glGetProgramInfoLog( __id, 0x200, nullptr, __infoLog );
+						std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << __infoLog << std::endl;
 
-							return;
-						}
-
-						glDeleteShader( __vertexShader->id( ) );
-						glDeleteShader( __fragmentShader->id( ) );
+						return;
 					}
+
+					glDeleteShader( __vertexShader->id( ) );
+					glDeleteShader( __fragmentShader->id( ) );
 				}
+			}
 
-				Shader( CStr &p_name, CStr &p_vertexText, CStr &p_fragmentText, ShaderCode::CreationMethod const &p_method, std::vector< GLuint > const &p_locId, std::vector< Str > const &p_names ) :
-				Named( p_name ),
-				__vertexShader( new ShaderCode( GL_VERTEX_SHADER, p_vertexText, p_method ) ),
-				__geometryShader( nullptr ),
-				__fragmentShader( new ShaderCode( GL_FRAGMENT_SHADER, p_fragmentText, p_method ) ),
-				__success( 0 ) {
+			Shader( CStr &p_name, CStr &p_vertexText, CStr &p_fragmentText, ShaderCode::CreationMethod const &p_method, std::vector< GLuint > const &p_locId, std::vector< Str > const &p_names ) :
+			Named( p_name ),
+			__vertexShader( new ShaderCode( GL_VERTEX_SHADER, p_vertexText, p_method ) ),
+			__geometryShader( nullptr ),
+			__fragmentShader( new ShaderCode( GL_FRAGMENT_SHADER, p_fragmentText, p_method ) ),
+			__success( 0 ) {
 
-					if( __vertexShader && __fragmentShader &&
-					__vertexShader->ok( ) && __fragmentShader->ok( ) ) {
+				if( __vertexShader && __fragmentShader &&
+				__vertexShader->ok( ) && __fragmentShader->ok( ) ) {
 
-						__id = glCreateProgram( );
-						glAttachShader( __id, __vertexShader->id( ) );
-						glAttachShader( __id, __fragmentShader->id( ) );
+					__id = glCreateProgram( );
+					glAttachShader( __id, __vertexShader->id( ) );
+					glAttachShader( __id, __fragmentShader->id( ) );
 
-						for( unsigned int i = 0; i < p_locId.size( ); ++i ) {
+					for( unsigned int i = 0; i < p_locId.size( ); ++i ) {
 
-							glBindAttribLocation( __id, p_locId[ i ], p_names[ i ].c_str( ) );
-						}
-
-						glLinkProgram( __id );
-
-						glGetProgramiv( __id, GL_LINK_STATUS, &__success );
-
-						if( !__success ) {
-
-							__infoLog = new GLchar[ 0x200 ];
-
-							glGetProgramInfoLog( __id, 0x200, nullptr, __infoLog );
-							std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << __infoLog << std::endl;
-
-							return;
-						}
-
-						glDeleteShader( __vertexShader->id( ) );
-						glDeleteShader( __fragmentShader->id( ) );
+						glBindAttribLocation( __id, p_locId[ i ], p_names[ i ].c_str( ) );
 					}
+
+					glLinkProgram( __id );
+
+					glGetProgramiv( __id, GL_LINK_STATUS, &__success );
+
+					if( !__success ) {
+
+						__infoLog = new GLchar[ 0x200 ];
+
+						glGetProgramInfoLog( __id, 0x200, nullptr, __infoLog );
+						std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << __infoLog << std::endl;
+
+						return;
+					}
+
+					glDeleteShader( __vertexShader->id( ) );
+					glDeleteShader( __fragmentShader->id( ) );
 				}
+			}
 
-				Shader( CStr &p_name, CStr &p_vertexText, CStr &p_geometryText, CStr &p_fragmentText, ShaderCode::CreationMethod const &p_method ) :
-				Named( p_name ),
-				__vertexShader( new ShaderCode( GL_VERTEX_SHADER, p_vertexText, p_method ) ),
-				__geometryShader( new ShaderCode( GL_GEOMETRY_SHADER, p_geometryText, p_method ) ),
-				__fragmentShader( new ShaderCode( GL_FRAGMENT_SHADER, p_fragmentText, p_method ) ),
-				__success( 0 ),
-				__id( 0 ),
-				__infoLog( nullptr ) {
+			Shader( CStr &p_name, CStr &p_vertexText, CStr &p_geometryText, CStr &p_fragmentText, ShaderCode::CreationMethod const &p_method ) :
+			Named( p_name ),
+			__vertexShader( new ShaderCode( GL_VERTEX_SHADER, p_vertexText, p_method ) ),
+			__geometryShader( new ShaderCode( GL_GEOMETRY_SHADER, p_geometryText, p_method ) ),
+			__fragmentShader( new ShaderCode( GL_FRAGMENT_SHADER, p_fragmentText, p_method ) ),
+			__success( 0 ),
+			__id( 0 ),
+			__infoLog( nullptr ) {
 
-					if( __vertexShader && __geometryShader && __fragmentShader &&
-					__vertexShader->ok( ) && __geometryShader->ok( ) && __fragmentShader->ok( ) ) {
+				if( __vertexShader && __geometryShader && __fragmentShader &&
+				__vertexShader->ok( ) && __geometryShader->ok( ) && __fragmentShader->ok( ) ) {
 
-						__id = glCreateProgram( );
-						glAttachShader( __id, __vertexShader->id( ) );
-						glAttachShader( __id, __geometryShader->id( ) );
-						glAttachShader( __id, __fragmentShader->id( ) );
+					__id = glCreateProgram( );
+					glAttachShader( __id, __vertexShader->id( ) );
+					glAttachShader( __id, __geometryShader->id( ) );
+					glAttachShader( __id, __fragmentShader->id( ) );
 
-						glLinkProgram( __id );
+					glLinkProgram( __id );
 
-						glGetProgramiv( __id, GL_LINK_STATUS, &__success );
+					glGetProgramiv( __id, GL_LINK_STATUS, &__success );
 
-						if( !__success ) {
+					if( !__success ) {
 
-							__infoLog = new GLchar[ 0x200 ];
+						__infoLog = new GLchar[ 0x200 ];
+
+						glGetProgramInfoLog( __id, 0x200, nullptr, __infoLog );
+						std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << __infoLog << std::endl;
+
+							return;
+					}
+
+					glDeleteShader( __vertexShader->id( ) );
+					glDeleteShader( __geometryShader->id( ) );
+					glDeleteShader( __fragmentShader->id( ) );
+				}
+			}
+
+			Shader( CStr &p_name, CStr &p_vertexText, CStr &p_geometryText, CStr &p_fragmentText, ShaderCode::CreationMethod const &p_method, std::vector< GLuint > const &p_locId, std::vector< Str > const &p_names ) :
+			Named( p_name ),
+			__vertexShader( new ShaderCode( GL_VERTEX_SHADER, p_vertexText, p_method ) ),
+			__geometryShader( new ShaderCode( GL_GEOMETRY_SHADER, p_geometryText, p_method ) ),
+			__fragmentShader( new ShaderCode( GL_FRAGMENT_SHADER, p_fragmentText, p_method ) ),
+			__success( 0 ) {
+
+				if( __vertexShader && __geometryShader && __fragmentShader &&
+				__vertexShader->ok( ) && __geometryShader->ok( ) && __fragmentShader->ok( ) ) {
+
+					__id = glCreateProgram( );
+					glAttachShader( __id, __vertexShader->id( ) );
+					glAttachShader( __id, __geometryShader->id( ) );
+					glAttachShader( __id, __fragmentShader->id( ) );
+
+					for( unsigned int i = 0; i < p_locId.size( ); ++i ) {
+
+						glBindAttribLocation( __id, p_locId[ i ], p_names[ i ].c_str( ) );
+					}
+
+					glLinkProgram( __id );
+
+					glGetProgramiv( __id, GL_LINK_STATUS, &__success );
+
+					if( !__success ) {
+
+						__infoLog = new GLchar[ 0x200 ];
 
 							glGetProgramInfoLog( __id, 0x200, nullptr, __infoLog );
 							std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << __infoLog << std::endl;
 
 							return;
-						}
+					}
 
-						glDeleteShader( __vertexShader->id( ) );
+					glDeleteShader( __vertexShader->id( ) );
 						glDeleteShader( __geometryShader->id( ) );
 						glDeleteShader( __fragmentShader->id( ) );
-					}
 				}
+			}
 
-				Shader( CStr &p_name, CStr &p_vertexText, CStr &p_geometryText, CStr &p_fragmentText, ShaderCode::CreationMethod const &p_method, std::vector< GLuint > const &p_locId, std::vector< Str > const &p_names ) :
-				Named( p_name ),
-				__vertexShader( new ShaderCode( GL_VERTEX_SHADER, p_vertexText, p_method ) ),
-				__geometryShader( new ShaderCode( GL_GEOMETRY_SHADER, p_geometryText, p_method ) ),
-				__fragmentShader( new ShaderCode( GL_FRAGMENT_SHADER, p_fragmentText, p_method ) ),
-				__success( 0 ) {
+			~Shader( ) {
 
-					if( __vertexShader && __geometryShader && __fragmentShader &&
-					__vertexShader->ok( ) && __geometryShader->ok( ) && __fragmentShader->ok( ) ) {
+				glDeleteProgram( __id );
 
-						__id = glCreateProgram( );
-						glAttachShader( __id, __vertexShader->id( ) );
-						glAttachShader( __id, __geometryShader->id( ) );
-						glAttachShader( __id, __fragmentShader->id( ) );
+				if( __infoLog ) {
 
-						for( unsigned int i = 0; i < p_locId.size( ); ++i ) {
-
-							glBindAttribLocation( __id, p_locId[ i ], p_names[ i ].c_str( ) );
-						}
-
-						glLinkProgram( __id );
-
-						glGetProgramiv( __id, GL_LINK_STATUS, &__success );
-
-						if( !__success ) {
-
-							__infoLog = new GLchar[ 0x200 ];
-
-							glGetProgramInfoLog( __id, 0x200, nullptr, __infoLog );
-							std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << __infoLog << std::endl;
-
-							return;
-						}
-
-						glDeleteShader( __vertexShader->id( ) );
-						glDeleteShader( __geometryShader->id( ) );
-						glDeleteShader( __fragmentShader->id( ) );
-					}
+					delete __infoLog;
 				}
+				if( __fragmentShader ) {
 
-				~Shader( ) {
-
-					glDeleteProgram( __id );
-
-					if( __infoLog ) {
-
-						delete __infoLog;
-					}
-					if( __fragmentShader ) {
-
-						delete __fragmentShader;
-					}
-					if( __geometryShader ) {
-
-						delete __geometryShader;
-					}
-					if( __vertexShader ) {
-
-						delete __vertexShader;
-					}
-
-					for( auto u : uniform ) {
-
-						delete u.second;
-					}
+					delete __fragmentShader;
 				}
+				if( __geometryShader ) {
 
-			private :
-
-				ShaderCode
-				*__vertexShader,
-				*__geometryShader,
-				*__fragmentShader;
-
-				GLint
-				__success;
-
-				GLuint
-				__id;
-
-				GLchar
-				*__infoLog;
-
-			public :
-
-
-				enum
-				TYPE {
-
-					INT, UINT, FLOAT,
-					VEC2, VEC3, VEC4,
-					IVEC2, IVEC3, IVEC4,
-					UVEC2, UVEC3, UVEC4,
-					MAT2, MAT2x3, MAT2x4,
-					MAT3x2, MAT3, MAT3x4,
-					MAT4x2, MAT4x3, MAT4
-				};
-
-				enum
-				SIZE {
-
-					SCALAR = 0,
-					ARR1 = 1,
-					ARR2 = 2,
-					ARR3 = 3,
-					ARR4 = 4,
-					ARR5 = 5,
-					ARR6 = 6,
-					ARR7 = 7,
-					ARR8 = 8,
-					ARR9 = 9,
-					ARR10 = 10
-				};
-
-				class
-				Uniform {
-
-					public:
-
-						TYPE
-						type;
-
-						SIZE
-						size;
-
-						void
-						*data;
-
-					public:
-
-						Uniform( TYPE const & p_ut, SIZE const & p_us, void* p_data ) :
-						type( p_ut ),
-						size( p_us ),
-						data( p_data ) {
-
-						}
-				};
-
-				std::map< CStr, Uniform * >
-				uniform;
-
-			public:
-
-				GLuint
-				id( ) const {
-
-					return __id;
+					delete __geometryShader;
 				}
+				if( __vertexShader ) {
 
-				bool
+					delete __vertexShader;
+				}
+			}
+
+		private :
+
+			ShaderCode
+			*__vertexShader,
+			*__geometryShader,
+			*__fragmentShader;
+
+			GLint
+			__success;
+
+			GLuint
+			__id;
+
+			GLchar
+			*__infoLog;
+
+		public :
+
+
+			enum
+			TYPE {
+
+				INT, UINT, FLOAT,
+				VEC2, VEC3, VEC4,
+				IVEC2, IVEC3, IVEC4,
+				UVEC2, UVEC3, UVEC4,
+				MAT2, MAT2x3, MAT2x4,
+				MAT3x2, MAT3, MAT3x4,
+				MAT4x2, MAT4x3, MAT4
+			};
+
+			enum
+			SIZE {
+
+				SCALAR = 0,
+				ARR1 = 1,
+				ARR2 = 2,
+				ARR3 = 3,
+				ARR4 = 4,
+				ARR5 = 5,
+				ARR6 = 6,
+				ARR7 = 7,
+				ARR8 = 8,
+				ARR9 = 9,
+				ARR10 = 10
+			};
+
+			class
+			Uniform {
+
+				public:
+
+					TYPE
+					type;
+
+					SIZE
+					size;
+
+					void
+					* data;
+
+				public:
+
+					Uniform( TYPE const & p_ut = INT, SIZE const & p_us = SCALAR, void * p_data = nullptr ) :
+					type( p_ut ),
+					size( p_us ),
+					data( p_data ) {
+
+					}
+
+					void
+					set( TYPE const & p_ut, SIZE const & p_us, void* p_data ) {
+
+						type = p_ut;
+						size = p_us;
+						data = p_data;
+					}
+			};
+
+			std::map< CStr, Uniform >
+			uniform;
+
+		public:
+
+			GLuint
+			id( ) const {
+
+				return __id;
+			}
+
+			bool
 				ok( ) const {
 
 					return __success;
@@ -1180,20 +1189,28 @@ GLR {
 					return glUseProgram( 0 );
 				}
 
-			private:
+		private:
 
 		public:
 
 				Shader
-				&addUniform( CStr & p_name, TYPE p_ut, SIZE p_us, void * p_data ) {
+				& addUniform( CStr & p_name, TYPE p_ut, SIZE p_us, void * p_data ) {
 
-					uniform[ p_name ] = new Uniform( p_ut, p_us, p_data );
+					uniform[ p_name ] = Uniform( p_ut, p_us, p_data );
 
 					return *this;
 				}
 
 				Shader
-				&setUniformSamplerId( CStr & p_name, GLint p_samplerId ) {
+				& modifyUniform( CStr & p_name, TYPE p_ut, SIZE p_us, void * p_data ) {
+
+					uniform[ p_name ].set( p_ut, p_us, p_data );
+
+					return *this;
+				}
+
+				Shader
+				& setUniformSamplerId( CStr & p_name, GLint p_samplerId ) {
 
 					glUniform1i( glGetUniformLocation( __id, p_name.c_str( ) ), p_samplerId );
 
@@ -1208,27 +1225,27 @@ GLR {
 						GLint
 						uLoc = glGetUniformLocation( __id, u.first.c_str( ) );
 
-						if( u.second->size < 1 ) {
+						if( u.second.size < 1 ) {
 
-							switch( u.second->type ) {
+							switch( u.second.type ) {
 
 								case INT : {
 
-									glUniform1i( uLoc, ( static_cast< GLint * >( u.second->data ) )[ 0 ] );
+									glUniform1i( uLoc, ( static_cast< GLint * >( u.second.data ) )[ 0 ] );
 
 									break;
 								}
 
 								case UINT : {
 
-									glUniform1ui( uLoc, ( static_cast< GLuint * >( u.second->data ) )[ 0 ] );
+									glUniform1ui( uLoc, ( static_cast< GLuint * >( u.second.data ) )[ 0 ] );
 
 									break;
 								}
 
 								case FLOAT : {
 
-									glUniform1f( uLoc, ( static_cast< GLfloat * >( u.second->data ) )[ 0 ] );
+									glUniform1f( uLoc, ( static_cast< GLfloat * >( u.second.data ) )[ 0 ] );
 
 									break;
 								}
@@ -1237,8 +1254,8 @@ GLR {
 
 									glUniform2i(
 									uLoc,
-									( static_cast< GLint * >( u.second->data ) )[ 0 ],
-									( static_cast< GLint * >( u.second->data ) )[ 1 ] );
+									( static_cast< GLint * >( u.second.data ) )[ 0 ],
+									( static_cast< GLint * >( u.second.data ) )[ 1 ] );
 
 									break;
 								}
@@ -1247,9 +1264,9 @@ GLR {
 
 									glUniform3i(
 									uLoc,
-									( static_cast< GLint * >( u.second->data ) )[ 0 ],
-									( static_cast< GLint * >( u.second->data ) )[ 1 ],
-									( static_cast< GLint * >( u.second->data ) )[ 2 ] );
+									( static_cast< GLint * >( u.second.data ) )[ 0 ],
+									( static_cast< GLint * >( u.second.data ) )[ 1 ],
+									( static_cast< GLint * >( u.second.data ) )[ 2 ] );
 
 									break;
 								}
@@ -1258,10 +1275,10 @@ GLR {
 
 									glUniform4i(
 									uLoc,
-									( static_cast< GLint * >( u.second->data ) )[ 0 ],
-									( static_cast< GLint * >( u.second->data ) )[ 1 ],
-									( static_cast< GLint * >( u.second->data ) )[ 2 ],
-									( static_cast< GLint * >( u.second->data ) )[ 3 ] );
+									( static_cast< GLint * >( u.second.data ) )[ 0 ],
+									( static_cast< GLint * >( u.second.data ) )[ 1 ],
+									( static_cast< GLint * >( u.second.data ) )[ 2 ],
+									( static_cast< GLint * >( u.second.data ) )[ 3 ] );
 
 									break;
 								}
@@ -1270,8 +1287,8 @@ GLR {
 
 									glUniform2ui(
 									uLoc,
-									( static_cast< GLuint * >( u.second->data ) )[ 0 ],
-									( static_cast< GLuint * >( u.second->data ) )[ 1 ] );
+									( static_cast< GLuint * >( u.second.data ) )[ 0 ],
+									( static_cast< GLuint * >( u.second.data ) )[ 1 ] );
 
 									break;
 								}
@@ -1280,9 +1297,9 @@ GLR {
 
 									glUniform3ui(
 									uLoc,
-									( static_cast< GLuint * >( u.second->data ) )[ 0 ],
-									( static_cast< GLuint * >( u.second->data ) )[ 1 ],
-									( static_cast< GLuint * >( u.second->data ) )[ 2 ] );
+									( static_cast< GLuint * >( u.second.data ) )[ 0 ],
+									( static_cast< GLuint * >( u.second.data ) )[ 1 ],
+									( static_cast< GLuint * >( u.second.data ) )[ 2 ] );
 
 									break;
 								}
@@ -1291,10 +1308,10 @@ GLR {
 
 									glUniform4ui(
 									uLoc,
-									( static_cast< GLuint * >( u.second->data ) )[ 0 ],
-									( static_cast< GLuint * >( u.second->data ) )[ 1 ],
-									( static_cast< GLuint * >( u.second->data ) )[ 2 ],
-									( static_cast< GLuint * >( u.second->data ) )[ 3 ] );
+									( static_cast< GLuint * >( u.second.data ) )[ 0 ],
+									( static_cast< GLuint * >( u.second.data ) )[ 1 ],
+									( static_cast< GLuint * >( u.second.data ) )[ 2 ],
+									( static_cast< GLuint * >( u.second.data ) )[ 3 ] );
 
 									break;
 								}
@@ -1303,8 +1320,8 @@ GLR {
 
 									glUniform2f(
 									uLoc,
-									( static_cast< GLfloat * >( u.second->data ) )[ 0 ],
-									( static_cast< GLfloat * >( u.second->data ) )[ 1 ] );
+									( static_cast< GLfloat * >( u.second.data ) )[ 0 ],
+									( static_cast< GLfloat * >( u.second.data ) )[ 1 ] );
 
 									break;
 								}
@@ -1313,9 +1330,9 @@ GLR {
 
 									glUniform3f(
 									uLoc,
-									( static_cast< GLfloat * >( u.second->data ) )[ 0 ],
-									( static_cast< GLfloat * >( u.second->data ) )[ 1 ],
-									( static_cast< GLfloat * >( u.second->data ) )[ 2 ] );
+									( static_cast< GLfloat * >( u.second.data ) )[ 0 ],
+									( static_cast< GLfloat * >( u.second.data ) )[ 1 ],
+									( static_cast< GLfloat * >( u.second.data ) )[ 2 ] );
 
 									break;
 								}
@@ -1324,73 +1341,73 @@ GLR {
 
 									glUniform4f(
 									uLoc,
-									( static_cast< GLfloat * >( u.second->data ) )[ 0 ],
-									( static_cast< GLfloat * >( u.second->data ) )[ 1 ],
-									( static_cast< GLfloat * >( u.second->data ) )[ 2 ],
-									( static_cast< GLfloat * >( u.second->data ) )[ 3 ] );
+									( static_cast< GLfloat * >( u.second.data ) )[ 0 ],
+									( static_cast< GLfloat * >( u.second.data ) )[ 1 ],
+									( static_cast< GLfloat * >( u.second.data ) )[ 2 ],
+									( static_cast< GLfloat * >( u.second.data ) )[ 3 ] );
 
 									break;
 								}
 
 								case MAT2 : {
 
-									glUniformMatrix2fv( uLoc, 1, false, static_cast< GLfloat * >( u.second->data ) );
+									glUniformMatrix2fv( uLoc, 1, false, static_cast< GLfloat * >( u.second.data ) );
 
 									break;
 								}
 
 								case MAT2x3 : {
 
-									glUniformMatrix2x3fv( uLoc, 1, false, static_cast< GLfloat * >( u.second->data ) );
+									glUniformMatrix2x3fv( uLoc, 1, false, static_cast< GLfloat * >( u.second.data ) );
 
 									break;
 								}
 
 								case MAT2x4 : {
 
-									glUniformMatrix2x4fv( uLoc, 1, false, static_cast< GLfloat * >( u.second->data ) );
+									glUniformMatrix2x4fv( uLoc, 1, false, static_cast< GLfloat * >( u.second.data ) );
 
 									break;
 								}
 
 								case MAT3x2 : {
 
-									glUniformMatrix3x2fv( uLoc, 1, false, static_cast< GLfloat * >( u.second->data ) );
+									glUniformMatrix3x2fv( uLoc, 1, false, static_cast< GLfloat * >( u.second.data ) );
 
 									break;
 								}
 
 								case MAT3 : {
 
-									glUniformMatrix3fv( uLoc, 1, false, static_cast< GLfloat * >( u.second->data ) );
+									glUniformMatrix3fv( uLoc, 1, false, static_cast< GLfloat * >( u.second.data ) );
 
 									break;
 								}
 
 								case MAT3x4 : {
 
-									glUniformMatrix3x4fv( uLoc, 1, false, static_cast< GLfloat * >( u.second->data ) );
+									glUniformMatrix3x4fv( uLoc, 1, false, static_cast< GLfloat * >( u.second.data ) );
 
 									break;
 								}
 
 								case MAT4x2 : {
 
-									glUniformMatrix4x2fv( uLoc, 1, false, static_cast< GLfloat * >( u.second->data ) );
+									glUniformMatrix4x2fv( uLoc, 1, false, static_cast< GLfloat * >( u.second.data ) );
 
 									break;
 								}
 
 								case MAT4x3 : {
 
-									glUniformMatrix4x3fv( uLoc, 1, false, static_cast< GLfloat * >( u.second->data ) );
+									glUniformMatrix4x3fv( uLoc, 1, false, static_cast< GLfloat * >( u.second.data ) );
 
 									break;
 								}
 
 								case MAT4 : {
 
-									glUniformMatrix4fv( uLoc, 1, false, static_cast< GLfloat * >( u.second->data ) );
+									glUniformMatrix4fv( uLoc, 1, false, static_cast< GLfloat * >( u.second.data ) );
 
 									break;
 								}
@@ -1398,151 +1415,151 @@ GLR {
 						}
 						else {
 
-							switch( u.second->type ) {
+							switch( u.second.type ) {
 
 								case INT : {
 
-									glUniform1iv( uLoc, u.second->size, static_cast< GLint * >( u.second->data ) );
+									glUniform1iv( uLoc, u.second.size, static_cast< GLint * >( u.second.data ) );
 
 									break;
 								}
 
 								case UINT : {
 
-									glUniform1uiv( uLoc, u.second->size, static_cast< GLuint * >( u.second->data ) );
+									glUniform1uiv( uLoc, u.second.size, static_cast< GLuint * >( u.second.data ) );
 
 									break;
 								}
 
 								case FLOAT : {
 
-									glUniform1fv( uLoc, u.second->size,static_cast< GLfloat * >( u.second->data ) );
+									glUniform1fv( uLoc, u.second.size,static_cast< GLfloat * >( u.second.data ) );
 
 									break;
 								}
 
 								case IVEC2 : {
 
-									glUniform2iv( uLoc, u.second->size, static_cast< GLint * >( u.second->data ) );
+									glUniform2iv( uLoc, u.second.size, static_cast< GLint * >( u.second.data ) );
 
 									break;
 								}
 
 								case IVEC3 : {
 
-									glUniform3iv( uLoc, u.second->size, static_cast< GLint * >( u.second->data ) );
+									glUniform3iv( uLoc, u.second.size, static_cast< GLint * >( u.second.data ) );
 
 									break;
 								}
 
 								case IVEC4 : {
 
-									glUniform3iv( uLoc, u.second->size, static_cast< GLint * >( u.second->data ) );
+									glUniform3iv( uLoc, u.second.size, static_cast< GLint * >( u.second.data ) );
 
 									break;
 								}
 
 								case UVEC2 : {
 
-									glUniform2uiv( uLoc, u.second->size, static_cast< GLuint * >( u.second->data ) );
+									glUniform2uiv( uLoc, u.second.size, static_cast< GLuint * >( u.second.data ) );
 
 									break;
 								}
 
 								case UVEC3 : {
 
-									glUniform3uiv( uLoc, u.second->size, static_cast< GLuint * >( u.second->data ) );
+									glUniform3uiv( uLoc, u.second.size, static_cast< GLuint * >( u.second.data ) );
 
 									break;
 								}
 
 								case UVEC4 : {
 
-									glUniform4uiv( uLoc, u.second->size, static_cast< GLuint * >( u.second->data ) );
+									glUniform4uiv( uLoc, u.second.size, static_cast< GLuint * >( u.second.data ) );
 
 									break;
 								}
 
 								case VEC2 : {
 
-									glUniform2fv( uLoc, u.second->size, static_cast< GLfloat * >( u.second->data ) );
+									glUniform2fv( uLoc, u.second.size, static_cast< GLfloat * >( u.second.data ) );
 
 									break;
 								}
 
 								case VEC3 : {
 
-									glUniform3fv( uLoc, u.second->size, static_cast< GLfloat * >( u.second->data ) );
+									glUniform3fv( uLoc, u.second.size, static_cast< GLfloat * >( u.second.data ) );
 
 									break;
 								}
 
 								case VEC4 : {
 
-									glUniform4fv( uLoc, u.second->size, static_cast< GLfloat * >( u.second->data ) );
+									glUniform4fv( uLoc, u.second.size, static_cast< GLfloat * >( u.second.data ) );
 
 									break;
 								}
 
 								case MAT2 : {
 
-									glUniformMatrix2fv( uLoc, u.second->size, false, static_cast< GLfloat * >( u.second->data ) );
+									glUniformMatrix2fv( uLoc, u.second.size, false, static_cast< GLfloat * >( u.second.data ) );
 
 									break;
 								}
 
 								case MAT2x3 : {
 
-									glUniformMatrix2x3fv( uLoc, u.second->size, false, static_cast< GLfloat * >( u.second->data ) );
+									glUniformMatrix2x3fv( uLoc, u.second.size, false, static_cast< GLfloat * >( u.second.data ) );
 
 									break;
 								}
 
 								case MAT2x4 : {
 
-									glUniformMatrix2x4fv( uLoc, u.second->size, false, static_cast< GLfloat * >( u.second->data ) );
+									glUniformMatrix2x4fv( uLoc, u.second.size, false, static_cast< GLfloat * >( u.second.data ) );
 
 									break;
 								}
 
 								case MAT3x2 : {
 
-									glUniformMatrix3x2fv( uLoc, u.second->size, false, static_cast< GLfloat * >( u.second->data ) );
+									glUniformMatrix3x2fv( uLoc, u.second.size, false, static_cast< GLfloat * >( u.second.data ) );
 
 									break;
 								}
 
 								case MAT3 : {
 
-									glUniformMatrix3fv( uLoc, u.second->size, false, static_cast< GLfloat * >( u.second->data ) );
+									glUniformMatrix3fv( uLoc, u.second.size, false, static_cast< GLfloat * >( u.second.data ) );
 
 									break;
 								}
 
 								case MAT3x4 : {
 
-									glUniformMatrix3x4fv( uLoc, u.second->size, false, static_cast< GLfloat * >( u.second->data ) );
+									glUniformMatrix3x4fv( uLoc, u.second.size, false, static_cast< GLfloat * >( u.second.data ) );
 
 									break;
 								}
 
 								case MAT4x2 : {
 
-									glUniformMatrix4x2fv( uLoc, u.second->size, false, static_cast< GLfloat * >( u.second->data ) );
+									glUniformMatrix4x2fv( uLoc, u.second.size, false, static_cast< GLfloat * >( u.second.data ) );
 
 									break;
 								}
 
 								case MAT4x3 : {
 
-									glUniformMatrix4x3fv( uLoc, u.second->size, false, static_cast< GLfloat * >( u.second->data ) );
+									glUniformMatrix4x3fv( uLoc, u.second.size, false, static_cast< GLfloat * >( u.second.data ) );
 
 									break;
 								}
 
 								case MAT4 : {
 
-									glUniformMatrix4fv( uLoc, u.second->size, false, static_cast< GLfloat * >( u.second->data ) );
+									glUniformMatrix4fv( uLoc, u.second.size, false, static_cast< GLfloat * >( u.second.data ) );
 
 									break;
 								}
@@ -1561,131 +1578,131 @@ GLR {
 
 					return var;
 				}
-		};
+	};
 
-		class
-		FrameBuffer :
-		public
-		Named {
+	class
+	FrameBuffer :
+	public
+	Named {
 
-			private:
+		private:
 
-				GLuint
-				__id;
+			GLuint
+			__id;
 
-			public :
+		public :
 
-				FrameBuffer( CStr & p_name ) :
-				Named( p_name ),
-				__id( 0 ) {
+			FrameBuffer( CStr & p_name ) :
+			Named( p_name ),
+			__id( 0 ) {
 
-					glGenFramebuffers( 1, & __id );
-				}
+				glGenFramebuffers( 1, & __id );
+			}
 
-				~FrameBuffer( ) {
+			~FrameBuffer( ) {
 
-					glDeleteFramebuffers( 1, & __id);
-				}
+				glDeleteFramebuffers( 1, & __id);
+			}
 
-				void
-				bind( ) {
+			void
+			bind( ) {
 
-					glBindFramebuffer( GL_FRAMEBUFFER, __id );
-				}
+				glBindFramebuffer( GL_FRAMEBUFFER, __id );
+			}
 
-				GLuint
-				id( ) const {
+			GLuint
+			id( ) const {
 
-					return __id;
-				}
+				return __id;
+			}
 
-				void
-				release( ) {
+			void
+			release( ) {
 
-					glBindFramebuffer( GL_FRAMEBUFFER, 0 );
-				}
-		};
+				glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+			}
+	};
 
-		class
-		Container :
-		public
-		Named {
+	class
+	Container :
+	public
+	Named {
 
-			private :
+		private :
 
-				GLR
-				* __glr;
+			GLR
+			* __glr;
 
-				GLuint
-				__clearBits;
+			GLuint
+			__clearBits;
 
-			public :
+		public :
 
-				Container( CStr &p_name, GLR * p_glr ) :
-				Named( p_name ),
-				__glr( p_glr ),
-				__clearBits( 0x00000000 ),
-				fixSize( false ) {
+			Container( CStr &p_name, GLR * p_glr ) :
+			Named( p_name ),
+			__glr( p_glr ),
+			__clearBits( 0x00000000 ),
+			fixSize( false ) {
 
-				}
+			}
 
-				~Container( ) {
+			~Container( ) {
 
-				}
+			}
 
-			public:
+		public:
 
-				Str
-				frameBuffer;
+			Str
+			frameBuffer;
 
-				Str
-				vertexArray;
+			Str
+			vertexArray;
 
-				Str
-				indexArray;
+			Str
+			indexArray;
 
-				std::vector< Str >
-				inTextures,
-				outTextures,
-				renderBuffers;
+			std::vector< Str >
+			inTextures,
+			outTextures,
+			renderBuffers;
 
-				Str
-				shader;
+			Str
+			shader;
 
-				GLsizei
-				fixViewPortWidth,
-				fixViewPortHeight,
-				viewPortWidth,
-				viewPortHeight;
+			GLsizei
+			fixViewPortWidth,
+			fixViewPortHeight,
+			viewPortWidth,
+			viewPortHeight;
 
-				bool
-				fixSize;
+			bool
+			fixSize;
 
-			public :
+		public :
 
-				GLenum
-				clearBits( ) const {
+			GLenum
+			clearBits( ) const {
 
-					return __clearBits;
-				}
+				return __clearBits;
+			}
 
-				Container
-				& addClearBits( GLenum const & p_clearBits ) {
+			Container
+			& addClearBits( GLenum const & p_clearBits ) {
 
-					__clearBits = p_clearBits;
+				__clearBits = p_clearBits;
+
+				return *this;
+			}
+
+			Container
+			& subClearBits( GLenum const & p_clearBits ) {
+
+				__clearBits |= ~p_clearBits;
 
 					return *this;
-				}
+			}
 
-				Container
-				& subClearBits( GLenum const & p_clearBits ) {
-
-					__clearBits |= ~p_clearBits;
-
-					return *this;
-				}
-
-				Container
+			Container
 				& setFrameBuffer( CStr & p_frameBufferName ) {
 
 					frameBuffer = p_frameBufferName;
@@ -1950,7 +1967,7 @@ GLR {
 					}
 
 					VertexArray
-					*va = __glr->va[ vertexArray ];
+					* va = __glr->va[ vertexArray ];
 
 					if( va ) {
 
@@ -2038,20 +2055,20 @@ GLR {
 						}
 					}
 				}
-		};
+	};
 
 	public :
 
-		std::map< CStr, FrameBuffer * >
-		fb;
+	std::map< CStr, FrameBuffer * >
+	fb;
 
-		std::map< CStr, VertexArray * >
-		va;
+	std::map< CStr, VertexArray * >
+	va;
 
-		std::map< CStr, IndexArray * >
-		ia;
+	std::map< CStr, IndexArray * >
+	ia;
 
-		std::map< CStr, Texture * >
+	std::map< CStr, Texture * >
 		tx;
 
 		std::map< CStr, Shader * >
@@ -2252,22 +2269,22 @@ GLRRef {
 
 	public :
 
-		GLRRef ( GLR & p_glr ) :
-		__glr ( p_glr ) {
-		}
+	GLRRef ( GLR & p_glr ) :
+	__glr ( p_glr ) {
+	}
 
 	private :
 
-		GLR
-		& __glr;
+	GLR
+	& __glr;
 
 	public :
 
-		GLR
-		& glr ( ) const {
+	GLR
+	& glr ( ) {
 
-			return __glr;
-		}
+		return __glr;
+	}
 };
 
 class GLProject :
@@ -2275,47 +2292,47 @@ public Named {
 
 	public:
 
-		explicit GLProject( CStr p_name, ViewControlData * p_vcd = nullptr ) :
-		Named( p_name ),
-		vcd( p_vcd ) {
+	explicit GLProject( CStr p_name, ViewControlData * p_vcd = nullptr ) :
+	Named( p_name ),
+	vcd( p_vcd ) {
 
-		}
+	}
 
-		virtual
-		~GLProject(  ) {
+	virtual
+	~GLProject(  ) {
 
-		}
+	}
 
 	public:
 
-		GLR
-		glr;
+	GLR
+	glr;
 
-		ViewControlData
-		* vcd;
+	ViewControlData
+	* vcd;
 
-		void
-		setViewControlData( ViewControlData * p_vcd ) {
+	void
+	setViewControlData( ViewControlData * p_vcd ) {
 
-			vcd = p_vcd;
+		vcd = p_vcd;
+	}
+
+	virtual void
+	init( ) = 0;
+
+	virtual void
+	resize( int p_width, int p_height ) = 0;
+
+	void
+	resizeViewport( int p_width, int p_height ) {
+
+		for( auto & p : glr.co ) {
+
+			p.second->resize( p_width, p_height );
 		}
+	}
 
-		virtual void
-		init( ) = 0;
-
-		virtual void
-		resize( int p_width, int p_height ) = 0;
-
-		void
-		resizeViewport( int p_width, int p_height ) {
-
-			for( auto & p : glr.co ) {
-
-				p.second->resize( p_width, p_height );
-			}
-		}
-
-		virtual void
-		paint( ) = 0;
+	virtual void
+	paint( ) = 0;
 };
 #endif // GLR_HPP
