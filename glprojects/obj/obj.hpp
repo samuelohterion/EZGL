@@ -112,8 +112,8 @@ SHADERS [ 4 ][ 2 ] =
 		"	vec3 vn;\n"
 		"} vs2fs;\n"
 		"const vec3 lightColor = vec3( 1., 1., 1. );\n"
-		"const float lightPower = 10.;\n"
-		"const float screenGamma = .75;\n" // Assume the monitor is calibrated to the sRGB color space
+		"const float lightPower = 5.;\n"
+		"const float screenGamma = .5;\n" // Assume the monitor is calibrated to the sRGB color space
 		"uniform mat4 model;\n"
 		"uniform mat4 view;\n"
 		"uniform float Ns;\n"
@@ -127,7 +127,7 @@ SHADERS [ 4 ][ 2 ] =
 		"out vec4 fColor;\n"
 		"void main( ) {\n"
 		"	vec3 ray = lightPos - vs2fs.v;\n"
-		"	float distance = dot( ray, ray );\n"
+		"	float distance = pow( dot( ray, ray ), .5 );\n"
 		"	ray = normalize( ray );\n"
 		"	float lambertian = max( dot( ray, vs2fs.vn ), 0. );\n"
 		"	float specular = 0.0;\n"
@@ -187,8 +187,8 @@ SHADERS [ 4 ][ 2 ] =
 		"	vec3 vn;\n"
 		"} vs2fs;\n"
 		"const vec3 lightColor = vec3( 1., 1., 1. );\n"
-		"const float lightPower = 10.;\n"
-		"const float screenGamma = .75;\n" // Assume the monitor is calibrated to the sRGB color space
+		"const float lightPower = 5.;\n"
+		"const float screenGamma = .5;\n" // Assume the monitor is calibrated to the sRGB color space
 		"uniform mat4 model;\n"
 		"uniform mat4 view;\n"
 		"uniform float Ns;\n"
@@ -203,7 +203,7 @@ SHADERS [ 4 ][ 2 ] =
 		"out vec4 fColor;\n"
 		"void main( ) {\n"
 		"	vec3 ray = lightPos - vs2fs.v;\n"
-		"	float distance = dot( ray, ray );\n"
+		"	float distance = pow( dot( ray, ray ), .5 );\n"
 		"	ray = normalize( ray );\n"
 		"	float lambertian = max( dot( ray, vs2fs.vn ), 0. );\n"
 		"	float specular = 0.0;\n"
@@ -221,7 +221,7 @@ SHADERS [ 4 ][ 2 ] =
 //		"			specular = pow( specAngle, Ns / 4.0);\n"
 //		"		}\n"
 		"	}\n"
-		"	vec3 colorLinear = Ka + ( Kd + vec3( texture( map_Kd, vs2fs.vt ) )* lambertian + Ks * specular ) * lightColor * lightPower / distance;\n"
+		"	vec3 colorLinear = Ka + .5 * ( Kd + vec3( texture( map_Kd, vs2fs.vt ) ) * lambertian + Ks * specular ) * lightColor * lightPower / distance;\n"
 		//	apply gamma correction (assume ambientColor, diffuseColor and specColor
 		//	have been linearized, i.e. have no gamma correction in them)
 		"	vec3 colorGammaCorrected = pow( colorLinear, vec3( 1.0 / screenGamma ) );\n"

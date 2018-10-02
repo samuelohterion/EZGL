@@ -543,10 +543,10 @@ ObjExample::init ( ) {
 	model = glm::translate( model, V3 ( +0, +0, +0 ) );
 	view  = glm::translate( view,  V3 ( +0, +0, -10 ) );
 
-	glClearColor( .81f, .82f, .83f, 1. );
+	glClearColor( .51f, .52f, .53f, 1. );
 
 	glEnable ( GL_DEPTH_TEST );
-	glDisable ( GL_CULL_FACE );
+	glEnable ( GL_CULL_FACE );
 }
 
 void
@@ -566,7 +566,7 @@ ObjExample:: paint ( ) {
 	view  = ccv.view ( );
 
 //	scene->lightPos = V3 ( scene->model * V4( V3 ( 0., 4., 2. ), 1 ) );
-	lightPos = V3( model * V4 ( -1.f + 12.f * sinf( 1.f * vcd->time ), 0.f + 1.f * sinf( .75f * vcd->time ), + 4.f * cosf( 1.f * vcd->time ), 1. ) );
+	lightPos = V3( model * V4 ( 5.f * sinf( 1.f * vcd->time ), 3.f + 10.f * sinf( .1f * vcd->time ), + 5.f * cosf( 1.f * vcd->time ), 1. ) );
 
 	M4
 	tmp = model;
@@ -585,17 +585,18 @@ ObjExample:: paint ( ) {
 
 //	model = tmp;
 
-	model = glm::translate ( model, V3 ( 0.f, -2.5f, 0.f ) );
+	model = glm::translate ( model, V3 ( 0.f, -10.f, 0.f ) );
 
 	glr.run ( { "C-LIGHT" } );
 
-	glr.run ( contList1 );
 
-	model = glm::rotate ( model, -1.57f, V3 ( 0.f, 1.f, 0.f ) );
-	model = glm::translate ( model, V3 ( 0.f, -3.6f, +10.f ) );
-	model = glm::scale ( model, V3 ( 1.4f, 1.4f, 1.4f ) );
-
+	model = glm::scale ( model, V3 ( 5.f, 5.f, 5.f ) );
 	glr.run ( contList2 );
+	model = glm::scale ( model, V3 ( .2f, .2f, .2f ) );
+	model = glm::rotate ( model, 1.57f, V3 ( 0.f, 1.f, 0.f ) );
+	model = glm::translate ( model, V3 ( 0.f, +4.f, 0.f ) );
+
+	glr.run ( contList1 );
 
 	model = tmp;
 }
