@@ -7,7 +7,7 @@ public GLProject {
 
 	public:
 
-		MSTest( CStr const & p_name = "MSTest", ViewControlData *p_vcd = nullptr );
+		MSTest( CStr const & p_name = "MSTest" );
 
 	public:
 
@@ -15,7 +15,11 @@ public GLProject {
 		m,//odel
 		v,//iew
 		p,//projection
+		vp,
 		mvp;//model-view-projection
+
+		GLR::CameraCenterView
+		ccv;
 
 	public:
 

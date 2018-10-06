@@ -1,7 +1,7 @@
 #include "multisampling.hpp"
 
-MultiSampling::MultiSampling( const CStr &p_name, ViewControlData *p_vcd ) :
-GLProject ( p_name, p_vcd ) {
+MultiSampling::MultiSampling( CStr & p_name ) :
+GLProject ( p_name ) {
 
 }
 

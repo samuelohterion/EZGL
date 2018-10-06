@@ -7,7 +7,7 @@ public GLProject {
 
 	public:
 
-		ZBufferTexture( CStr const & p_name = "ZBufferTexture", ViewControlData *p_vcd = nullptr );
+		ZBufferTexture( CStr const & p_name = "ZBufferTexture" );
 
 	public:
 

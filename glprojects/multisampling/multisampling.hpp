@@ -8,7 +8,7 @@ public GLProject {
 
 	public:
 
-		MultiSampling( CStr const & p_name = "MultiSampling", ViewControlData * p_vcd = nullptr );
+		MultiSampling( CStr & p_name = "MultiSampling" );
 
 	public:
 

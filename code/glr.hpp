@@ -97,128 +97,144 @@ GLR {
 
 		public :
 
-		CameraCenterView ( glm::mat4 const & p_model, glm::mat4 const & p_view, ViewControlData * p_vcd, glm::vec3 const & p_par = glm::vec3( .01f, .01f, .1f ) ) :
-		__model( p_model ),
-		__view( p_view ),
-		__loc( glm::mat3( inverse( __model ) ) ),
-		__vcd( p_vcd ),
-		__par( p_par ) {
+			CameraCenterView ( glm::mat4 const & p_model = glm::mat4 ( 1.f ), glm::mat4 const & p_view = glm::mat4( 1.f ), ViewControlData * p_vcd = nullptr, glm::vec3 const & p_par = glm::vec3( .01f, .01f, .1f ) ) :
+			__model ( p_model ),
+			__view ( p_view ),
+			__loc ( glm::mat3 ( inverse ( __model ) ) ),
+			__vcd ( p_vcd ),
+			__par ( p_par ) {
 
-		}
+			}
 
-		~CameraCenterView ( ) {
+			~ CameraCenterView ( ) {
 
-		}
+			}
 
 		private :
 
-		glm::mat4
-		__model,
-		__view;
+			glm::mat4
+			__model,
+			__view;
 
-		glm::mat3
-		__loc;
+			glm::mat3
+			__loc;
 
-		ViewControlData
-		* __vcd;
+			ViewControlData
+			* __vcd;
 
-		glm::vec3
-		__par;
+			glm::vec3
+			__par;
 
 		public :
 
-		CameraCenterView
-		& fixModel( glm::mat4 const & p_model ) {
+			CameraCenterView
+			& fixModel( glm::mat4 const & p_model ) {
 
-			__model = p_model;
-			__loc   = inverse( __model );
+				__model = p_model;
+				__loc   = inverse( __model );
 
-			return *this;
-		}
+				return *this;
+			}
 
-		void
-		rotate_around_x( GLfloat const & p_angle ) {
+			CameraCenterView
+			& fixView ( glm::mat4 const & p_view ) {
 
-			__model = glm::rotate( __model, p_angle, __loc[ 0 ] );
-		}
+				__view = p_view;
 
-		void
-		rotate_around_y( GLfloat const & p_angle ) {
+				return *this;
+			}
 
-			__model = glm::rotate( __model, p_angle, __loc[ 1 ] );
-		}
+			CameraCenterView
+			& fixVCD ( ViewControlData * p_viewControlData ) {
 
-		void
-		rotate_around_z( GLfloat const & p_angle ) {
+				__vcd = p_viewControlData;
 
-			__model = glm::rotate( __model, p_angle, __loc[ 2 ] );
-		}
+				return *this;
+			}
 
-		void
-		rotate_around( GLfloat const & p_angle, glm::vec3 const & p_axis ) {
+			void
+			rotate_around_x( GLfloat const & p_angle ) {
 
-			__model = glm::rotate( __model, p_angle, p_axis * __loc );
-		}
+				__model = glm::rotate( __model, p_angle, __loc[ 0 ] );
+			}
 
-		glm::mat4
-		model( ) const {
+			void
+			rotate_around_y( GLfloat const & p_angle ) {
 
-			return __model;
-		}
+				__model = glm::rotate( __model, p_angle, __loc[ 1 ] );
+			}
 
-		void
-		move( GLfloat const & dS ) {
+			void
+			rotate_around_z( GLfloat const & p_angle ) {
 
-			__view = glm::translate( __view, glm::vec3( 0, 0, dS ) );
-		}
+				__model = glm::rotate( __model, p_angle, __loc[ 2 ] );
+			}
 
-		glm::mat4
+			void
+			rotate_around( GLfloat const & p_angle, glm::vec3 const & p_axis ) {
+
+				__model = glm::rotate( __model, p_angle, p_axis * __loc );
+			}
+
+			glm::mat4
+			model( ) const {
+
+				return __model;
+			}
+
+			void
+			move( GLfloat const & dS ) {
+
+				__view = glm::translate( __view, glm::vec3( 0, 0, dS ) );
+			}
+
+			glm::mat4
 			view( ) const {
 
 				return __view;
 			}
 
 			glm::vec3
-				param( ) const {
+			param( ) const {
 
-					return __par;
+				return __par;
+			}
+
+			void
+			setParam( glm::vec3 const & p_par = glm::vec3( .01f, .01f, .1f ) ) {
+
+				__par = p_par;
+			}
+
+			void
+			reactOnMouse( ) {
+
+				glm::vec2
+				dAngle = glm::vec2( __par ) * __vcd->dMouse;
+
+				if ( __vcd->buttons & 0x02 )
+
+					move( __par.z * __vcd->dMouse.y );
+
+				if ( __vcd->ticks != 0 ) {
+
+					move( .1f * __par.z * __vcd->ticks );
 				}
 
-				void
-				setParam( glm::vec3 const & p_par = glm::vec3( .01f, .01f, .1f ) ) {
+				if ( __vcd->buttons & 0x01 ) {
 
-					__par = p_par;
-				}
+					if( 0 < abs( dAngle.y ) ) {
 
-				void
-				reactOnMouse( ) {
-
-					glm::vec2
-					dAngle = glm::vec2( __par ) * __vcd->dMouse;
-
-					if ( __vcd->buttons & 0x02 )
-
-						move( __par.z * __vcd->dMouse.y );
-
-					if ( __vcd->ticks != 0 ) {
-
-						move( .1f * __par.z * __vcd->ticks );
+						rotate_around_x( - dAngle.y );
 					}
 
-					if ( __vcd->buttons & 0x01 ) {
+					if( 0 < abs( dAngle.x ) ) {
 
-						if( 0 < abs( dAngle.y ) ) {
-
-							rotate_around_x( - dAngle.y );
-						}
-
-						if( 0 < abs( dAngle.x ) ) {
-
-							rotate_around_y( + dAngle.x );
-						}
+						rotate_around_y( + dAngle.x );
 					}
 				}
-	};
+			}
+		};
 
 	class
 	SpaceShipView {
@@ -238,15 +254,15 @@ GLR {
 
 		private :
 
-		glm::mat4
-		__model,
-		__view;
+			glm::mat4
+			__model,
+			__view;
 
-		glm::mat3
-		__loc;
+			glm::mat3
+			__loc;
 
-		ViewControlData
-		* __vcd;
+			ViewControlData
+			* __vcd;
 
 		public :
 	};
@@ -1806,14 +1822,6 @@ GLR {
 						iaLoc->bind( );
 					}
 
-					Shader
-					*shLoc = __glr->sh[ shader ];
-
-					if( shLoc ) {
-
-						shLoc->bind( );
-					}
-
 					if( vaLoc ) {
 
 						glBufferData( GL_ARRAY_BUFFER, sizeof( float ) * vaLoc->arr.size( ), vaLoc->arr.data( ), vaLoc->usage );
@@ -1824,18 +1832,27 @@ GLR {
 						glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof( GLushort ) * iaLoc->arr.size( ), iaLoc->arr.data( ), iaLoc->usage );
 					}
 
-					for( std::map< CStr, VertexArray::Attr >::const_iterator a = vaLoc->attr.cbegin( ); a != vaLoc->attr.cend( ); ++ a ) {
 
-						CStr
-						nm = a->first;
+					Shader
+					*shLoc = __glr->sh[ shader ];
 
-						GLint
-						sz = a->second.size,
-						of = a->second.offs,
-						st = vaLoc->stride;
+					if( shLoc ) {
 
-						shLoc->setVertexAttrib( nm, sz, GL_FLOAT, GL_FALSE, st * sizeof( GLfloat ), ( void* ) ( of * sizeof( GLfloat ) ) );
-//						shLoc->prg->setVertexAttrib( a->first, a->second, GL_FLOAT, GL_FALSE, vaLoc->attrCount * sizeof( GLfloat ), ( void* ) ( vaLoc->attrOffset[ a->first ] * sizeof( GLfloat ) ) );
+						shLoc->bind( );
+
+						for( std::map< CStr, VertexArray::Attr >::const_iterator a = vaLoc->attr.cbegin( ); a != vaLoc->attr.cend( ); ++ a ) {
+
+							CStr
+							nm = a->first;
+
+							GLint
+							sz = a->second.size,
+							of = a->second.offs,
+							st = vaLoc->stride;
+
+							shLoc->setVertexAttrib( nm, sz, GL_FLOAT, GL_FALSE, st * sizeof( GLfloat ), ( void* ) ( of * sizeof( GLfloat ) ) );
+	//						shLoc->prg->setVertexAttrib( a->first, a->second, GL_FLOAT, GL_FALSE, vaLoc->attrCount * sizeof( GLfloat ), ( void* ) ( vaLoc->attrOffset[ a->first ] * sizeof( GLfloat ) ) );
+						}
 					}
 
 					for( std::size_t i = 0; i < inTextures.size( ); ++ i ) {
@@ -2294,9 +2311,9 @@ public Named {
 
 	public:
 
-	explicit GLProject( CStr p_name, ViewControlData * p_vcd = nullptr ) :
+	explicit GLProject( CStr p_name ) :
 	Named( p_name ),
-	vcd( p_vcd ) {
+	vcd( nullptr ) {
 
 	}
 

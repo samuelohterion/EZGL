@@ -1,8 +1,8 @@
 #include "dummy.hpp"
 #include "../../code/glmprinter.hpp"
 
-Dummy::Dummy ( CStr const & p_name, ViewControlData *p_vcd ) :
-GLProject ( p_name, p_vcd ),
+Dummy::Dummy ( CStr & p_name ) :
+GLProject ( p_name ),
 m ( glm::mat4( 1.f ) ),
 v ( m ),
 p ( m ),

@@ -1,8 +1,8 @@
 #include "zbuffertexture.hpp"
 #include "../../code/glmprinter.hpp"
 
-ZBufferTexture::ZBufferTexture( CStr const & p_name, ViewControlData *p_vcd ) :
-GLProject ( p_name, p_vcd ) {
+ZBufferTexture::ZBufferTexture( CStr const & p_name ) :
+GLProject ( p_name ) {
 
 }
 

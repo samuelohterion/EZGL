@@ -215,8 +215,8 @@ Obj:: load ( CStr & p_filename ) {
 }
 */
 
-ObjExample::ObjExample ( CStr & p_name, ViewControlData * p_vcd ) :
-GLProject ( p_name, p_vcd ),
+ObjExample::ObjExample ( CStr & p_name ) :
+GLProject ( p_name ),
 obj1 ( 0x100000 ),
 obj2 ( 0x1000000 ),
 Kd( .2f, .4f, .8f ) {

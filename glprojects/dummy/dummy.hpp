@@ -150,7 +150,7 @@ public GLProject {
 
 	public:
 
-		Dummy ( CStr const & p_name = "Dummy", ViewControlData *p_vcd = nullptr );
+		Dummy ( CStr & p_name = "Dummy" );
 
 		~ Dummy( );
 
