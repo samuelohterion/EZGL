@@ -2014,7 +2014,9 @@ GLR {
 
 					//addUniformInt( tx->name( ).c_str( ), i );
 
-					glClear( clearBits( ) );
+					if ( clearBits ( ) )
+
+						glClear ( clearBits( ) );
 
 					if( va ) {
 

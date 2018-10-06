@@ -516,13 +516,13 @@ MultiSampling::init( ) {
 		{
 			glr.texture(
 			"TEXTURE-LIGHTED-CHECKERBOARD-BACKGROUND",
-			new GLR::Texture( "txIn0", "../EZGL/glprojects/texturetest/pix/Schubler.png" ) );
+			new GLR::Texture( "txIn0", "../pix/Schubler.png" ) );
 		}
 		// TEXTURE-LIGHTED-CHECKERBOARD-CHECKERBOARD
 		{
 			glr.texture(
 				"TEXTURE-LIGHTED-CHECKERBOARD-CHECKERBOARD",
-				new GLR::Texture( "txIn1", "../EZGL/glprojects/texturetest/pix/Schubler.png" ) );
+				new GLR::Texture( "txIn1", "../pix/Schubler.png" ) );
 		}
 		// TEXTURE-TEXTURE-MULTISAMPLING
 		{

@@ -13,221 +13,495 @@
 #include <regex>
 #include <unistd.h>
 
+enum PASSES {
+
+	PASSES_1 = 0,
+	PASSES_2 = 1,
+	PASSES_COUNT = 2
+};
+
+enum SHADER_ALTERNATIVE {
+
+	SA_V     = 0,
+	SA_VVT   = 1,
+	SA_VVN   = 2,
+	SA_VVTVN = 3,
+	SA_COUNT = 4
+};
+
+enum SHADER_TYPES {
+
+	ST_VERTEX = 0,
+	ST_FRAGMENT = 1,
+	ST_COUNT = 2
+};
+
 CStr
-SHADERS [ 4 ][ 2 ] =
-{
-	// S-V
+SHADERS [ PASSES_COUNT ][ SA_COUNT ][ ST_COUNT ] = {
+	// PASS 1
 	{
-		// vertex shader
-		"#version 330 core\n"
-		"in vec3 v;\n"
-		"uniform mat4 model;\n"
-		"uniform mat4 view;\n"
-		"uniform mat4 projection;\n"
+		// S-V
+		{
+			// vertex shader
+			"#version 330 core\n"
+			"in vec3 v;\n"
+			"uniform mat4 model;\n"
+			"uniform mat4 view;\n"
+			"uniform mat4 projection;\n"
 
-		"void main( ) {\n"
-		"	gl_Position = projection * view * model * vec4( v, 1 );\n"
-		"}\n",
+			"void main( ) {\n"
+			"	gl_Position = projection * view * model * vec4( v, 1 );\n"
+			"}\n",
 
-		// fragment shader
-		"#version 330 core\n"
+			// fragment shader
+			"#version 330 core\n"
 
-		"uniform float Ns;\n"
-		"uniform float Ni;\n"
-		"uniform float d;\n"
-		"uniform vec3 Ka;\n"
-		"uniform vec3 Kd;\n"
-		"uniform vec3 Ks;\n"
-		"uniform vec3 Ke;\n"
-		"out vec4 fColor;\n"
-		"void main( ) {\n"
-		"	fColor = vec4( Kd, 1 );\n"
-		"}\n"
+			"uniform float Ns;\n"
+			"uniform float Ni;\n"
+			"uniform float d;\n"
+			"uniform vec3 Ka;\n"
+			"uniform vec3 Kd;\n"
+			"uniform vec3 Ks;\n"
+			"uniform vec3 Ke;\n"
+			"uniform int pass;\n"
+			"out vec4 fColor;\n"
+			"void main( ) {\n"
+			"	fColor = vec4( Kd, 1 );\n"
+			"}\n"
+		},
+		// S-VVT
+		{
+			// vertex shader
+			"#version 330 core\n"
+			"in vec3 v;\n"
+			"in vec2 vt;\n"
+			"uniform mat4 model;\n"
+			"uniform mat4 view;\n"
+			"uniform mat4 projection;\n"
+
+			"out VS2FS {\n"
+			"	vec2 vt;\n"
+			"} vs2fs;\n"
+
+			"void main( ) {\n"
+			"	vs2fs.vt = vt;\n"
+			"	gl_Position = projection * view * model * vec4( v, 1 );\n"
+			"}\n",
+
+			// fragment shader
+			"#version 330 core\n"
+
+			"in VS2FS {\n"
+			"	vec2 vt;\n"
+			"} vs2fs;\n"
+	//		"uniform float Ns;\n"
+	//		"uniform float Ni;\n"
+	//		"uniform float d;\n"
+	//		"uniform vec3 Ka;\n"
+			"uniform vec3 Kd;\n"
+	//		"uniform vec3 Ks;\n"
+	//		"uniform vec3 Ke;\n"
+			"uniform sampler2D map_Kd;\n"
+			"uniform int pass;\n"
+			"out vec4 fColor;\n"
+			"void main( ) {\n"
+			"	fColor = texture( map_Kd, vs2fs.vt );\n"
+			"}\n"
+		},
+		// S-VVN
+		{
+			// vertex shader
+			"#version 330 core\n"
+			"in vec3 v;\n"
+			"in vec3 vn;\n"
+			"uniform mat4 model;\n"
+			"uniform mat4 view;\n"
+			"uniform mat4 projection;\n"
+
+			"out VS2FS {\n"
+			"	vec3 v;\n"
+			"	vec3 vn;\n"
+			"} vs2fs;\n"
+
+			"void main( ) {\n"
+			"	vs2fs.v  = vec3( model * vec4( v, 1 ) );\n"
+			"	vs2fs.vn = normalize( vec3( vec4( vn, 0 ) * inverse( model ) ) );\n"
+			"	gl_Position = projection * view * model * vec4( v, 1 );\n"
+			"}\n",
+
+			// fragment shader
+			"#version 330 core\n"
+
+			"in VS2FS {\n"
+			"	vec3 v;\n"
+			"	vec3 vn;\n"
+			"} vs2fs;\n"
+			"const vec3 lightColor = vec3( 1., 1., 1. );\n"
+			"const float lightPower = 10.;\n"
+			"const float screenGamma = .75;\n" // Assume the monitor is calibrated to the sRGB color space
+			"uniform mat4 model;\n"
+			"uniform mat4 view;\n"
+			"uniform float Ns;\n"
+			"uniform float Ni;\n"
+			"uniform float d;\n"
+			"uniform vec3 Ka;\n"
+			"uniform vec3 Kd;\n"
+			"uniform vec3 Ks;\n"
+			"uniform vec3 Ke;\n"
+			"uniform vec3 lightPos;\n"
+			"uniform int pass;\n"
+			"out vec4 fColor;\n"
+			"void main( ) {\n"
+			"	vec3 ray = lightPos - vs2fs.v;\n"
+			"	float distance = pow( dot( ray, ray ), .5 );\n"
+			"	ray = normalize( ray );\n"
+			"	float lambertian = max( dot( ray, vs2fs.vn ), 0. );\n"
+			"	float specular = 0.0;\n"
+			"	if ( lambertian > 0.0 ) {\n"
+			"		vec3 viewDir = normalize( -vs2fs.v );\n"
+					// this is blinn phong
+			"		vec3 halfDir = normalize( ray + viewDir );\n"
+			"		float specAngle = max( dot( halfDir, vs2fs.vn ), 0.0 );\n"
+			"		specular = pow( specAngle, Ns );\n"
+			//		this is phong (for comparison)
+	//		"		if( mode == 2 ) {\n"
+	//		"			vec3 reflectDir = reflect( -ray, vs2fs.vn );\n"
+	//		"			specAngle = max( dot( reflectDir, viewDir ), 0. );\n"
+	//		//			note that the exponent is different here
+	//		"			specular = pow( specAngle, Ns / 4.0);\n"
+	//		"		}\n"
+			"	}\n"
+			"	vec3 colorLinear = Ka + ( Kd * lambertian + Ks * specular ) * lightColor * lightPower / distance;\n"
+			//	apply gamma correction (assume ambientColor, diffuseColor and specColor
+			//	have been linearized, i.e. have no gamma correction in them)
+			"	vec3 colorGammaCorrected = pow( colorLinear, vec3( 1.0 / screenGamma ) );\n"
+			//	use the gamma corrected color in the fragment
+			"	fColor = vec4( colorGammaCorrected, 1. );"
+	//		"	fColor = vec4( min( vec3( 1 ), amp * Kd + Ka ), 1 );\n"
+			"}\n"
+		},
+		// S-VVTVN
+		{
+			// vertex shader
+			"#version 330 core\n"
+			"in vec3 v;\n"
+			"in vec2 vt;\n"
+			"in vec3 vn;\n"
+			"uniform mat4 model;\n"
+			"uniform mat4 view;\n"
+			"uniform mat4 projection;\n"
+
+			"out VS2FS {\n"
+			"	vec3 v;\n"
+			"	vec2 vt;\n"
+			"	vec3 vn;\n"
+			"} vs2fs;\n"
+
+			"void main( ) {\n"
+			"	vs2fs.v  = vec3( model * vec4( v, 1 ) );\n"
+			"	vs2fs.vt = vt;\n"
+			"	vs2fs.vn = normalize( vec3( vec4( vn, 0 ) * inverse( model ) ) );\n"
+			"	gl_Position = projection * view * model * vec4( v, 1 );\n"
+			"}\n",
+
+			// fragment shader
+			"#version 330 core\n"
+
+			"in VS2FS {\n"
+			"	vec3 v;\n"
+			"	vec2 vt;\n"
+			"	vec3 vn;\n"
+			"} vs2fs;\n"
+			"const vec3 lightColor = vec3( 1., 1., 1. );\n"
+			"const float lightPower = 10.;\n"
+			"const float screenGamma = .75;\n" // Assume the monitor is calibrated to the sRGB color space
+			"uniform mat4 model;\n"
+			"uniform mat4 view;\n"
+			"uniform float Ns;\n"
+			"uniform float Ni;\n"
+			"uniform float d;\n"
+			"uniform vec3 Ka;\n"
+			"uniform vec3 Kd;\n"
+			"uniform vec3 Ks;\n"
+			"uniform vec3 Ke;\n"
+			"uniform sampler2D map_Kd;\n"
+			"uniform vec3 lightPos;\n"
+			"uniform int pass;\n"
+			"out vec4 fColor;\n"
+			"void main( ) {\n"
+			"	vec3 ray = lightPos - vs2fs.v;\n"
+			"	float distance = pow( dot( ray, ray ), .5 );\n"
+			"	ray = normalize( ray );\n"
+			"	float lambertian = max( dot( ray, vs2fs.vn ), 0. );\n"
+			"	float specular = 0.0;\n"
+			"	if ( lambertian > 0.0 ) {\n"
+			"		vec3 viewDir = normalize( -vs2fs.v );\n"
+					// this is blinn phong
+			"		vec3 halfDir = normalize( ray + viewDir );\n"
+			"		float specAngle = max( dot( halfDir, vs2fs.vn ), 0.0 );\n"
+			"		specular = pow( specAngle, Ns );\n"
+			//		this is phong (for comparison)
+	//		"		if( mode == 2 ) {\n"
+	//		"			vec3 reflectDir = reflect( -ray, vs2fs.vn );\n"
+	//		"			specAngle = max( dot( reflectDir, viewDir ), 0. );\n"
+	//		//			note that the exponent is different here
+	//		"			specular = pow( specAngle, Ns / 4.0);\n"
+	//		"		}\n"
+			"	}\n"
+			"	vec3 cl = vec3( texture( map_Kd, vs2fs.vt ) );\n"
+			"	if ( dot( cl, cl ) < 0.0001 )\n"
+			"		cl = Kd;\n"
+			"	vec3 colorLinear = Ka + ( cl * lambertian + Ks * specular ) * lightColor * lightPower / distance;\n"
+			//	apply gamma correction (assume ambientColor, diffuseColor and specColor
+			//	have been linearized, i.e. have no gamma correction in them)
+			"	vec3 colorGammaCorrected = pow( colorLinear, vec3( 1.0 / screenGamma ) );\n"
+			//	use the gamma corrected color in the fragment
+			"	fColor = vec4( colorGammaCorrected, 1. );"
+			"}\n"
+		}
 	},
-	// S-VVT
+
+	// PASS 2
 	{
-		// vertex shader
-		"#version 330 core\n"
-		"in vec3 v;\n"
-		"in vec2 vt;\n"
-		"uniform mat4 model;\n"
-		"uniform mat4 view;\n"
-		"uniform mat4 projection;\n"
+		// S-V
+		{
+			// vertex shader
+			"#version 330 core\n"
+			"in vec3 v;\n"
+			"uniform mat4 model;\n"
+			"uniform mat4 view;\n"
+			"uniform mat4 projection;\n"
 
-		"out VS2FS {\n"
-		"	vec2 vt;\n"
-		"} vs2fs;\n"
+			"void main( ) {\n"
+			"	vs2fs.v  = vec3( model * vec4( v, 1 ) );\n"
+			"	vec4 p = projection * view * model * vec4( v, 1 );\n"
+			"	vs2fs.tx = p.xy;\n"
+			"	gl_Position = p;\n"
+			"}\n",
 
-		"void main( ) {\n"
-		"	vs2fs.vt = vt;\n"
-		"	gl_Position = projection * view * model * vec4( v, 1 );\n"
-		"}\n",
+			// fragment shader
+			"#version 330 core\n"
 
-		// fragment shader
-		"#version 330 core\n"
+			"uniform float Ns;\n"
+			"uniform float Ni;\n"
+			"uniform float d;\n"
+			"uniform vec3 Ka;\n"
+			"uniform vec3 Kd;\n"
+			"uniform vec3 Ks;\n"
+			"uniform vec3 Ke;\n"
+			"uniform sampler2D pass1;\n"
+			"out vec4 fColor;\n"
+			"void main( ) {\n"
+			"	vec3 c1 = vec3( texture( pass1, vs2fs.tx ) );\n"
+			"	fColor = vec4( mix( Kd, c1, d ), 1 );\n"
+			"}\n"
+		},
+		// S-VVT
+		{
+			// vertex shader
+			"#version 330 core\n"
+			"in vec3 v;\n"
+			"in vec2 vt;\n"
+			"uniform mat4 model;\n"
+			"uniform mat4 view;\n"
+			"uniform mat4 projection;\n"
 
-		"in VS2FS {\n"
-		"	vec2 vt;\n"
-		"} vs2fs;\n"
-//		"uniform float Ns;\n"
-//		"uniform float Ni;\n"
-//		"uniform float d;\n"
-//		"uniform vec3 Ka;\n"
-		"uniform vec3 Kd;\n"
-//		"uniform vec3 Ks;\n"
-//		"uniform vec3 Ke;\n"
-		"uniform sampler2D map_Kd;\n"
-		"out vec4 fColor;\n"
-		"void main( ) {\n"
-		"	fColor = texture( map_Kd, vs2fs.vt );\n"
-		"}\n"
-	},
+			"out VS2FS {\n"
+			"	vec2 vt;\n"
+			"	vec2 tx;\n"
+			"} vs2fs;\n"
 
-	// S-VVN
-	{
-		// vertex shader
-		"#version 330 core\n"
-		"in vec3 v;\n"
-		"in vec3 vn;\n"
-		"uniform mat4 model;\n"
-		"uniform mat4 view;\n"
-		"uniform mat4 projection;\n"
+			"void main( ) {\n"
+			"	vs2fs.v  = vec3( model * vec4( v, 1 ) );\n"
+			"	vs2fs.vt = vt;\n"
+			"	vs2fs.vn = normalize( vec3( vec4( vn, 0 ) * inverse( model ) ) );\n"
+			"	vec4 p = projection * view * model * vec4( v, 1 );\n"
+			"	vs2fs.tx = p.xy;\n"
+			"	gl_Position = p;\n"
+			"}\n",
 
-		"out VS2FS {\n"
-		"	vec3 v;\n"
-		"	vec3 vn;\n"
-		"} vs2fs;\n"
+			// fragment shader
+			"#version 330 core\n"
 
-		"void main( ) {\n"
-		"	vs2fs.v  = vec3( model * vec4( v, 1 ) );\n"
-		"	vs2fs.vn = normalize( vec3( vec4( vn, 0 ) * inverse( model ) ) );\n"
-		"	gl_Position = projection * view * model * vec4( v, 1 );\n"
-		"}\n",
+			"in VS2FS {\n"
+			"	vec2 vt;\n"
+			"} vs2fs;\n"
+			"uniform float Ns;\n"
+			"uniform float Ni;\n"
+			"uniform float d;\n"
+			"uniform vec3 Ka;\n"
+			"uniform vec3 Kd;\n"
+			"uniform vec3 Ks;\n"
+			"uniform vec3 Ke;\n"
+			"uniform sampler2D map_Kd;\n"
+			"uniform sampler2D pass1;\n"
+			"out vec4 fColor;\n"
+			"void main( ) {\n"
+			"	vec3 c2 = vec3( texture( map_Kd, vs2fs.vt ) );\n"
+			"	if ( dot( c2, c2 ) < 0.0001 )\n"
+			"		c2 = Kd;\n"
+			"	vec3 c1 = vec3( texture( pass1, vs2fs.tx ) );\n"
+			"	vec3 colorLinear = Ka + ( mix( c1, c2, d ) * lambertian + Ks * specular ) * lightColor * lightPower / distance;\n"
+			"	fColor = texture( mix( Kd, map_Kd, d ), vs2fs.vt );\n"
+			"}\n"
+		},
+		// S-VVN
+		{
+			// vertex shader
+			"#version 330 core\n"
+			"in vec3 v;\n"
+			"in vec3 vn;\n"
+			"uniform mat4 model;\n"
+			"uniform mat4 view;\n"
+			"uniform mat4 projection;\n"
 
-		// fragment shader
-		"#version 330 core\n"
+			"out VS2FS {\n"
+			"	vec3 v;\n"
+			"	vec3 vn;\n"
+			"	vec2 tx;\n"
+			"} vs2fs;\n"
 
-		"in VS2FS {\n"
-		"	vec3 v;\n"
-		"	vec3 vn;\n"
-		"} vs2fs;\n"
-		"const vec3 lightColor = vec3( 1., 1., 1. );\n"
-		"const float lightPower = 5.;\n"
-		"const float screenGamma = .5;\n" // Assume the monitor is calibrated to the sRGB color space
-		"uniform mat4 model;\n"
-		"uniform mat4 view;\n"
-		"uniform float Ns;\n"
-		"uniform float Ni;\n"
-		"uniform float d;\n"
-		"uniform vec3 Ka;\n"
-		"uniform vec3 Kd;\n"
-		"uniform vec3 Ks;\n"
-		"uniform vec3 Ke;\n"
-		"uniform vec3 lightPos;\n"
-		"out vec4 fColor;\n"
-		"void main( ) {\n"
-		"	vec3 ray = lightPos - vs2fs.v;\n"
-		"	float distance = pow( dot( ray, ray ), .5 );\n"
-		"	ray = normalize( ray );\n"
-		"	float lambertian = max( dot( ray, vs2fs.vn ), 0. );\n"
-		"	float specular = 0.0;\n"
-		"	if ( lambertian > 0.0 ) {\n"
-		"		vec3 viewDir = normalize( -vs2fs.v );\n"
-				// this is blinn phong
-		"		vec3 halfDir = normalize( ray + viewDir );\n"
-		"		float specAngle = max( dot( halfDir, vs2fs.vn ), 0.0 );\n"
-		"		specular = pow( specAngle, Ns );\n"
-		//		this is phong (for comparison)
-//		"		if( mode == 2 ) {\n"
-//		"			vec3 reflectDir = reflect( -ray, vs2fs.vn );\n"
-//		"			specAngle = max( dot( reflectDir, viewDir ), 0. );\n"
-//		//			note that the exponent is different here
-//		"			specular = pow( specAngle, Ns / 4.0);\n"
-//		"		}\n"
-		"	}\n"
-		"	vec3 colorLinear = Ka + ( Kd * lambertian + Ks * specular ) * lightColor * lightPower / distance;\n"
-		//	apply gamma correction (assume ambientColor, diffuseColor and specColor
-		//	have been linearized, i.e. have no gamma correction in them)
-		"	vec3 colorGammaCorrected = pow( colorLinear, vec3( 1.0 / screenGamma ) );\n"
-		//	use the gamma corrected color in the fragment
-		"	fColor = vec4( colorGammaCorrected, 1. );"
-//		"	fColor = vec4( min( vec3( 1 ), amp * Kd + Ka ), 1 );\n"
-		"}\n"
-	},
-	// S-VVTVN
-	{
-		// vertex shader
-		"#version 330 core\n"
-		"in vec3 v;\n"
-		"in vec2 vt;\n"
-		"in vec3 vn;\n"
-		"uniform mat4 model;\n"
-		"uniform mat4 view;\n"
-		"uniform mat4 projection;\n"
+			"void main( ) {\n"
+			"	vs2fs.v  = vec3( model * vec4( v, 1 ) );\n"
+			"	vs2fs.vt = vt;\n"
+			"	vs2fs.vn = normalize( vec3( vec4( vn, 0 ) * inverse( model ) ) );\n"
+			"	vec4 p = projection * view * model * vec4( v, 1 );\n"
+			"	vs2fs.tx = p.xy;\n"
+			"	gl_Position = p;\n"
+			"}\n",
 
-		"out VS2FS {\n"
-		"	vec3 v;\n"
-		"	vec2 vt;\n"
-		"	vec3 vn;\n"
-		"} vs2fs;\n"
+			// fragment shader
+			"#version 330 core\n"
 
-		"void main( ) {\n"
-		"	vs2fs.v  = vec3( model * vec4( v, 1 ) );\n"
-		"	vs2fs.vt = vt;\n"
-		"	vs2fs.vn = normalize( vec3( vec4( vn, 0 ) * inverse( model ) ) );\n"
-		"	gl_Position = projection * view * model * vec4( v, 1 );\n"
-		"}\n",
+			"in VS2FS {\n"
+			"	vec3 v;\n"
+			"	vec3 vn;\n"
+			"	vec2 tx;\n"
+			"} vs2fs;\n"
+			"const vec3 lightColor = vec3( 1., 1., 1. );\n"
+			"const float lightPower = 10.;\n"
+			"const float screenGamma = .75;\n" // Assume the monitor is calibrated to the sRGB color space
+			"uniform mat4 model;\n"
+			"uniform mat4 view;\n"
+			"uniform float Ns;\n"
+			"uniform float Ni;\n"
+			"uniform float d;\n"
+			"uniform vec3 Ka;\n"
+			"uniform vec3 Kd;\n"
+			"uniform vec3 Ks;\n"
+			"uniform vec3 Ke;\n"
+			"uniform vec3 lightPos;\n"
+			"uniform sampler2D pass1;\n"
+			"out vec4 fColor;\n"
+			"void main( ) {\n"
+			"	vec3 ray = lightPos - vs2fs.v;\n"
+			"	float distance = pow( dot( ray, ray ), .5 );\n"
+			"	ray = normalize( ray );\n"
+			"	float lambertian = max( dot( ray, vs2fs.vn ), 0. );\n"
+			"	float specular = 0.0;\n"
+			"	if ( lambertian > 0.0 ) {\n"
+			"		vec3 viewDir = normalize( -vs2fs.v );\n"
+					// this is blinn phong
+			"		vec3 halfDir = normalize( ray + viewDir );\n"
+			"		float specAngle = max( dot( halfDir, vs2fs.vn ), 0.0 );\n"
+			"		specular = pow( specAngle, Ns );\n"
+			//		this is phong (for comparison)
+	//		"		if( mode == 2 ) {\n"
+	//		"			vec3 reflectDir = reflect( -ray, vs2fs.vn );\n"
+	//		"			specAngle = max( dot( reflectDir, viewDir ), 0. );\n"
+	//		//			note that the exponent is different here
+	//		"			specular = pow( specAngle, Ns / 4.0);\n"
+	//		"		}\n"
+			"	}\n"
+			"	vec3 c1 = vec3( texture( pass1, vs2fs.tx ) );\n"
+//			"	vec3 colorLinear = Ka + ( mix( Kd, c1, d ) * lambertian + Ks * specular ) * lightColor * lightPower / distance;\n"
+			"	vec3 colorLinear = c1;\n"
+			//	apply gamma correction (assume ambientColor, diffuseColor and specColor
+			//	have been linearized, i.e. have no gamma correction in them)
+			"	vec3 colorGammaCorrected = pow( colorLinear, vec3( 1.0 / screenGamma ) );\n"
+			//	use the gamma corrected color in the fragment
+			"	fColor = vec4( colorGammaCorrected, 1. );"
+	//		"	fColor = vec4( min( vec3( 1 ), amp * Kd + Ka ), 1 );\n"
+			"}\n"
+		},
+		// S-VVTVN
+		{
+			// vertex shader
+			"#version 330 core\n"
+			"in vec3 v;\n"
+			"in vec2 vt;\n"
+			"in vec3 vn;\n"
+			"uniform mat4 model;\n"
+			"uniform mat4 view;\n"
+			"uniform mat4 projection;\n"
 
-		// fragment shader
-		"#version 330 core\n"
+			"out VS2FS {\n"
+			"	vec3 v;\n"
+			"	vec2 vt;\n"
+			"	vec3 vn;\n"
+			"	vec2 tx;\n"
+			"} vs2fs;\n"
 
-		"in VS2FS {\n"
-		"	vec3 v;\n"
-		"	vec2 vt;\n"
-		"	vec3 vn;\n"
-		"} vs2fs;\n"
-		"const vec3 lightColor = vec3( 1., 1., 1. );\n"
-		"const float lightPower = 5.;\n"
-		"const float screenGamma = .5;\n" // Assume the monitor is calibrated to the sRGB color space
-		"uniform mat4 model;\n"
-		"uniform mat4 view;\n"
-		"uniform float Ns;\n"
-		"uniform float Ni;\n"
-		"uniform float d;\n"
-		"uniform vec3 Ka;\n"
-		"uniform vec3 Kd;\n"
-		"uniform vec3 Ks;\n"
-		"uniform vec3 Ke;\n"
-		"uniform sampler2D map_Kd;\n"
-		"uniform vec3 lightPos;\n"
-		"out vec4 fColor;\n"
-		"void main( ) {\n"
-		"	vec3 ray = lightPos - vs2fs.v;\n"
-		"	float distance = pow( dot( ray, ray ), .5 );\n"
-		"	ray = normalize( ray );\n"
-		"	float lambertian = max( dot( ray, vs2fs.vn ), 0. );\n"
-		"	float specular = 0.0;\n"
-		"	if ( lambertian > 0.0 ) {\n"
-		"		vec3 viewDir = normalize( -vs2fs.v );\n"
-				// this is blinn phong
-		"		vec3 halfDir = normalize( ray + viewDir );\n"
-		"		float specAngle = max( dot( halfDir, vs2fs.vn ), 0.0 );\n"
-		"		specular = pow( specAngle, Ns );\n"
-		//		this is phong (for comparison)
-//		"		if( mode == 2 ) {\n"
-//		"			vec3 reflectDir = reflect( -ray, vs2fs.vn );\n"
-//		"			specAngle = max( dot( reflectDir, viewDir ), 0. );\n"
-//		//			note that the exponent is different here
-//		"			specular = pow( specAngle, Ns / 4.0);\n"
-//		"		}\n"
-		"	}\n"
-		"	vec3 colorLinear = Ka + .5 * ( Kd + vec3( texture( map_Kd, vs2fs.vt ) ) * lambertian + Ks * specular ) * lightColor * lightPower / distance;\n"
-		//	apply gamma correction (assume ambientColor, diffuseColor and specColor
-		//	have been linearized, i.e. have no gamma correction in them)
-		"	vec3 colorGammaCorrected = pow( colorLinear, vec3( 1.0 / screenGamma ) );\n"
-		//	use the gamma corrected color in the fragment
-		"	fColor = vec4( colorGammaCorrected, 1. );"
-		"}\n"
+			"void main( ) {\n"
+			"	vs2fs.v  = vec3( model * vec4( v, 1 ) );\n"
+			"	vs2fs.vt = vt;\n"
+			"	vs2fs.vn = normalize( vec3( vec4( vn, 0 ) * inverse( model ) ) );\n"
+			"	vec4 p = projection * view * model * vec4( v, 1 );\n"
+			"	vs2fs.tx = p.xy;\n"
+			"	gl_Position = p;\n"
+			"}\n",
+
+			// fragment shader
+			"#version 330 core\n"
+
+			"in VS2FS {\n"
+			"	vec3 v;\n"
+			"	vec2 vt;\n"
+			"	vec3 vn;\n"
+			"	vec2 tx;\n"
+			"} vs2fs;\n"
+			"const vec3 lightColor = vec3( 1., 1., 1. );\n"
+			"const float lightPower = 10.;\n"
+			"const float screenGamma = .75;\n" // Assume the monitor is calibrated to the sRGB color space
+			"uniform mat4 model;\n"
+			"uniform mat4 view;\n"
+			"uniform float Ns;\n"
+			"uniform float Ni;\n"
+			"uniform float d;\n"
+			"uniform vec3 Ka;\n"
+			"uniform vec3 Kd;\n"
+			"uniform vec3 Ks;\n"
+			"uniform vec3 Ke;\n"
+			"uniform sampler2D map_Kd;\n"
+			"uniform sampler2D pass1;\n"
+			"uniform vec3 lightPos;\n"
+			"out vec4 fColor;\n"
+			"void main( ) {\n"
+			"	vec3 ray = lightPos - vs2fs.v;\n"
+			"	float distance = pow( dot( ray, ray ), .5 );\n"
+			"	ray = normalize( ray );\n"
+			"	float lambertian = max( dot( ray, vs2fs.vn ), 0. );\n"
+			"	float specular = 0.0;\n"
+			"	if ( lambertian > 0.0 ) {\n"
+			"		vec3 viewDir = normalize( -vs2fs.v );\n"
+					// this is blinn phong
+			"		vec3 halfDir = normalize( ray + viewDir );\n"
+			"		float specAngle = max( dot( halfDir, vs2fs.vn ), 0.0 );\n"
+			"		specular = pow( specAngle, Ns );\n"
+			"	}\n"
+			"	vec3 c2 = vec3( texture( map_Kd, vs2fs.vt ) );\n"
+//			"	if ( dot( c2, c2 ) < 0.0001 )\n"
+//			"		c2 = Kd;\n"
+			"	vec3 c1 = vec3( texture( pass1, vs2fs.tx ) );\n"
+//			"	vec3 colorLinear = Ka + ( mix( c1, c2, d ) * lambertian + Ks * specular ) * lightColor * lightPower / distance;\n"
+			"	vec3 colorLinear = c1;\n"
+			//	apply gamma correction (assume ambientColor, diffuseColor and specColor
+			//	have been linearized, i.e. have no gamma correction in them)
+			"	vec3 colorGammaCorrected = pow( colorLinear, vec3( 1.0 / screenGamma ) );\n"
+			//	use the gamma corrected color in the fragment
+			"	fColor = vec4( colorGammaCorrected, 1. );"
+			"}\n"
+		}
 	}
 };
 
@@ -515,7 +789,6 @@ class OBJ {
 
 			ss >> str >> * p_x >> * p_y;
 		}
-
 
 		void
 		read3Floats( GLfloat * p_x, GLfloat * p_y, GLfloat * p_z, std::string const & p_str ) {
@@ -828,12 +1101,15 @@ public GLProject {
 		V3
 		lightPos;
 
-		std::vector < Str >
-		contList1,
-		contList2;
+		std::vector < std::vector < Str > >
+		cAudi,
+		cWoman;
 
 		V3
 		Kd;
+
+		GLint
+		renderPass;
 
 	public :
 
@@ -848,7 +1124,7 @@ public GLProject {
 		void
 		resize ( int p_width, int p_height );
 
-		std::vector < std::string >
+		std::vector < std::vector < std::string > >
 		add2GLR ( OBJ & p_obj, std::string const & p_objName, std::string const & p_objPath, std::string const & p_pixPath );
 };
 

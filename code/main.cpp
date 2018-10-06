@@ -5,7 +5,7 @@
 //#include "glprojects/coordinateSystem/coordinatesystem.hpp"
 //#include "glprojects/cubewithtexture/cubewithtexture.hpp"
 //#include "glprojects/solarsystem/solarsystem.hpp"
-//#include "glprojects/zbuffertexture/zbuffertexture.hpp"
+#include "glprojects/zbuffertexture/zbuffertexture.hpp"
 #include "glprojects/dummy/dummy.hpp"
 //#include "glprojects/cube/cube.hpp"
 //#include "glprojects/funIn2D/funIn2D.hpp"
@@ -15,7 +15,8 @@
 //#include "glprojects/robertslighttest2D/robertslighttest2D.hpp"
 //#include "glprojects/ballandlight/ballandlight.hpp"
 //#include "glprojects/texturetest/texturetest.hpp"
-//#include "glprojects/multisampling/multisampling.hpp"
+#include "glprojects/multisampling/multisampling.hpp"
+#include "glprojects/mstest/mstest.hpp"
 //#include "glprojects/sometext/sometext.hpp"
 //#include "glprojects/yetanothersphere/yetanothersphere.hpp"
 //#include "glprojects/space/space.hpp"
@@ -47,8 +48,8 @@ main( int argc, char *argv[ ] ) {
 //	SolarsSystem
 //	* solarsSystem = new SolarsSystem( "SolarsSystem" );
 
-//	ZBufferTexture
-//	* zBufferTexture = new ZBufferTexture( "ZBufferTexture" );
+	ZBufferTexture
+	* zBufferTexture = new ZBufferTexture( "ZBufferTexture" );
 
 	Dummy
 	* dummy = new Dummy( );
@@ -77,8 +78,11 @@ main( int argc, char *argv[ ] ) {
 //	TextureTest
 //	* textureTest = new TextureTest( "TextureTest" );
 
-//	MultiSampling
-//	* multiSampling = new MultiSampling( "MultiSampling" );
+	MultiSampling
+	* multiSampling = new MultiSampling( "MultiSampling" );
+
+	MSTest
+	* mstest = new MSTest ( "MSTest" );
 
 //	SomeText
 //	* someText = new SomeText( );
@@ -103,14 +107,13 @@ main( int argc, char *argv[ ] ) {
 	ObjExample
 	* objExample = new ObjExample ( );
 
-
 	w.addGLProject( dummy );
 //	w.addGLProject( triangle2D );
 //	w.addGLProject( quad3D );
 //	w.addGLProject( coordinateSystem );
 //	w.addGLProject( cubeWithTexture );
 //	w.addGLProject( solarsSystem );
-//	w.addGLProject( zBufferTexture );
+	w.addGLProject( zBufferTexture );
 //	w.addGLProject( yetAnotherSphere );
 //	w.projects[ "Cube" ] = cube;
 //	w.projects[ "FunIn2D" ] = funIn2D;
@@ -120,16 +123,17 @@ main( int argc, char *argv[ ] ) {
 //	w.projects[ "RobertsLightTest2D" ] = robertsLightTest2D;
 //	w.projects[ "BallAndLight" ] = ballAndLight;
 //	w.projects[ "TextureTest" ] = textureTest;
-//	w.projects[ "MultiSampling" ] = multiSampling;
+	w.projects[ "MultiSampling" ] = multiSampling;
 //	w.projects[ "SomeText" ] = someText;
 //	w.projects[ "YAS" ] = yetAnotherSphere;
 //	w.projects[ "Space" ] = space;
 //	w.projects[ "SphereWithTexture" ] = sphereWithTexture;
 //	w.projects[ "SceneExample" ] = sceneExample;
 
-	w.addGLProject( objExample );
+	//w.addGLProject( objExample );
+	w.addGLProject( mstest );
 
-	w.slotSetGLProject( "ObjExample" );
+	w.slotSetGLProject( "MSTest" );
 
 	w.show( );
 
