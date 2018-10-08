@@ -92,647 +92,592 @@ GLR {
 
 	public :
 
-	class
-	CameraCenterView {
+		GLenum const
+		drawBuffers[ 0x20 ] = {
 
-		public :
-
-			CameraCenterView ( glm::mat4 const & p_model = glm::mat4 ( 1.f ), glm::mat4 const & p_view = glm::mat4( 1.f ), ViewControlData * p_vcd = nullptr, glm::vec3 const & p_par = glm::vec3( .01f, .01f, .1f ) ) :
-			__model ( p_model ),
-			__view ( p_view ),
-			__loc ( glm::mat3 ( inverse ( __model ) ) ),
-			__vcd ( p_vcd ),
-			__par ( p_par ) {
-
-			}
-
-			~ CameraCenterView ( ) {
-
-			}
-
-		private :
-
-			glm::mat4
-			__model,
-			__view;
-
-			glm::mat3
-			__loc;
-
-			ViewControlData
-			* __vcd;
-
-			glm::vec3
-			__par;
-
-		public :
-
-			CameraCenterView
-			& fixModel( glm::mat4 const & p_model ) {
-
-				__model = p_model;
-				__loc   = inverse( __model );
-
-				return *this;
-			}
-
-			CameraCenterView
-			& fixView ( glm::mat4 const & p_view ) {
-
-				__view = p_view;
-
-				return *this;
-			}
-
-			CameraCenterView
-			& fixVCD ( ViewControlData * p_viewControlData ) {
-
-				__vcd = p_viewControlData;
-
-				return *this;
-			}
-
-			void
-			rotate_around_x( GLfloat const & p_angle ) {
-
-				__model = glm::rotate( __model, p_angle, __loc[ 0 ] );
-			}
-
-			void
-			rotate_around_y( GLfloat const & p_angle ) {
-
-				__model = glm::rotate( __model, p_angle, __loc[ 1 ] );
-			}
-
-			void
-			rotate_around_z( GLfloat const & p_angle ) {
-
-				__model = glm::rotate( __model, p_angle, __loc[ 2 ] );
-			}
-
-			void
-			rotate_around( GLfloat const & p_angle, glm::vec3 const & p_axis ) {
-
-				__model = glm::rotate( __model, p_angle, p_axis * __loc );
-			}
-
-			glm::mat4
-			model( ) const {
-
-				return __model;
-			}
-
-			void
-			move( GLfloat const & dS ) {
-
-				__view = glm::translate( __view, glm::vec3( 0, 0, dS ) );
-			}
-
-			glm::mat4
-			view( ) const {
-
-				return __view;
-			}
-
-			glm::vec3
-			param( ) const {
-
-				return __par;
-			}
-
-			void
-			setParam( glm::vec3 const & p_par = glm::vec3( .01f, .01f, .1f ) ) {
-
-				__par = p_par;
-			}
-
-			void
-			reactOnMouse( ) {
-
-				glm::vec2
-				dAngle = glm::vec2( __par ) * __vcd->dMouse;
-
-				if ( __vcd->buttons & 0x02 )
-
-					move( __par.z * __vcd->dMouse.y );
-
-				if ( __vcd->ticks != 0 ) {
-
-					move( .1f * __par.z * __vcd->ticks );
-				}
-
-				if ( __vcd->buttons & 0x01 ) {
-
-					if( 0 < abs( dAngle.y ) ) {
-
-						rotate_around_x( - dAngle.y );
-					}
-
-					if( 0 < abs( dAngle.x ) ) {
-
-						rotate_around_y( + dAngle.x );
-					}
-				}
-			}
+			GL_COLOR_ATTACHMENT0,
+			GL_COLOR_ATTACHMENT1,
+			GL_COLOR_ATTACHMENT2,
+			GL_COLOR_ATTACHMENT3,
+			GL_COLOR_ATTACHMENT4,
+			GL_COLOR_ATTACHMENT5,
+			GL_COLOR_ATTACHMENT6,
+			GL_COLOR_ATTACHMENT7,
+			GL_COLOR_ATTACHMENT8,
+			GL_COLOR_ATTACHMENT9,
+			GL_COLOR_ATTACHMENT10,
+			GL_COLOR_ATTACHMENT11,
+			GL_COLOR_ATTACHMENT12,
+			GL_COLOR_ATTACHMENT13,
+			GL_COLOR_ATTACHMENT14,
+			GL_COLOR_ATTACHMENT15,
+			GL_COLOR_ATTACHMENT16,
+			GL_COLOR_ATTACHMENT17,
+			GL_COLOR_ATTACHMENT18,
+			GL_COLOR_ATTACHMENT19,
+			GL_COLOR_ATTACHMENT20,
+			GL_COLOR_ATTACHMENT21,
+			GL_COLOR_ATTACHMENT22,
+			GL_COLOR_ATTACHMENT23,
+			GL_COLOR_ATTACHMENT24,
+			GL_COLOR_ATTACHMENT25,
+			GL_COLOR_ATTACHMENT26,
+			GL_COLOR_ATTACHMENT27,
+			GL_COLOR_ATTACHMENT28,
+			GL_COLOR_ATTACHMENT29,
+			GL_COLOR_ATTACHMENT30,
+			GL_COLOR_ATTACHMENT31
 		};
 
-	class
-	SpaceShipView {
+		class CameraCenterView {
 
-		public :
+			public :
 
-		SpaceShipView ( glm::mat4 const & p_model, glm::mat4 const & p_view, ViewControlData * p_vcd ) :
-		__model( p_model ),
-		__view( p_view ),
-		__vcd( p_vcd ) {
+				CameraCenterView ( glm::mat4 const & p_model = glm::mat4 ( 1.f ), glm::mat4 const & p_view = glm::mat4( 1.f ), ViewControlData * p_vcd = nullptr, glm::vec3 const & p_par = glm::vec3( .01f, .01f, .1f ) ) :
+				__model ( p_model ),
+				__view ( p_view ),
+				__loc ( glm::mat3 ( inverse ( __model ) ) ),
+				__vcd ( p_vcd ),
+				__par ( p_par ) {
 
-		}
-
-		~SpaceShipView ( ) {
-
-		}
-
-		private :
-
-			glm::mat4
-			__model,
-			__view;
-
-			glm::mat3
-			__loc;
-
-			ViewControlData
-			* __vcd;
-
-		public :
-	};
-
-	class Texture :
-	public Named {
-
-		public :
-
-		GLenum
-		target;
-
-		GLuint
-		level;
-
-		GLint
-		internal_format;
-
-		GLint
-		min_filter,
-		mag_filter,
-		wrap_s,
-		wrap_t;
-
-		GLenum
-		format,
-		type;
-
-		GLsizei
-		width,
-		height;
-
-		GLuint
-		id;
-
-		public :
-
-		Texture(
-		CStr p_name,
-		GLenum p_target	= GL_TEXTURE_2D,
-		GLint p_level = 0,
-		GLint p_internal_format = GL_RGBA32F,
-		GLint p_min_filter = GL_NEAREST,
-		GLint p_mag_filter = GL_NEAREST,
-		GLint p_wrap_t = GL_CLAMP_TO_EDGE,
-		GLint p_wrap_s = GL_CLAMP_TO_EDGE,
-		GLenum p_format = GL_RGBA,
-		GLenum p_type = GL_FLOAT,
-		GLsizei p_width = 32,
-		GLsizei p_height = 32 ) :
-		Named( p_name ),
-		target( p_target ),
-		level( p_level ),
-		internal_format( p_internal_format ),
-		min_filter( p_min_filter ),
-		mag_filter( p_mag_filter ),
-		wrap_s( p_wrap_s ),
-		wrap_t( p_wrap_t ),
-		format( p_format ),
-		type( p_type ),
-		width( p_width ),
-		height( p_height ),
-		id( 0 ) {
-
-			glGenTextures( 1, &id );
-			glBindTexture( target, id );
-
-			//glTexStorage2D( target, 0, GL_RG32F, simWidth, simHeight );
-			glTexParameteri( target, GL_TEXTURE_MIN_FILTER, min_filter );
-				glTexParameteri( target, GL_TEXTURE_MAG_FILTER, mag_filter );
-				glTexParameteri( target, GL_TEXTURE_WRAP_S, wrap_s );
-				glTexParameteri( target, GL_TEXTURE_WRAP_T, wrap_t );
-
-					if( format == GL_DEPTH_COMPONENT ) {
-
-						glTexParameteri( GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY );
-						glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE );
-						glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL );
-					}
-
-					glTexImage2D( target, level, internal_format, width, height, 0, format, type, nullptr );
-
-					glBindTexture( GL_TEXTURE_2D, 0 );
-		}
-
-		Texture(
-		CStr p_name, CStr p_filename ) :
-		Named( p_name ),
-		target( GL_TEXTURE_2D ),
-		level( 0 ),
-		internal_format( GL_RGBA32F ),
-		min_filter( GL_NEAREST ),
-		mag_filter( GL_NEAREST ),
-		wrap_s( GL_CLAMP_TO_EDGE ),
-		wrap_t( GL_CLAMP_TO_EDGE ),
-		format( GL_RGBA ),
-		type( GL_FLOAT ),
-		width( 0 ),
-		height( 0 ),
-		id( 0 ) {
-
-			QImage
-			imgFromFile;
-
-			if( ! imgFromFile.load( QString( p_filename.c_str( ) ) ) ) {
-
-					std::cerr << "error loading " << p_filename << std::endl ;
-					exit( 1 );
 				}
 
-				QImage
-				GL_formatted_image;
+				~ CameraCenterView ( ) {
 
-				GL_formatted_image = QGLWidget::convertToGLFormat( imgFromFile );
+				}
 
-				if( GL_formatted_image.isNull( ) ) {
+			private :
 
-						std::cerr << "error GL_formatted_image" << std::endl ;
+				glm::mat4
+				__model,
+				__view;
 
-						exit( 1 );
+				glm::mat3
+				__loc;
+
+				ViewControlData
+				* __vcd;
+
+				glm::vec3
+				__par;
+
+			public :
+
+				CameraCenterView
+				& fixModel( glm::mat4 const & p_model ) {
+
+					__model = p_model;
+					__loc   = inverse( __model );
+
+					return *this;
+				}
+
+				CameraCenterView
+				& fixView ( glm::mat4 const & p_view ) {
+
+					__view = p_view;
+
+					return *this;
+				}
+
+				CameraCenterView
+				& fixVCD ( ViewControlData * p_viewControlData ) {
+
+					__vcd = p_viewControlData;
+
+					return *this;
+				}
+
+				void
+				rotate_around_x( GLfloat const & p_angle ) {
+
+					__model = glm::rotate( __model, p_angle, __loc[ 0 ] );
+				}
+
+				void
+				rotate_around_y( GLfloat const & p_angle ) {
+
+					__model = glm::rotate( __model, p_angle, __loc[ 1 ] );
+				}
+
+				void
+				rotate_around_z( GLfloat const & p_angle ) {
+
+					__model = glm::rotate( __model, p_angle, __loc[ 2 ] );
+				}
+
+				void
+				rotate_around( GLfloat const & p_angle, glm::vec3 const & p_axis ) {
+
+					__model = glm::rotate( __model, p_angle, p_axis * __loc );
+				}
+
+				glm::mat4
+				model( ) const {
+
+					return __model;
+				}
+
+				void
+				move( GLfloat const & dS ) {
+
+					__view = glm::translate( __view, glm::vec3( 0, 0, dS ) );
+				}
+
+				glm::mat4
+				view( ) const {
+
+					return __view;
+				}
+
+				glm::vec3
+				param( ) const {
+
+					return __par;
+				}
+
+				void
+				setParam( glm::vec3 const & p_par = glm::vec3( .01f, .01f, .1f ) ) {
+
+					__par = p_par;
+				}
+
+				void
+				reactOnMouse( ) {
+
+					glm::vec2
+					dAngle = glm::vec2( __par ) * __vcd->dMouse;
+
+					if ( __vcd->buttons & 0x02 )
+
+						move( __par.z * __vcd->dMouse.y );
+
+					if ( __vcd->ticks != 0 ) {
+
+						move( .1f * __par.z * __vcd->ticks );
 					}
 
-					width  = GL_formatted_image.width( );
-					height = GL_formatted_image.height( );
+					if ( __vcd->buttons & 0x01 ) {
 
-					glGenTextures( 1, &id );
-					glBindTexture( target, id );
+						if( 0 < abs( dAngle.y ) ) {
 
-					glTexParameteri( target, GL_TEXTURE_MIN_FILTER, min_filter );
+							rotate_around_x( - dAngle.y );
+						}
+
+						if( 0 < abs( dAngle.x ) ) {
+
+							rotate_around_y( + dAngle.x );
+						}
+					}
+				}
+			};
+
+		class SpaceShipView {
+
+			public :
+
+			SpaceShipView ( glm::mat4 const & p_model, glm::mat4 const & p_view, ViewControlData * p_vcd ) :
+			__model( p_model ),
+			__view( p_view ),
+			__vcd( p_vcd ) {
+
+			}
+
+			~SpaceShipView ( ) {
+
+			}
+
+			private :
+
+				glm::mat4
+				__model,
+				__view;
+
+				glm::mat3
+				__loc;
+
+				ViewControlData
+				* __vcd;
+
+			public :
+		};
+
+		enum MODE {
+
+			OFFSCREEN,
+			ONSCREEN
+		};
+
+		class FrameBuffer {
+
+			private:
+
+				GLuint
+				__id;
+
+			public :
+
+				FrameBuffer ( ) :
+				__id( 0 ) {
+
+					glGenFramebuffers ( 1, & __id );
+				}
+
+				~ FrameBuffer ( ) {
+
+					glDeleteFramebuffers ( 1, & __id );
+				}
+
+				std::vector< Str >
+				outTextures,
+				renderBuffers;
+
+				FrameBuffer
+				& addOutTexture ( CStr & p_textureName ) {
+
+					outTextures.push_back ( p_textureName );
+
+					return * this;
+				}
+
+				FrameBuffer
+				& addRenderBuffer ( CStr & p_colorRenderBufferName ) {
+
+					renderBuffers.push_back ( p_colorRenderBufferName );
+
+					return * this;
+				}
+				void
+				bind ( ) {
+
+					glBindFramebuffer ( GL_FRAMEBUFFER, __id );
+				}
+
+				GLuint
+				id ( ) const {
+
+					return __id;
+				}
+
+				void
+				release ( ) {
+
+					glBindFramebuffer ( GL_FRAMEBUFFER, 0 );
+				}
+		};
+
+		class Texture :
+		public Named {
+
+			public :
+
+			GLenum
+			target;
+
+			GLuint
+			level;
+
+			GLint
+			internal_format;
+
+			GLint
+			min_filter,
+			mag_filter,
+			wrap_s,
+			wrap_t;
+
+			GLenum
+			format,
+			type;
+
+			GLsizei
+			width,
+			height;
+
+			GLuint
+			id;
+
+			public :
+
+			Texture(
+			CStr p_name,
+			GLenum p_target	= GL_TEXTURE_2D,
+			GLint p_level = 0,
+			GLint p_internal_format = GL_RGBA32F,
+			GLint p_min_filter = GL_NEAREST,
+			GLint p_mag_filter = GL_NEAREST,
+			GLint p_wrap_t = GL_CLAMP_TO_EDGE,
+			GLint p_wrap_s = GL_CLAMP_TO_EDGE,
+			GLenum p_format = GL_RGBA,
+			GLenum p_type = GL_FLOAT,
+			GLsizei p_width = 32,
+			GLsizei p_height = 32 ) :
+			Named( p_name ),
+			target( p_target ),
+			level( p_level ),
+			internal_format( p_internal_format ),
+			min_filter( p_min_filter ),
+			mag_filter( p_mag_filter ),
+			wrap_s( p_wrap_s ),
+			wrap_t( p_wrap_t ),
+			format( p_format ),
+			type( p_type ),
+			width( p_width ),
+			height( p_height ),
+			id( 0 ) {
+
+				glGenTextures( 1, &id );
+				glBindTexture( target, id );
+
+				//glTexStorage2D( target, 0, GL_RG32F, simWidth, simHeight );
+				glTexParameteri( target, GL_TEXTURE_MIN_FILTER, min_filter );
 					glTexParameteri( target, GL_TEXTURE_MAG_FILTER, mag_filter );
 					glTexParameteri( target, GL_TEXTURE_WRAP_S, wrap_s );
 					glTexParameteri( target, GL_TEXTURE_WRAP_T, wrap_t );
 
-					glTexImage2D( target, level, internal_format, width, height, 0, format, GL_UNSIGNED_BYTE, GL_formatted_image.bits( ) );
+						if( format == GL_DEPTH_COMPONENT ) {
 
-					glBindTexture( GL_TEXTURE_2D, 0 );
-		}
+							glTexParameteri( GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY );
+							glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE );
+							glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL );
+						}
 
-		~Texture( ) {
+						glTexImage2D( target, level, internal_format, width, height, 0, format, type, nullptr );
 
-			glDeleteTextures( 1, &id );
-		}
-
-		void
-		bind( ) {
-
-			glBindTexture( target, id );
-		}
-
-		void
-			release( ) {
-
-				glBindTexture( target, 0 );
+						glBindTexture( GL_TEXTURE_2D, 0 );
 			}
 
-			void
-			resize( GLuint p_width, GLuint p_height ) {
+			Texture(
+			CStr p_name, CStr p_filename ) :
+			Named( p_name ),
+			target( GL_TEXTURE_2D ),
+			level( 0 ),
+			internal_format( GL_RGBA32F ),
+			min_filter( GL_NEAREST ),
+			mag_filter( GL_NEAREST ),
+			wrap_s( GL_CLAMP_TO_EDGE ),
+			wrap_t( GL_CLAMP_TO_EDGE ),
+			format( GL_RGBA ),
+			type( GL_FLOAT ),
+			width( 0 ),
+			height( 0 ),
+			id( 0 ) {
 
-				width = p_width;
-				height = p_height;
+				QImage
+				imgFromFile;
 
-					glBindTexture( target, id );
+				if( ! imgFromFile.load( QString( p_filename.c_str( ) ) ) ) {
 
-					//glTexStorage2D( target, 0, GL_RG32F, width, height );
-					glTexImage2D( target, level, internal_format, width, height, 0, format, type, nullptr );
+						std::cerr << "error loading " << p_filename << std::endl ;
+						exit( 1 );
+					}
 
-					glBindTexture( GL_TEXTURE_2D, 0 );
-			}
-	};
+					QImage
+					GL_formatted_image;
 
-	class RenderBuffer :
-	public Named {
+					GL_formatted_image = QGLWidget::convertToGLFormat( imgFromFile );
 
-		private:
+					if( GL_formatted_image.isNull( ) ) {
 
-		GLuint
-		__id;
+							std::cerr << "error GL_formatted_image" << std::endl ;
 
-		GLenum
-		__storageType;
+							exit( 1 );
+						}
 
-		public :
+						width  = GL_formatted_image.width( );
+						height = GL_formatted_image.height( );
 
-		GLsizei
-		width,
-		height;
+						glGenTextures( 1, &id );
+						glBindTexture( target, id );
 
-		public :
+						glTexParameteri( target, GL_TEXTURE_MIN_FILTER, min_filter );
+						glTexParameteri( target, GL_TEXTURE_MAG_FILTER, mag_filter );
+						glTexParameteri( target, GL_TEXTURE_WRAP_S, wrap_s );
+						glTexParameteri( target, GL_TEXTURE_WRAP_T, wrap_t );
 
-		RenderBuffer( CStr & p_name, GLenum const & p_storageType ) :
-		Named( p_name ),
-		__id( 0 ),
-		__storageType( p_storageType ) {
+						glTexImage2D( target, level, internal_format, width, height, 0, format, GL_UNSIGNED_BYTE, GL_formatted_image.bits( ) );
 
-			glGenRenderbuffers( 1, & __id );
-		}
-
-		~RenderBuffer( ) {
-
-			glDeleteRenderbuffers( 1, & __id);
-		}
-
-		void
-		bind( ) {
-
-			glBindRenderbuffer( GL_RENDERBUFFER, __id );
-		}
-
-		GLuint
-		id( ) const {
-
-			return __id;
-		}
-
-		void
-		release( ) {
-
-			glBindFramebuffer( GL_RENDERBUFFER, 0 );
-		}
-
-		void
-		resize( GLsizei p_width, GLsizei p_height ) {
-
-			width = p_width;
-			height = p_height;
-
-				glBindRenderbuffer( GL_RENDERBUFFER, __id );
-
-				glRenderbufferStorage( GL_RENDERBUFFER, __storageType, p_width, p_height );
-
-				//glTexStorage2D( target, 0, GL_RG32F, width, height );
-				//glTexImage2D( target, level, internal_format, width, height, 0, format, type, nullptr );
-
-				glBindRenderbuffer( GL_RENDERBUFFER, 0 );
-		}
-	};
-
-	class IndexArray :
-	public Named {
-
-		public :
-
-		GLuint
-		iaoId,
-		iboId,
-		stride;
-
-		GLenum
-		usage;
-
-		class Object {
-
-			public:
-
-				Object( GLint p_offs, GLint p_size, GLenum p_mode ) :
-				offs( p_offs ),
-				size( p_size ),
-				mode( p_mode ) {
-
-				}
-
-				GLint
-				offs,
-				size;
-
-				GLenum
-				mode;
-		};
-
-		std::vector< GLushort >
-		arr;
-
-		std::vector< Object >
-		obj;
-
-		public :
-
-		IndexArray( CStr &p_name ) :
-		Named( p_name ),
-		iaoId( 0 ),
-		iboId( 0 ),
-		stride( 0 ),
-		usage( GL_STATIC_DRAW ) {
-
-			glGenVertexArrays( 1, &iaoId );
-//					glBindVertexArray( vaoId );
-
-			glGenBuffers( 1, &iboId );
-//					glBindBuffer( GL_ARRAY_BUFFER, vboId );
-//					glBufferData( GL_ARRAY_BUFFER, sizeof( float ) * arr.size( ), arr.data( ), GL_STATIC_DRAW );
-
-//					glBindVertexArray( 0 );
-		}
-
-		~IndexArray( ) {
-
-		}
-
-		IndexArray
-		& operator << ( GLushort const & p_value ) {
-
-			arr.push_back( p_value );
-
-			return *this;
-		}
-
-		IndexArray
-		& operator << ( Object const & p_object ) {
-
-			obj.push_back( p_object );
-
-				return *this;
-		}
-
-
-		IndexArray
-			&setUsage( GLenum const & p_usage ) {
-
-				usage = p_usage;
-
-				return *this;
+						glBindTexture( GL_TEXTURE_2D, 0 );
 			}
 
-			int
-			indexCount( ) {
+			~Texture( ) {
 
-				return arr.size( );
+				glDeleteTextures( 1, &id );
 			}
 
 			void
 			bind( ) {
 
-				glBindVertexArray( iaoId );
-				glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, iboId );
+				glBindTexture( target, id );
+			}
+
+			void
+				release( ) {
+
+					glBindTexture( target, 0 );
+				}
+
+				void
+				resize( GLuint p_width, GLuint p_height ) {
+
+					width = p_width;
+					height = p_height;
+
+						glBindTexture( target, id );
+
+						//glTexStorage2D( target, 0, GL_RG32F, width, height );
+						glTexImage2D( target, level, internal_format, width, height, 0, format, type, nullptr );
+
+						glBindTexture( GL_TEXTURE_2D, 0 );
+				}
+		};
+
+		class RenderBuffer :
+		public Named {
+
+			private:
+
+			GLuint
+			__id;
+
+			GLenum
+			__storageType;
+
+			public :
+
+			GLsizei
+			width,
+			height;
+
+			public :
+
+			RenderBuffer( CStr & p_name, GLenum const & p_storageType ) :
+			Named( p_name ),
+			__id( 0 ),
+			__storageType( p_storageType ) {
+
+				glGenRenderbuffers( 1, & __id );
+			}
+
+			~RenderBuffer( ) {
+
+				glDeleteRenderbuffers( 1, & __id);
+			}
+
+			void
+			bind( ) {
+
+				glBindRenderbuffer( GL_RENDERBUFFER, __id );
+			}
+
+			GLuint
+			id( ) const {
+
+				return __id;
 			}
 
 			void
 			release( ) {
 
-				glBindVertexArray( 0 );
-				glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
+				glBindFramebuffer( GL_RENDERBUFFER, 0 );
 			}
-	};
 
-	class VertexArray :
-	public Named {
+			void
+			resize( GLsizei p_width, GLsizei p_height ) {
 
-		public :
+				width = p_width;
+				height = p_height;
+
+					glBindRenderbuffer( GL_RENDERBUFFER, __id );
+
+					glRenderbufferStorage( GL_RENDERBUFFER, __storageType, p_width, p_height );
+
+					//glTexStorage2D( target, 0, GL_RG32F, width, height );
+					//glTexImage2D( target, level, internal_format, width, height, 0, format, type, nullptr );
+
+					glBindRenderbuffer( GL_RENDERBUFFER, 0 );
+			}
+		};
+
+		class IndexArray :
+		public Named {
+
+			public :
 
 			GLuint
-			vaoId,
-			vboId,
+			iaoId,
+			iboId,
 			stride;
 
 			GLenum
 			usage;
 
-			struct Attr {
-
-				GLsizei offs;
-				GLuint size;
-			};
-
 			class Object {
 
 				public:
 
-				Object( GLsizei p_offs, GLuint p_size, GLenum p_mode ) :
-				offs( p_offs ),
-				size( p_size ),
-				mode( p_mode ) {
+					Object( GLint p_offs, GLint p_size, GLenum p_mode ) :
+					offs( p_offs ),
+					size( p_size ),
+					mode( p_mode ) {
 
-				}
+					}
 
-				GLsizei
-				offs;
+					GLint
+					offs,
+					size;
 
-				GLuint
-				size;
-
-				GLenum
-				mode;
+					GLenum
+					mode;
 			};
 
-			std::map< CStr, Attr >
-			attr;
-
-			std::vector< GLfloat >
+			std::vector< GLushort >
 			arr;
 
 			std::vector< Object >
 			obj;
 
-		public :
+			public :
 
-			VertexArray( CStr &p_name ) :
+			IndexArray( CStr &p_name ) :
 			Named( p_name ),
-			vaoId( 0 ),
-			vboId( 0 ),
+			iaoId( 0 ),
+			iboId( 0 ),
 			stride( 0 ),
 			usage( GL_STATIC_DRAW ) {
 
-				glGenVertexArrays( 1, &vaoId );
+				glGenVertexArrays( 1, &iaoId );
+	//					glBindVertexArray( vaoId );
 
-				glGenBuffers( 1, &vboId );
+				glGenBuffers( 1, &iboId );
+	//					glBindBuffer( GL_ARRAY_BUFFER, vboId );
+	//					glBufferData( GL_ARRAY_BUFFER, sizeof( float ) * arr.size( ), arr.data( ), GL_STATIC_DRAW );
+
+	//					glBindVertexArray( 0 );
 			}
 
-			~VertexArray( ) {
+			~IndexArray( ) {
 
 			}
 
-			VertexArray
-			&operator << ( GLfloat const & p_value ) {
+			IndexArray
+			& operator << ( GLushort const & p_value ) {
 
 				arr.push_back( p_value );
 
 				return *this;
 			}
 
-			VertexArray
-			&operator << ( Object const & p_object ) {
+			IndexArray
+			& operator << ( Object const & p_object ) {
 
 				obj.push_back( p_object );
 
-				return *this;
-			}
-
-			VertexArray
-			&operator << ( glm::vec2 const & p_value ) {
-
-				arr.push_back( p_value.x );
-				arr.push_back( p_value.y );
-
-				return *this;
-			}
-
-			VertexArray
-			&operator << ( glm::vec3 const & p_value ) {
-
-				arr.push_back( p_value.r );
-				arr.push_back( p_value.g );
-					arr.push_back( p_value.b );
-
 					return *this;
 			}
 
-			VertexArray
-			&operator << ( glm::vec4 const & p_value ) {
 
-				arr.push_back( p_value.r );
-					arr.push_back( p_value.g );
-					arr.push_back( p_value.b );
-					arr.push_back( p_value.a );
-
-					return *this;
-			}
-
-			VertexArray
-				& attrib( std::string const & p_name, GLsizei const &p_offset, GLuint const &p_size ) {
-
-					attr[ p_name ].offs = p_offset;
-					attr[ p_name ].size = p_size;
-					stride += p_size;
-
-//					vertexCount = arr.size( ) / stride;
-
-					return *this;
-				}
-
-				VertexArray
+			IndexArray
 				&setUsage( GLenum const & p_usage ) {
 
 					usage = p_usage;
@@ -741,990 +686,1048 @@ GLR {
 				}
 
 				int
-				vertexCount( ) {
+				indexCount( ) {
 
-					return arr.size( ) / stride;
+					return arr.size( );
 				}
 
 				void
 				bind( ) {
 
-					glBindVertexArray( vaoId );
-					glBindBuffer( GL_ARRAY_BUFFER, vboId );
+					glBindVertexArray( iaoId );
+					glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, iboId );
 				}
 
 				void
 				release( ) {
 
 					glBindVertexArray( 0 );
-					glBindBuffer( GL_ARRAY_BUFFER, 0 );
+					glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
 				}
-	};
+		};
 
-	class
-	ShaderCode {
+		class VertexArray :
+		public Named {
 
-		public :
+			public :
 
-			enum
-			CreationMethod {
+				GLuint
+				vaoId,
+				vboId,
+				stride;
 
-				FROM_CODE,
-				FROM_FILE
-			};
+				GLenum
+				usage;
 
-		public :
+				struct Attr {
 
-			ShaderCode( GLenum p_shaderType, CStr &p_text, CreationMethod const &p_method ) :
-			__type( p_shaderType ),
-			__infoLog( nullptr ) {
+					GLsizei offs;
+					GLuint size;
+				};
 
-				if( p_method == FROM_CODE ) {
+				class Object {
 
-					createFromCode( p_text );
+					public:
 
-					return;
+					Object( GLsizei p_offs, GLuint p_size, GLenum p_mode ) :
+					offs( p_offs ),
+					size( p_size ),
+					mode( p_mode ) {
+
+					}
+
+					GLsizei
+					offs;
+
+					GLuint
+					size;
+
+					GLenum
+					mode;
+				};
+
+				std::map< CStr, Attr >
+				attr;
+
+				std::vector< GLfloat >
+				arr;
+
+				std::vector< Object >
+				obj;
+
+			public :
+
+				VertexArray( CStr &p_name ) :
+				Named( p_name ),
+				vaoId( 0 ),
+				vboId( 0 ),
+				stride( 0 ),
+				usage( GL_STATIC_DRAW ) {
+
+					glGenVertexArrays( 1, &vaoId );
+
+					glGenBuffers( 1, &vboId );
 				}
 
-				createFromFile( p_text );
-			}
+				~VertexArray( ) {
 
-			~ShaderCode( ) {
-
-				glDeleteShader( __id );
-
-				if( __infoLog ) {
-
-					delete __infoLog;
 				}
-			}
 
-		private :
+				VertexArray
+				&operator << ( GLfloat const & p_value ) {
 
-			GLenum
-			__type;			// GL_VERTEX_SHADER or GL_FRAGMENT_SHADER
+					arr.push_back( p_value );
 
-			GLint
-			__success;
+					return *this;
+				}
 
-			std::string
-			__fname,
-			__code;
+				VertexArray
+				&operator << ( Object const & p_object ) {
 
-			GLuint
-			__id;
+					obj.push_back( p_object );
 
-			GLchar
-			*__infoLog;
+					return *this;
+				}
 
-		private :
+				VertexArray
+				&operator << ( glm::vec2 const & p_value ) {
 
-			bool
-			createFromCode( CStr &p_code ) {
+					arr.push_back( p_value.x );
+					arr.push_back( p_value.y );
 
-				__code = p_code;
+					return *this;
+				}
 
-				GLchar const
-				*cStr = p_code.c_str( );
+				VertexArray
+				&operator << ( glm::vec3 const & p_value ) {
 
-				__id = glCreateShader( __type );
+					arr.push_back( p_value.r );
+					arr.push_back( p_value.g );
+						arr.push_back( p_value.b );
 
-				glShaderSource( __id, 1, &cStr, nullptr );
-				glCompileShader( __id );
+						return *this;
+				}
 
-				glGetShaderiv( __id, GL_COMPILE_STATUS, &__success );
+				VertexArray
+				&operator << ( glm::vec4 const & p_value ) {
 
-					if( !__success ) {
+					arr.push_back( p_value.r );
+						arr.push_back( p_value.g );
+						arr.push_back( p_value.b );
+						arr.push_back( p_value.a );
 
-						__infoLog = new GLchar[ 0x200 ];
+						return *this;
+				}
 
-						glGetShaderInfoLog( __id, 0x200, nullptr, __infoLog );
+				VertexArray
+					& attrib( std::string const & p_name, GLsizei const &p_offset, GLuint const &p_size ) {
 
-						std::string const
-						shaderTypeString =
-						__type == GL_FRAGMENT_SHADER
-						? "FRAGMENT"
-						: __type == GL_GEOMETRY_SHADER
-						? "GEOMETRY"
-						: __type == GL_FRAGMENT_SHADER
-						? "FRAGMENT"
-						: "UNKNOWN";
+						attr[ p_name ].offs = p_offset;
+						attr[ p_name ].size = p_size;
+						stride += p_size;
 
-						std::cout << "ERROR::SHADER::" << shaderTypeString << "::COMPILATION_FAILED\n" << __infoLog << std::endl;
+	//					vertexCount = arr.size( ) / stride;
 
-						return false;
+						return *this;
+					}
+
+					VertexArray
+					&setUsage( GLenum const & p_usage ) {
+
+						usage = p_usage;
+
+						return *this;
+					}
+
+					int
+					vertexCount( ) {
+
+						return arr.size( ) / stride;
+					}
+
+					void
+					bind( ) {
+
+						glBindVertexArray( vaoId );
+						glBindBuffer( GL_ARRAY_BUFFER, vboId );
+					}
+
+					void
+					release( ) {
+
+						glBindVertexArray( 0 );
+						glBindBuffer( GL_ARRAY_BUFFER, 0 );
+					}
+		};
+
+		class
+		ShaderCode {
+
+			public :
+
+				enum
+				CreationMethod {
+
+					FROM_CODE,
+					FROM_FILE
+				};
+
+			public :
+
+				ShaderCode( GLenum p_shaderType, CStr &p_text, CreationMethod const &p_method ) :
+				__type( p_shaderType ),
+				__infoLog( nullptr ) {
+
+					if( p_method == FROM_CODE ) {
+
+						createFromCode( p_text );
+
+						return;
+					}
+
+					createFromFile( p_text );
+				}
+
+				~ShaderCode( ) {
+
+					glDeleteShader( __id );
+
+					if( __infoLog ) {
+
+						delete __infoLog;
+					}
+				}
+
+			private :
+
+				GLenum
+				__type;			// GL_VERTEX_SHADER or GL_FRAGMENT_SHADER
+
+				GLint
+				__success;
+
+				std::string
+				__fname,
+				__code;
+
+				GLuint
+				__id;
+
+				GLchar
+				*__infoLog;
+
+			private :
+
+				bool
+				createFromCode( CStr &p_code ) {
+
+					__code = p_code;
+
+					GLchar const
+					*cStr = p_code.c_str( );
+
+					__id = glCreateShader( __type );
+
+					glShaderSource( __id, 1, &cStr, nullptr );
+					glCompileShader( __id );
+
+					glGetShaderiv( __id, GL_COMPILE_STATUS, &__success );
+
+						if( !__success ) {
+
+							__infoLog = new GLchar[ 0x200 ];
+
+							glGetShaderInfoLog( __id, 0x200, nullptr, __infoLog );
+
+							std::string const
+							shaderTypeString =
+							__type == GL_FRAGMENT_SHADER
+							? "FRAGMENT"
+							: __type == GL_GEOMETRY_SHADER
+							? "GEOMETRY"
+							: __type == GL_FRAGMENT_SHADER
+							? "FRAGMENT"
+							: "UNKNOWN";
+
+							std::cout << "ERROR::SHADER::" << shaderTypeString << "::COMPILATION_FAILED\n" << __infoLog << std::endl;
+
+							return false;
+						}
+
+						return true;
+				}
+
+				bool
+				createFromFile( CStr &p_fileName ) {
+
+					try {
+
+						std::ifstream
+						ifs( p_fileName.c_str( ) );
+
+						std::stringstream
+						ss;
+
+						ss << ifs.rdbuf( );
+
+						ifs.close( );
+
+						std::cout << ss.str( ) << std::endl;
+
+							return createFromCode( ss.str( ) );
+					}
+					catch( std::exception p_exception  ) {
+
+						std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
 					}
 
 					return true;
-			}
-
-			bool
-			createFromFile( CStr &p_fileName ) {
-
-				try {
-
-					std::ifstream
-					ifs( p_fileName.c_str( ) );
-
-					std::stringstream
-					ss;
-
-					ss << ifs.rdbuf( );
-
-					ifs.close( );
-
-					std::cout << ss.str( ) << std::endl;
-
-						return createFromCode( ss.str( ) );
-				}
-				catch( std::exception p_exception  ) {
-
-					std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
 				}
 
-				return true;
-			}
+			public :
 
-		public :
+				Str
+				code( ) const {
 
-			Str
-			code( ) const {
-
-				return __code;
-			}
-
-			GLuint
-			id( ) const {
-
-				return __id;
-			}
-
-			Str
-			fileName( ) const {
-
-				return __fname;
-			}
-
-			bool
-			ok( ) const {
-
-				return __success;
-			}
-
-			GLenum
-				type( ) const {
-
-					return __type;
+					return __code;
 				}
-	};
 
-	class
-	Shader :
-	public
-	Named {
+				GLuint
+				id( ) const {
 
-		public :
-
-			Shader( CStr &p_name, CStr &p_vertexText, CStr &p_fragmentText, ShaderCode::CreationMethod const &p_method ) :
-			Named( p_name ),
-			__vertexShader( new ShaderCode( GL_VERTEX_SHADER, p_vertexText, p_method ) ),
-			__geometryShader( nullptr ),
-			__fragmentShader( new ShaderCode( GL_FRAGMENT_SHADER, p_fragmentText, p_method ) ),
-			__success( 0 ),
-			__id( 0 ),
-			__infoLog( nullptr ) {
-
-				if( __vertexShader && __fragmentShader &&
-				__vertexShader->ok( ) && __fragmentShader->ok( ) ) {
-
-					__id = glCreateProgram( );
-					glAttachShader( __id, __vertexShader->id( ) );
-					glAttachShader( __id, __fragmentShader->id( ) );
-
-					glLinkProgram( __id );
-
-					glGetProgramiv( __id, GL_LINK_STATUS, &__success );
-
-					if( !__success ) {
-
-						__infoLog = new GLchar[ 0x200 ];
-
-						glGetProgramInfoLog( __id, 0x200, nullptr, __infoLog );
-						std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << __infoLog << std::endl;
-
-						return;
-					}
-
-					glDeleteShader( __vertexShader->id( ) );
-					glDeleteShader( __fragmentShader->id( ) );
+					return __id;
 				}
-			}
 
-			Shader( CStr &p_name, CStr &p_vertexText, CStr &p_fragmentText, ShaderCode::CreationMethod const &p_method, std::vector< GLuint > const &p_locId, std::vector< Str > const &p_names ) :
-			Named( p_name ),
-			__vertexShader( new ShaderCode( GL_VERTEX_SHADER, p_vertexText, p_method ) ),
-			__geometryShader( nullptr ),
-			__fragmentShader( new ShaderCode( GL_FRAGMENT_SHADER, p_fragmentText, p_method ) ),
-			__success( 0 ) {
+				Str
+				fileName( ) const {
 
-				if( __vertexShader && __fragmentShader &&
-				__vertexShader->ok( ) && __fragmentShader->ok( ) ) {
-
-					__id = glCreateProgram( );
-					glAttachShader( __id, __vertexShader->id( ) );
-					glAttachShader( __id, __fragmentShader->id( ) );
-
-					for( unsigned int i = 0; i < p_locId.size( ); ++i ) {
-
-						glBindAttribLocation( __id, p_locId[ i ], p_names[ i ].c_str( ) );
-					}
-
-					glLinkProgram( __id );
-
-					glGetProgramiv( __id, GL_LINK_STATUS, &__success );
-
-					if( !__success ) {
-
-						__infoLog = new GLchar[ 0x200 ];
-
-						glGetProgramInfoLog( __id, 0x200, nullptr, __infoLog );
-						std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << __infoLog << std::endl;
-
-						return;
-					}
-
-					glDeleteShader( __vertexShader->id( ) );
-					glDeleteShader( __fragmentShader->id( ) );
+					return __fname;
 				}
-			}
 
-			Shader( CStr &p_name, CStr &p_vertexText, CStr &p_geometryText, CStr &p_fragmentText, ShaderCode::CreationMethod const &p_method ) :
-			Named( p_name ),
-			__vertexShader( new ShaderCode( GL_VERTEX_SHADER, p_vertexText, p_method ) ),
-			__geometryShader( new ShaderCode( GL_GEOMETRY_SHADER, p_geometryText, p_method ) ),
-			__fragmentShader( new ShaderCode( GL_FRAGMENT_SHADER, p_fragmentText, p_method ) ),
-			__success( 0 ),
-			__id( 0 ),
-			__infoLog( nullptr ) {
-
-				if( __vertexShader && __geometryShader && __fragmentShader &&
-				__vertexShader->ok( ) && __geometryShader->ok( ) && __fragmentShader->ok( ) ) {
-
-					__id = glCreateProgram( );
-					glAttachShader( __id, __vertexShader->id( ) );
-					glAttachShader( __id, __geometryShader->id( ) );
-					glAttachShader( __id, __fragmentShader->id( ) );
-
-					glLinkProgram( __id );
-
-					glGetProgramiv( __id, GL_LINK_STATUS, &__success );
-
-					if( !__success ) {
-
-						__infoLog = new GLchar[ 0x200 ];
-
-						glGetProgramInfoLog( __id, 0x200, nullptr, __infoLog );
-						std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << __infoLog << std::endl;
-
-							return;
-					}
-
-					glDeleteShader( __vertexShader->id( ) );
-					glDeleteShader( __geometryShader->id( ) );
-					glDeleteShader( __fragmentShader->id( ) );
-				}
-			}
-
-			Shader( CStr &p_name, CStr &p_vertexText, CStr &p_geometryText, CStr &p_fragmentText, ShaderCode::CreationMethod const &p_method, std::vector< GLuint > const &p_locId, std::vector< Str > const &p_names ) :
-			Named( p_name ),
-			__vertexShader( new ShaderCode( GL_VERTEX_SHADER, p_vertexText, p_method ) ),
-			__geometryShader( new ShaderCode( GL_GEOMETRY_SHADER, p_geometryText, p_method ) ),
-			__fragmentShader( new ShaderCode( GL_FRAGMENT_SHADER, p_fragmentText, p_method ) ),
-			__success( 0 ) {
-
-				if( __vertexShader && __geometryShader && __fragmentShader &&
-				__vertexShader->ok( ) && __geometryShader->ok( ) && __fragmentShader->ok( ) ) {
-
-					__id = glCreateProgram( );
-					glAttachShader( __id, __vertexShader->id( ) );
-					glAttachShader( __id, __geometryShader->id( ) );
-					glAttachShader( __id, __fragmentShader->id( ) );
-
-					for( unsigned int i = 0; i < p_locId.size( ); ++i ) {
-
-						glBindAttribLocation( __id, p_locId[ i ], p_names[ i ].c_str( ) );
-					}
-
-					glLinkProgram( __id );
-
-					glGetProgramiv( __id, GL_LINK_STATUS, &__success );
-
-					if( !__success ) {
-
-						__infoLog = new GLchar[ 0x200 ];
-
-							glGetProgramInfoLog( __id, 0x200, nullptr, __infoLog );
-							std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << __infoLog << std::endl;
-
-							return;
-					}
-
-					glDeleteShader( __vertexShader->id( ) );
-						glDeleteShader( __geometryShader->id( ) );
-						glDeleteShader( __fragmentShader->id( ) );
-				}
-			}
-
-			~Shader( ) {
-
-				glDeleteProgram( __id );
-
-				if( __infoLog ) {
-
-					delete __infoLog;
-				}
-				if( __fragmentShader ) {
-
-					delete __fragmentShader;
-				}
-				if( __geometryShader ) {
-
-					delete __geometryShader;
-				}
-				if( __vertexShader ) {
-
-					delete __vertexShader;
-				}
-			}
-
-		private :
-
-			ShaderCode
-			*__vertexShader,
-			*__geometryShader,
-			*__fragmentShader;
-
-			GLint
-			__success;
-
-			GLuint
-			__id;
-
-			GLchar
-			*__infoLog;
-
-		public :
-
-
-			enum
-			TYPE {
-
-				INT, UINT, FLOAT,
-				VEC2, VEC3, VEC4,
-				IVEC2, IVEC3, IVEC4,
-				UVEC2, UVEC3, UVEC4,
-				MAT2, MAT2x3, MAT2x4,
-				MAT3x2, MAT3, MAT3x4,
-				MAT4x2, MAT4x3, MAT4
-			};
-
-			enum
-			SIZE {
-
-				SCALAR = 0,
-				ARR1 = 1,
-				ARR2 = 2,
-				ARR3 = 3,
-				ARR4 = 4,
-				ARR5 = 5,
-				ARR6 = 6,
-				ARR7 = 7,
-				ARR8 = 8,
-				ARR9 = 9,
-				ARR10 = 10
-			};
-
-			class
-			Uniform {
-
-				public:
-
-					TYPE
-					type;
-
-					SIZE
-					size;
-
-					void
-					* data;
-
-				public:
-
-					Uniform( TYPE const & p_ut = INT, SIZE const & p_us = SCALAR, void * p_data = nullptr ) :
-					type( p_ut ),
-					size( p_us ),
-					data( p_data ) {
-
-					}
-
-					void
-					set( TYPE const & p_ut, SIZE const & p_us, void* p_data ) {
-
-						type = p_ut;
-						size = p_us;
-						data = p_data;
-					}
-			};
-
-			std::map< CStr, Uniform >
-			uniform;
-
-		public:
-
-			GLuint
-			id( ) const {
-
-				return __id;
-			}
-
-			bool
+				bool
 				ok( ) const {
 
 					return __success;
 				}
 
-				void
-				bind( ) {
+				GLenum
+					type( ) const {
 
-					return glUseProgram( __id );
+						return __type;
+					}
+		};
+
+		class Shader :
+		public Named {
+
+			public :
+
+				Shader( CStr &p_name, CStr &p_vertexText, CStr &p_fragmentText, ShaderCode::CreationMethod const &p_method ) :
+				Named( p_name ),
+				__vertexShader( new ShaderCode( GL_VERTEX_SHADER, p_vertexText, p_method ) ),
+				__geometryShader( nullptr ),
+				__fragmentShader( new ShaderCode( GL_FRAGMENT_SHADER, p_fragmentText, p_method ) ),
+				__success( 0 ),
+				__id( 0 ),
+				__infoLog( nullptr ) {
+
+					if( __vertexShader && __fragmentShader &&
+					__vertexShader->ok( ) && __fragmentShader->ok( ) ) {
+
+						__id = glCreateProgram( );
+						glAttachShader( __id, __vertexShader->id( ) );
+						glAttachShader( __id, __fragmentShader->id( ) );
+
+						glLinkProgram( __id );
+
+						glGetProgramiv( __id, GL_LINK_STATUS, &__success );
+
+						if( !__success ) {
+
+							__infoLog = new GLchar[ 0x200 ];
+
+							glGetProgramInfoLog( __id, 0x200, nullptr, __infoLog );
+							std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << __infoLog << std::endl;
+
+							return;
+						}
+
+						glDeleteShader( __vertexShader->id( ) );
+						glDeleteShader( __fragmentShader->id( ) );
+					}
 				}
 
-				void
-				release( ) {
+				Shader( CStr &p_name, CStr &p_vertexText, CStr &p_fragmentText, ShaderCode::CreationMethod const &p_method, std::vector< GLuint > const &p_locId, std::vector< Str > const &p_names ) :
+				Named( p_name ),
+				__vertexShader( new ShaderCode( GL_VERTEX_SHADER, p_vertexText, p_method ) ),
+				__geometryShader( nullptr ),
+				__fragmentShader( new ShaderCode( GL_FRAGMENT_SHADER, p_fragmentText, p_method ) ),
+				__success( 0 ) {
 
-					return glUseProgram( 0 );
+					if( __vertexShader && __fragmentShader &&
+					__vertexShader->ok( ) && __fragmentShader->ok( ) ) {
+
+						__id = glCreateProgram( );
+						glAttachShader( __id, __vertexShader->id( ) );
+						glAttachShader( __id, __fragmentShader->id( ) );
+
+						for( unsigned int i = 0; i < p_locId.size( ); ++i ) {
+
+							glBindAttribLocation( __id, p_locId[ i ], p_names[ i ].c_str( ) );
+						}
+
+						glLinkProgram( __id );
+
+						glGetProgramiv( __id, GL_LINK_STATUS, &__success );
+
+						if( !__success ) {
+
+							__infoLog = new GLchar[ 0x200 ];
+
+							glGetProgramInfoLog( __id, 0x200, nullptr, __infoLog );
+							std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << __infoLog << std::endl;
+
+							return;
+						}
+
+						glDeleteShader( __vertexShader->id( ) );
+						glDeleteShader( __fragmentShader->id( ) );
+					}
 				}
 
-		private:
+				Shader( CStr &p_name, CStr &p_vertexText, CStr &p_geometryText, CStr &p_fragmentText, ShaderCode::CreationMethod const &p_method ) :
+				Named( p_name ),
+				__vertexShader( new ShaderCode( GL_VERTEX_SHADER, p_vertexText, p_method ) ),
+				__geometryShader( new ShaderCode( GL_GEOMETRY_SHADER, p_geometryText, p_method ) ),
+				__fragmentShader( new ShaderCode( GL_FRAGMENT_SHADER, p_fragmentText, p_method ) ),
+				__success( 0 ),
+				__id( 0 ),
+				__infoLog( nullptr ) {
 
-		public:
+					if( __vertexShader && __geometryShader && __fragmentShader &&
+					__vertexShader->ok( ) && __geometryShader->ok( ) && __fragmentShader->ok( ) ) {
 
-				Shader
-				& addUniform( CStr & p_name, TYPE p_ut, SIZE p_us, void * p_data ) {
+						__id = glCreateProgram( );
+						glAttachShader( __id, __vertexShader->id( ) );
+						glAttachShader( __id, __geometryShader->id( ) );
+						glAttachShader( __id, __fragmentShader->id( ) );
 
-					uniform[ p_name ] = Uniform( p_ut, p_us, p_data );
+						glLinkProgram( __id );
 
-					return *this;
+						glGetProgramiv( __id, GL_LINK_STATUS, &__success );
+
+						if( !__success ) {
+
+							__infoLog = new GLchar[ 0x200 ];
+
+							glGetProgramInfoLog( __id, 0x200, nullptr, __infoLog );
+							std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << __infoLog << std::endl;
+
+								return;
+						}
+
+						glDeleteShader( __vertexShader->id( ) );
+						glDeleteShader( __geometryShader->id( ) );
+						glDeleteShader( __fragmentShader->id( ) );
+					}
 				}
 
-				Shader
-				& modifyUniform( CStr & p_name, TYPE p_ut, SIZE p_us, void * p_data ) {
+				Shader( CStr &p_name, CStr &p_vertexText, CStr &p_geometryText, CStr &p_fragmentText, ShaderCode::CreationMethod const &p_method, std::vector< GLuint > const &p_locId, std::vector< Str > const &p_names ) :
+				Named( p_name ),
+				__vertexShader( new ShaderCode( GL_VERTEX_SHADER, p_vertexText, p_method ) ),
+				__geometryShader( new ShaderCode( GL_GEOMETRY_SHADER, p_geometryText, p_method ) ),
+				__fragmentShader( new ShaderCode( GL_FRAGMENT_SHADER, p_fragmentText, p_method ) ),
+				__success( 0 ) {
 
-					uniform[ p_name ].set( p_ut, p_us, p_data );
+					if( __vertexShader && __geometryShader && __fragmentShader &&
+					__vertexShader->ok( ) && __geometryShader->ok( ) && __fragmentShader->ok( ) ) {
 
-					return *this;
+						__id = glCreateProgram( );
+						glAttachShader( __id, __vertexShader->id( ) );
+						glAttachShader( __id, __geometryShader->id( ) );
+						glAttachShader( __id, __fragmentShader->id( ) );
+
+						for( unsigned int i = 0; i < p_locId.size( ); ++i ) {
+
+							glBindAttribLocation( __id, p_locId[ i ], p_names[ i ].c_str( ) );
+						}
+
+						glLinkProgram( __id );
+
+						glGetProgramiv( __id, GL_LINK_STATUS, &__success );
+
+						if( !__success ) {
+
+							__infoLog = new GLchar[ 0x200 ];
+
+								glGetProgramInfoLog( __id, 0x200, nullptr, __infoLog );
+								std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << __infoLog << std::endl;
+
+								return;
+						}
+
+						glDeleteShader( __vertexShader->id( ) );
+							glDeleteShader( __geometryShader->id( ) );
+							glDeleteShader( __fragmentShader->id( ) );
+					}
 				}
 
-				Shader
-				& setUniformSamplerId( CStr & p_name, GLint p_samplerId ) {
+				~Shader( ) {
 
-					glUniform1i( glGetUniformLocation( __id, p_name.c_str( ) ), p_samplerId );
+					glDeleteProgram( __id );
 
-					return *this;
+					if( __infoLog ) {
+
+						delete __infoLog;
+					}
+					if( __fragmentShader ) {
+
+						delete __fragmentShader;
+					}
+					if( __geometryShader ) {
+
+						delete __geometryShader;
+					}
+					if( __vertexShader ) {
+
+						delete __vertexShader;
+					}
 				}
 
-				void
-				sendUniforms( ) {
+			private :
 
-					for( auto u : uniform ) {
+				ShaderCode
+				*__vertexShader,
+				*__geometryShader,
+				*__fragmentShader;
 
-						GLint
-						uLoc = glGetUniformLocation( __id, u.first.c_str( ) );
+				GLint
+				__success;
 
-						if( u.second.size < 1 ) {
+				GLuint
+				__id;
 
-							switch( u.second.type ) {
+				GLchar
+				*__infoLog;
 
-								case INT : {
+			public :
 
-									glUniform1i( uLoc, ( static_cast< GLint * >( u.second.data ) )[ 0 ] );
 
-									break;
-								}
+				enum
+				TYPE {
 
-								case UINT : {
+					INT, UINT, FLOAT,
+					VEC2, VEC3, VEC4,
+					IVEC2, IVEC3, IVEC4,
+					UVEC2, UVEC3, UVEC4,
+					MAT2, MAT2x3, MAT2x4,
+					MAT3x2, MAT3, MAT3x4,
+					MAT4x2, MAT4x3, MAT4
+				};
 
-									glUniform1ui( uLoc, ( static_cast< GLuint * >( u.second.data ) )[ 0 ] );
+				enum
+				SIZE {
 
-									break;
-								}
+					SCALAR = 0,
+					ARR1 = 1,
+					ARR2 = 2,
+					ARR3 = 3,
+					ARR4 = 4,
+					ARR5 = 5,
+					ARR6 = 6,
+					ARR7 = 7,
+					ARR8 = 8,
+					ARR9 = 9,
+					ARR10 = 10
+				};
 
-								case FLOAT : {
+				class
+				Uniform {
 
-									glUniform1f( uLoc, ( static_cast< GLfloat * >( u.second.data ) )[ 0 ] );
+					public:
 
-									break;
-								}
+						TYPE
+						type;
 
-								case IVEC2 : {
+						SIZE
+						size;
 
-									glUniform2i(
-									uLoc,
-									( static_cast< GLint * >( u.second.data ) )[ 0 ],
-									( static_cast< GLint * >( u.second.data ) )[ 1 ] );
+						void
+						* data;
 
-									break;
-								}
+					public:
 
-								case IVEC3 : {
+						Uniform( TYPE const & p_ut = INT, SIZE const & p_us = SCALAR, void * p_data = nullptr ) :
+						type( p_ut ),
+						size( p_us ),
+						data( p_data ) {
 
-									glUniform3i(
-									uLoc,
-									( static_cast< GLint * >( u.second.data ) )[ 0 ],
-									( static_cast< GLint * >( u.second.data ) )[ 1 ],
-									( static_cast< GLint * >( u.second.data ) )[ 2 ] );
+						}
 
-									break;
-								}
+						void
+						set( TYPE const & p_ut, SIZE const & p_us, void* p_data ) {
 
-								case IVEC4 : {
+							type = p_ut;
+							size = p_us;
+							data = p_data;
+						}
+				};
 
-									glUniform4i(
-									uLoc,
-									( static_cast< GLint * >( u.second.data ) )[ 0 ],
-									( static_cast< GLint * >( u.second.data ) )[ 1 ],
-									( static_cast< GLint * >( u.second.data ) )[ 2 ],
-									( static_cast< GLint * >( u.second.data ) )[ 3 ] );
+				std::map< CStr, Uniform >
+				uniform;
 
-									break;
-								}
+			public:
 
-								case UVEC2 : {
+				GLuint
+				id( ) const {
 
-									glUniform2ui(
-									uLoc,
-									( static_cast< GLuint * >( u.second.data ) )[ 0 ],
-									( static_cast< GLuint * >( u.second.data ) )[ 1 ] );
+					return __id;
+				}
 
-									break;
-								}
+				bool
+					ok( ) const {
 
-								case UVEC3 : {
+						return __success;
+					}
 
-									glUniform3ui(
-									uLoc,
-									( static_cast< GLuint * >( u.second.data ) )[ 0 ],
-									( static_cast< GLuint * >( u.second.data ) )[ 1 ],
-									( static_cast< GLuint * >( u.second.data ) )[ 2 ] );
+					void
+					bind( ) {
 
-									break;
-								}
+						return glUseProgram( __id );
+					}
 
-								case UVEC4 : {
+					void
+					release( ) {
 
-									glUniform4ui(
-									uLoc,
-									( static_cast< GLuint * >( u.second.data ) )[ 0 ],
-									( static_cast< GLuint * >( u.second.data ) )[ 1 ],
-									( static_cast< GLuint * >( u.second.data ) )[ 2 ],
-									( static_cast< GLuint * >( u.second.data ) )[ 3 ] );
+						return glUseProgram( 0 );
+					}
 
-									break;
-								}
+			private:
 
-								case VEC2 : {
+			public:
 
-									glUniform2f(
-									uLoc,
-									( static_cast< GLfloat * >( u.second.data ) )[ 0 ],
-									( static_cast< GLfloat * >( u.second.data ) )[ 1 ] );
+					Shader
+					& addUniform( CStr & p_name, TYPE p_ut, SIZE p_us, void * p_data ) {
 
-									break;
-								}
+						uniform[ p_name ] = Uniform( p_ut, p_us, p_data );
 
-								case VEC3 : {
+						return *this;
+					}
 
-									glUniform3f(
-									uLoc,
-									( static_cast< GLfloat * >( u.second.data ) )[ 0 ],
-									( static_cast< GLfloat * >( u.second.data ) )[ 1 ],
-									( static_cast< GLfloat * >( u.second.data ) )[ 2 ] );
+					Shader
+					& modifyUniform( CStr & p_name, TYPE p_ut, SIZE p_us, void * p_data ) {
 
-									break;
-								}
+						uniform[ p_name ].set( p_ut, p_us, p_data );
 
-								case VEC4 : {
+						return *this;
+					}
 
-									glUniform4f(
-									uLoc,
-									( static_cast< GLfloat * >( u.second.data ) )[ 0 ],
-									( static_cast< GLfloat * >( u.second.data ) )[ 1 ],
-									( static_cast< GLfloat * >( u.second.data ) )[ 2 ],
-									( static_cast< GLfloat * >( u.second.data ) )[ 3 ] );
+					Shader
+					& setUniformSamplerId( CStr & p_name, GLint p_samplerId ) {
 
-									break;
-								}
+						glUniform1i( glGetUniformLocation( __id, p_name.c_str( ) ), p_samplerId );
 
-								case MAT2 : {
+						return *this;
+					}
 
-									glUniformMatrix2fv( uLoc, 1, false, static_cast< GLfloat * >( u.second.data ) );
+					void
+					sendUniforms( ) {
 
-									break;
-								}
+						for( auto u : uniform ) {
 
-								case MAT2x3 : {
+							GLint
+							uLoc = glGetUniformLocation( __id, u.first.c_str( ) );
 
-									glUniformMatrix2x3fv( uLoc, 1, false, static_cast< GLfloat * >( u.second.data ) );
+							if( u.second.size < 1 ) {
 
-									break;
-								}
+								switch( u.second.type ) {
 
-								case MAT2x4 : {
+									case INT : {
 
-									glUniformMatrix2x4fv( uLoc, 1, false, static_cast< GLfloat * >( u.second.data ) );
+										glUniform1i( uLoc, ( static_cast< GLint * >( u.second.data ) )[ 0 ] );
 
-									break;
-								}
+										break;
+									}
 
-								case MAT3x2 : {
+									case UINT : {
 
-									glUniformMatrix3x2fv( uLoc, 1, false, static_cast< GLfloat * >( u.second.data ) );
+										glUniform1ui( uLoc, ( static_cast< GLuint * >( u.second.data ) )[ 0 ] );
 
-									break;
-								}
+										break;
+									}
 
-								case MAT3 : {
+									case FLOAT : {
 
-									glUniformMatrix3fv( uLoc, 1, false, static_cast< GLfloat * >( u.second.data ) );
+										glUniform1f( uLoc, ( static_cast< GLfloat * >( u.second.data ) )[ 0 ] );
 
-									break;
-								}
+										break;
+									}
 
-								case MAT3x4 : {
+									case IVEC2 : {
 
-									glUniformMatrix3x4fv( uLoc, 1, false, static_cast< GLfloat * >( u.second.data ) );
+										glUniform2i(
+										uLoc,
+										( static_cast< GLint * >( u.second.data ) )[ 0 ],
+										( static_cast< GLint * >( u.second.data ) )[ 1 ] );
 
-									break;
-								}
+										break;
+									}
 
-								case MAT4x2 : {
+									case IVEC3 : {
 
-									glUniformMatrix4x2fv( uLoc, 1, false, static_cast< GLfloat * >( u.second.data ) );
+										glUniform3i(
+										uLoc,
+										( static_cast< GLint * >( u.second.data ) )[ 0 ],
+										( static_cast< GLint * >( u.second.data ) )[ 1 ],
+										( static_cast< GLint * >( u.second.data ) )[ 2 ] );
 
-									break;
-								}
+										break;
+									}
 
-								case MAT4x3 : {
+									case IVEC4 : {
 
-									glUniformMatrix4x3fv( uLoc, 1, false, static_cast< GLfloat * >( u.second.data ) );
+										glUniform4i(
+										uLoc,
+										( static_cast< GLint * >( u.second.data ) )[ 0 ],
+										( static_cast< GLint * >( u.second.data ) )[ 1 ],
+										( static_cast< GLint * >( u.second.data ) )[ 2 ],
+										( static_cast< GLint * >( u.second.data ) )[ 3 ] );
 
-									break;
-								}
+										break;
+									}
 
-								case MAT4 : {
+									case UVEC2 : {
 
-									glUniformMatrix4fv( uLoc, 1, false, static_cast< GLfloat * >( u.second.data ) );
+										glUniform2ui(
+										uLoc,
+										( static_cast< GLuint * >( u.second.data ) )[ 0 ],
+										( static_cast< GLuint * >( u.second.data ) )[ 1 ] );
 
-									break;
+										break;
+									}
+
+									case UVEC3 : {
+
+										glUniform3ui(
+										uLoc,
+										( static_cast< GLuint * >( u.second.data ) )[ 0 ],
+										( static_cast< GLuint * >( u.second.data ) )[ 1 ],
+										( static_cast< GLuint * >( u.second.data ) )[ 2 ] );
+
+										break;
+									}
+
+									case UVEC4 : {
+
+										glUniform4ui(
+										uLoc,
+										( static_cast< GLuint * >( u.second.data ) )[ 0 ],
+										( static_cast< GLuint * >( u.second.data ) )[ 1 ],
+										( static_cast< GLuint * >( u.second.data ) )[ 2 ],
+										( static_cast< GLuint * >( u.second.data ) )[ 3 ] );
+
+										break;
+									}
+
+									case VEC2 : {
+
+										glUniform2f(
+										uLoc,
+										( static_cast< GLfloat * >( u.second.data ) )[ 0 ],
+										( static_cast< GLfloat * >( u.second.data ) )[ 1 ] );
+
+										break;
+									}
+
+									case VEC3 : {
+
+										glUniform3f(
+										uLoc,
+										( static_cast< GLfloat * >( u.second.data ) )[ 0 ],
+										( static_cast< GLfloat * >( u.second.data ) )[ 1 ],
+										( static_cast< GLfloat * >( u.second.data ) )[ 2 ] );
+
+										break;
+									}
+
+									case VEC4 : {
+
+										glUniform4f(
+										uLoc,
+										( static_cast< GLfloat * >( u.second.data ) )[ 0 ],
+										( static_cast< GLfloat * >( u.second.data ) )[ 1 ],
+										( static_cast< GLfloat * >( u.second.data ) )[ 2 ],
+										( static_cast< GLfloat * >( u.second.data ) )[ 3 ] );
+
+										break;
+									}
+
+									case MAT2 : {
+
+										glUniformMatrix2fv( uLoc, 1, false, static_cast< GLfloat * >( u.second.data ) );
+
+										break;
+									}
+
+									case MAT2x3 : {
+
+										glUniformMatrix2x3fv( uLoc, 1, false, static_cast< GLfloat * >( u.second.data ) );
+
+										break;
+									}
+
+									case MAT2x4 : {
+
+										glUniformMatrix2x4fv( uLoc, 1, false, static_cast< GLfloat * >( u.second.data ) );
+
+										break;
+									}
+
+									case MAT3x2 : {
+
+										glUniformMatrix3x2fv( uLoc, 1, false, static_cast< GLfloat * >( u.second.data ) );
+
+										break;
+									}
+
+									case MAT3 : {
+
+										glUniformMatrix3fv( uLoc, 1, false, static_cast< GLfloat * >( u.second.data ) );
+
+										break;
+									}
+
+									case MAT3x4 : {
+
+										glUniformMatrix3x4fv( uLoc, 1, false, static_cast< GLfloat * >( u.second.data ) );
+
+										break;
+									}
+
+									case MAT4x2 : {
+
+										glUniformMatrix4x2fv( uLoc, 1, false, static_cast< GLfloat * >( u.second.data ) );
+
+										break;
+									}
+
+									case MAT4x3 : {
+
+										glUniformMatrix4x3fv( uLoc, 1, false, static_cast< GLfloat * >( u.second.data ) );
+
+										break;
+									}
+
+									case MAT4 : {
+
+										glUniformMatrix4fv( uLoc, 1, false, static_cast< GLfloat * >( u.second.data ) );
+
+										break;
+									}
 								}
 							}
-						}
-						else {
+							else {
 
-							switch( u.second.type ) {
+								switch( u.second.type ) {
 
-								case INT : {
+									case INT : {
 
-									glUniform1iv( uLoc, u.second.size, static_cast< GLint * >( u.second.data ) );
+										glUniform1iv( uLoc, u.second.size, static_cast< GLint * >( u.second.data ) );
 
-									break;
-								}
+										break;
+									}
 
-								case UINT : {
+									case UINT : {
 
-									glUniform1uiv( uLoc, u.second.size, static_cast< GLuint * >( u.second.data ) );
+										glUniform1uiv( uLoc, u.second.size, static_cast< GLuint * >( u.second.data ) );
 
-									break;
-								}
+										break;
+									}
 
-								case FLOAT : {
+									case FLOAT : {
 
-									glUniform1fv( uLoc, u.second.size,static_cast< GLfloat * >( u.second.data ) );
+										glUniform1fv( uLoc, u.second.size,static_cast< GLfloat * >( u.second.data ) );
 
-									break;
-								}
+										break;
+									}
 
-								case IVEC2 : {
+									case IVEC2 : {
 
-									glUniform2iv( uLoc, u.second.size, static_cast< GLint * >( u.second.data ) );
+										glUniform2iv( uLoc, u.second.size, static_cast< GLint * >( u.second.data ) );
 
-									break;
-								}
+										break;
+									}
 
-								case IVEC3 : {
+									case IVEC3 : {
 
-									glUniform3iv( uLoc, u.second.size, static_cast< GLint * >( u.second.data ) );
+										glUniform3iv( uLoc, u.second.size, static_cast< GLint * >( u.second.data ) );
 
-									break;
-								}
+										break;
+									}
 
-								case IVEC4 : {
+									case IVEC4 : {
 
-									glUniform3iv( uLoc, u.second.size, static_cast< GLint * >( u.second.data ) );
+										glUniform3iv( uLoc, u.second.size, static_cast< GLint * >( u.second.data ) );
 
-									break;
-								}
+										break;
+									}
 
-								case UVEC2 : {
+									case UVEC2 : {
 
-									glUniform2uiv( uLoc, u.second.size, static_cast< GLuint * >( u.second.data ) );
+										glUniform2uiv( uLoc, u.second.size, static_cast< GLuint * >( u.second.data ) );
 
-									break;
-								}
+										break;
+									}
 
-								case UVEC3 : {
+									case UVEC3 : {
 
-									glUniform3uiv( uLoc, u.second.size, static_cast< GLuint * >( u.second.data ) );
+										glUniform3uiv( uLoc, u.second.size, static_cast< GLuint * >( u.second.data ) );
 
-									break;
-								}
+										break;
+									}
 
-								case UVEC4 : {
+									case UVEC4 : {
 
-									glUniform4uiv( uLoc, u.second.size, static_cast< GLuint * >( u.second.data ) );
+										glUniform4uiv( uLoc, u.second.size, static_cast< GLuint * >( u.second.data ) );
 
-									break;
-								}
+										break;
+									}
 
-								case VEC2 : {
+									case VEC2 : {
 
-									glUniform2fv( uLoc, u.second.size, static_cast< GLfloat * >( u.second.data ) );
+										glUniform2fv( uLoc, u.second.size, static_cast< GLfloat * >( u.second.data ) );
 
-									break;
-								}
+										break;
+									}
 
-								case VEC3 : {
+									case VEC3 : {
 
-									glUniform3fv( uLoc, u.second.size, static_cast< GLfloat * >( u.second.data ) );
+										glUniform3fv( uLoc, u.second.size, static_cast< GLfloat * >( u.second.data ) );
 
-									break;
-								}
+										break;
+									}
 
-								case VEC4 : {
+									case VEC4 : {
 
-									glUniform4fv( uLoc, u.second.size, static_cast< GLfloat * >( u.second.data ) );
+										glUniform4fv( uLoc, u.second.size, static_cast< GLfloat * >( u.second.data ) );
 
-									break;
-								}
+										break;
+									}
 
-								case MAT2 : {
+									case MAT2 : {
 
-									glUniformMatrix2fv( uLoc, u.second.size, false, static_cast< GLfloat * >( u.second.data ) );
+										glUniformMatrix2fv( uLoc, u.second.size, false, static_cast< GLfloat * >( u.second.data ) );
 
-									break;
-								}
+										break;
+									}
 
-								case MAT2x3 : {
+									case MAT2x3 : {
 
-									glUniformMatrix2x3fv( uLoc, u.second.size, false, static_cast< GLfloat * >( u.second.data ) );
+										glUniformMatrix2x3fv( uLoc, u.second.size, false, static_cast< GLfloat * >( u.second.data ) );
 
-									break;
-								}
+										break;
+									}
 
-								case MAT2x4 : {
+									case MAT2x4 : {
 
-									glUniformMatrix2x4fv( uLoc, u.second.size, false, static_cast< GLfloat * >( u.second.data ) );
+										glUniformMatrix2x4fv( uLoc, u.second.size, false, static_cast< GLfloat * >( u.second.data ) );
 
-									break;
-								}
+										break;
+									}
 
-								case MAT3x2 : {
+									case MAT3x2 : {
 
-									glUniformMatrix3x2fv( uLoc, u.second.size, false, static_cast< GLfloat * >( u.second.data ) );
+										glUniformMatrix3x2fv( uLoc, u.second.size, false, static_cast< GLfloat * >( u.second.data ) );
 
-									break;
-								}
+										break;
+									}
 
-								case MAT3 : {
+									case MAT3 : {
 
-									glUniformMatrix3fv( uLoc, u.second.size, false, static_cast< GLfloat * >( u.second.data ) );
+										glUniformMatrix3fv( uLoc, u.second.size, false, static_cast< GLfloat * >( u.second.data ) );
 
-									break;
-								}
+										break;
+									}
 
-								case MAT3x4 : {
+									case MAT3x4 : {
 
-									glUniformMatrix3x4fv( uLoc, u.second.size, false, static_cast< GLfloat * >( u.second.data ) );
+										glUniformMatrix3x4fv( uLoc, u.second.size, false, static_cast< GLfloat * >( u.second.data ) );
 
-									break;
-								}
+										break;
+									}
 
-								case MAT4x2 : {
+									case MAT4x2 : {
 
-									glUniformMatrix4x2fv( uLoc, u.second.size, false, static_cast< GLfloat * >( u.second.data ) );
+										glUniformMatrix4x2fv( uLoc, u.second.size, false, static_cast< GLfloat * >( u.second.data ) );
 
-									break;
-								}
+										break;
+									}
 
-								case MAT4x3 : {
+									case MAT4x3 : {
 
-									glUniformMatrix4x3fv( uLoc, u.second.size, false, static_cast< GLfloat * >( u.second.data ) );
+										glUniformMatrix4x3fv( uLoc, u.second.size, false, static_cast< GLfloat * >( u.second.data ) );
 
-									break;
-								}
+										break;
+									}
 
-								case MAT4 : {
+									case MAT4 : {
 
-									glUniformMatrix4fv( uLoc, u.second.size, false, static_cast< GLfloat * >( u.second.data ) );
+										glUniformMatrix4fv( uLoc, u.second.size, false, static_cast< GLfloat * >( u.second.data ) );
 
-									break;
+										break;
+									}
 								}
 							}
 						}
 					}
-				}
-
-				GLint
-				setVertexAttrib( std::string const &p_name, GLint p_size, GLenum p_type, GLboolean p_normalized, GLsizei p_stride, void const *p_offset ) {
 
 					GLint
-					var = glGetAttribLocation( __id,  p_name.c_str( ) );
-					glEnableVertexAttribArray( var );
-					glVertexAttribPointer( var, p_size, p_type, p_normalized, p_stride, p_offset );
+					setVertexAttrib( std::string const &p_name, GLint p_size, GLenum p_type, GLboolean p_normalized, GLsizei p_stride, void const *p_offset ) {
 
-					return var;
+						GLint
+						var = glGetAttribLocation( __id,  p_name.c_str( ) );
+						glEnableVertexAttribArray( var );
+						glVertexAttribPointer( var, p_size, p_type, p_normalized, p_stride, p_offset );
+
+						return var;
+					}
+		};
+
+		class Container :
+		public Named {
+
+			private :
+
+				GLR
+				* __glr;
+
+			public :
+
+				Container( CStr &p_name, GLR * p_glr ) :
+				Named( p_name ),
+				__glr( p_glr ) {
+
 				}
-	};
 
-	class
-	FrameBuffer :
-	public
-	Named {
+				~Container( ) {
 
-		private:
-
-			GLuint
-			__id;
-
-		public :
-
-			FrameBuffer( CStr & p_name ) :
-			Named( p_name ),
-			__id( 0 ) {
-
-				glGenFramebuffers( 1, & __id );
-			}
-
-			~FrameBuffer( ) {
-
-				glDeleteFramebuffers( 1, & __id);
-			}
-
-			void
-			bind( ) {
-
-				glBindFramebuffer( GL_FRAMEBUFFER, __id );
-			}
-
-			GLuint
-			id( ) const {
-
-				return __id;
-			}
-
-			void
-			release( ) {
-
-				glBindFramebuffer( GL_FRAMEBUFFER, 0 );
-			}
-	};
-
-	class
-	Container :
-	public
-	Named {
-
-		private :
-
-			GLR
-			* __glr;
-
-			GLuint
-			__clearBits;
-
-		public :
-
-			Container( CStr &p_name, GLR * p_glr ) :
-			Named( p_name ),
-			__glr( p_glr ),
-			__clearBits( 0x00000000 ),
-			fixSize( false ) {
-
-			}
-
-			~Container( ) {
-
-			}
-
-		public:
-
-			Str
-			frameBuffer;
-
-			Str
-			vertexArray;
-
-			Str
-			indexArray;
-
-			std::vector< Str >
-			inTextures,
-			outTextures,
-			renderBuffers;
-
-			Str
-			shader;
-
-			GLsizei
-			fixViewPortWidth,
-			fixViewPortHeight,
-			viewPortWidth,
-			viewPortHeight;
-
-			bool
-			fixSize;
-
-		public :
-
-			GLenum
-			clearBits( ) const {
-
-				return __clearBits;
-			}
-
-			Container
-			& addClearBits( GLenum const & p_clearBits ) {
-
-				__clearBits = p_clearBits;
-
-				return *this;
-			}
-
-			Container
-			& subClearBits( GLenum const & p_clearBits ) {
-
-				__clearBits |= ~p_clearBits;
-
-					return *this;
-			}
-
-			Container
-				& setFrameBuffer( CStr & p_frameBufferName ) {
-
-					frameBuffer = p_frameBufferName;
-
-					return *this;
 				}
+
+			public:
+
+				Str
+				vertexArray;
+
+				Str
+				indexArray;
+
+				std::vector< Str >
+				inTextures;
+
+				Str
+				shader;
+
+			public :
 
 				Container
 				& setVertexArray( CStr & p_vertexArrayName ) {
@@ -1751,56 +1754,11 @@ GLR {
 				}
 
 				Container
-				& addOutTexture( CStr & p_textureName ) {
-
-					outTextures.push_back( p_textureName );
-
-					return *this;
-				}
-
-				Container
-				& addRenderBuffer( CStr & p_colorRenderBufferName ) {
-
-					renderBuffers.push_back( p_colorRenderBufferName );
-
-					return *this;
-				}
-
-				Container
 				& setShader( CStr & p_shaderName ) {
 
 					shader = p_shaderName;
 
 					return *this;
-				}
-
-				Container
-				& setFixSize( std::size_t const & p_width, std::size_t  const & p_height ) {
-
-					fixSize = true;
-
-					fixViewPortWidth  = p_width;
-					fixViewPortHeight = p_height;
-
-					viewPortWidth  = p_width;
-					viewPortHeight = p_height;
-
-					return *this;
-				}
-
-				void
-				resize( GLsizei p_width = 0, GLsizei p_height = 0 ) {
-
-					viewPortWidth = p_width;
-					viewPortHeight = p_height;
-
-					if( ! fixSize ) {
-
-						for( auto & ot : this->outTextures ) {
-
-							__glr->tx[ ot ]->resize( viewPortWidth, viewPortHeight );
-						}
-					}
 				}
 
 				void
@@ -1831,7 +1789,6 @@ GLR {
 
 						glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof( GLushort ) * iaLoc->arr.size( ), iaLoc->arr.data( ), iaLoc->usage );
 					}
-
 
 					Shader
 					*shLoc = __glr->sh[ shader ];
@@ -1891,98 +1848,6 @@ GLR {
 				void
 				run( ) {
 
-					if( fixSize ) {
-
-						glViewport( 0, 0, fixViewPortWidth, fixViewPortHeight );
-					}
-					else {
-
-						glViewport( 0, 0, viewPortWidth, viewPortHeight );
-					}
-
-
-					if( 0 < frameBuffer.length( ) ) {
-
-						GLenum const
-						drawBuffers[ 0x20 ] = {
-
-						GL_COLOR_ATTACHMENT0,
-						GL_COLOR_ATTACHMENT1,
-						GL_COLOR_ATTACHMENT2,
-						GL_COLOR_ATTACHMENT3,
-						GL_COLOR_ATTACHMENT4,
-						GL_COLOR_ATTACHMENT5,
-						GL_COLOR_ATTACHMENT6,
-						GL_COLOR_ATTACHMENT7,
-						GL_COLOR_ATTACHMENT8,
-						GL_COLOR_ATTACHMENT9,
-						GL_COLOR_ATTACHMENT10,
-						GL_COLOR_ATTACHMENT11,
-						GL_COLOR_ATTACHMENT12,
-						GL_COLOR_ATTACHMENT13,
-						GL_COLOR_ATTACHMENT14,
-						GL_COLOR_ATTACHMENT15,
-						GL_COLOR_ATTACHMENT16,
-						GL_COLOR_ATTACHMENT17,
-						GL_COLOR_ATTACHMENT18,
-						GL_COLOR_ATTACHMENT19,
-						GL_COLOR_ATTACHMENT20,
-						GL_COLOR_ATTACHMENT21,
-						GL_COLOR_ATTACHMENT22,
-						GL_COLOR_ATTACHMENT23,
-						GL_COLOR_ATTACHMENT24,
-						GL_COLOR_ATTACHMENT25,
-						GL_COLOR_ATTACHMENT26,
-						GL_COLOR_ATTACHMENT27,
-						GL_COLOR_ATTACHMENT28,
-						GL_COLOR_ATTACHMENT29,
-						GL_COLOR_ATTACHMENT30,
-						GL_COLOR_ATTACHMENT31
-						};
-
-						FrameBuffer
-						* fb = __glr->fb[ frameBuffer ];
-
-						fb->bind( );
-
-						GLuint
-						colorAttachments = 0;
-
-						for( GLuint i = 0; i < outTextures.size( ); ++ i ) {
-
-							Texture
-							*tx = __glr->tx[ outTextures[ i ] ];
-
-							tx->bind( );
-
-							if( tx->format == GL_DEPTH_COMPONENT ) {
-
-								glFramebufferTexture2D( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, tx->id, 0 );
-							}
-							else if ( tx->format == GL_STENCIL_INDEX ) {
-
-								glFramebufferTexture2D( GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, tx->id, 0 );
-							}
-							else if ( tx->format == GL_DEPTH_STENCIL ) {
-
-								glFramebufferTexture2D( GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, tx->id, 0 );
-							}
-							else {
-
-								glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttachments ++, GL_TEXTURE_2D, tx->id, 0 );
-							}
-						}
-
-						if( 0 < colorAttachments ) {
-
-							glDrawBuffers( colorAttachments, drawBuffers );
-						}
-						else {
-
-							glDrawBuffer( GL_NONE );
-						}
-					}
-
 					VertexArray
 					* va = __glr->va[ vertexArray ];
 
@@ -2031,10 +1896,6 @@ GLR {
 
 					//addUniformInt( tx->name( ).c_str( ), i );
 
-					if ( clearBits ( ) )
-
-						glClear ( clearBits( ) );
-
 					if( va ) {
 
 						for( auto i : va->obj ) {
@@ -2063,31 +1924,21 @@ GLR {
 					if( va ) va->release( );
 
 					if( ia ) ia->release( );
-
-					if( 0 < frameBuffer.size( ) ) {
-
-						__glr->fb[ frameBuffer ]->release( );
-
-						for( GLuint i = 0; i < outTextures.size( ); ++ i ) {
-
-							__glr->tx[ outTextures[ i ] ]->release( );
-						}
-					}
 				}
-	};
+		};
 
 	public :
 
-	std::map< CStr, FrameBuffer * >
-	fb;
+		FrameBuffer
+		* fb;
 
-	std::map< CStr, VertexArray * >
-	va;
+		std::map< CStr, VertexArray * >
+		va;
 
-	std::map< CStr, IndexArray * >
-	ia;
+		std::map< CStr, IndexArray * >
+		ia;
 
-	std::map< CStr, Texture * >
+		std::map< CStr, Texture * >
 		tx;
 
 		std::map< CStr, Shader * >
@@ -2096,24 +1947,23 @@ GLR {
 		std::map< CStr, Container * >
 		co;
 
-		FrameBuffer
-		*currentFrameBuffer;
-
 		VertexArray
-		*currentVertexArray;
+		* currentVertexArray;
 
 		IndexArray
-		*currentIndexArray;
+		* currentIndexArray;
 
 		Shader
-		*currentShader;
+		* currentShader;
 
 		Container
-		*currentProgram;
+		* currentContainer;
 
-		std::size_t
-		currentViewportWidth,
-		currentViewportHeight;
+		MODE
+		mode;
+
+		bool
+		fixedSize;
 
 	public :
 
@@ -2170,17 +2020,16 @@ GLR {
 			return * currentIndexArray;
 		}
 
-		FrameBuffer
-		& frameBuffer ( CStr & p_name ) {
+		GLR
+		& createOffScreen ( ) {
 
-			if ( fb.find ( p_name ) == fb.cend ( ) ) {
+			if ( fb )
 
-				fb[ p_name ] = new FrameBuffer ( p_name );
-			}
+				return * this;
 
-			currentFrameBuffer = fb[ p_name ];
+			fb = new FrameBuffer ( );
 
-			return * currentFrameBuffer;
+			return * this;
 		}
 
 		Texture
@@ -2259,10 +2108,26 @@ GLR {
 				co[ p_name ] = new Container ( p_name, this );
 			}
 
-			currentProgram = co[ p_name ];
+			currentContainer = co[ p_name ];
 
-			return * currentProgram;
+			return * currentContainer;
 		}
+
+		void
+		resize( GLsizei p_width = 0, GLsizei p_height = 0 ) {
+
+			viewPortWidth = p_width;
+			viewPortHeight = p_height;
+
+			if( ! fixSize ) {
+
+				for( auto ot : fb->outTextures ) {
+
+					tx[ ot ]->resize( viewPortWidth, viewPortHeight );
+				}
+			}
+		}
+
 
 		void
 		run ( std::initializer_list< CStr > const & p_containers ) {
@@ -2279,6 +2144,80 @@ GLR {
 			for ( auto c : p_containers ) {
 
 				co[ c ]->run ( );
+			}
+		}
+
+		void
+		screenoff ( ) {
+
+			if ( mode == OFFSCREEN )
+
+				return;
+
+			if ( fb == nullptr )
+
+				return;
+
+			mode = OFFSCREEN;
+
+			fb->bind( );
+
+			GLuint
+			colorAttachments = 0;
+
+			for( auto t : fb->outTextures ) {
+
+				Texture
+				* txLoc = tx[ t ];
+
+				txLoc->bind( );
+
+				if( txLoc->format == GL_DEPTH_COMPONENT ) {
+
+					glFramebufferTexture2D( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, txLoc->id, 0 );
+				}
+				else if ( txLoc->format == GL_STENCIL_INDEX ) {
+
+					glFramebufferTexture2D( GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, txLoc->id, 0 );
+				}
+				else if ( txLoc->format == GL_DEPTH_STENCIL ) {
+
+					glFramebufferTexture2D( GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, txLoc->id, 0 );
+				}
+				else {
+
+					glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttachments ++, GL_TEXTURE_2D, txLoc->id, 0 );
+				}
+			}
+
+			if( 0 < colorAttachments ) {
+
+				glDrawBuffers( colorAttachments, drawBuffers );
+			}
+			else {
+
+				glDrawBuffer( GL_NONE );
+			}
+		}
+
+		void
+		screenon ( ) {
+
+			if ( mode == ONSCREEN )
+
+				return;
+
+			mode = ONSCREEN;
+
+			if ( fb == nullptr )
+
+				return
+
+			fb->release( );
+
+			for ( auto t : fb->outTextures ) {
+
+				tx[ t ]->release( );
 			}
 		}
 };

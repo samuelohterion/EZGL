@@ -21,6 +21,12 @@ public GLProject {
 		GLR::CameraCenterView
 		ccv;
 
+		glm::vec4
+		color;
+
+		int
+		pass;
+
 	public:
 
 		void
