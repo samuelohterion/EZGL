@@ -17,9 +17,9 @@ FBTest::init( ) {
 				"T-FB-TEST-CANVAS-COL",
 				new GLR::Texture(
 					"txCOL", GL_TEXTURE_2D, 0, GL_RGBA32F,
-					GL_NEAREST, GL_NEAREST,
+					GL_LINEAR, GL_LINEAR,
 					GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE,
-					GL_RGBA, GL_FLOAT, 320, 200 ) );
+					GL_RGBA, GL_FLOAT, 200, 100 ) );
 		}
 		// T-FB-TEST-CANVAS-Z
 		{
@@ -27,9 +27,9 @@ FBTest::init( ) {
 				"T-FB-TEST-CANVAS-Z",
 				new GLR::Texture(
 					"txZ", GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32,
-					GL_NEAREST, GL_NEAREST,
+					GL_LINEAR, GL_LINEAR,
 					GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE,
-					GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 320, 200 ) );
+					GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 200, 100 ) );
 		}
 	}
 
@@ -75,7 +75,6 @@ FBTest::init( ) {
 			-1.f << +0.f << +0.f <<
 			GLR::VertexArray::Object( 6, 6, GL_TRIANGLE_FAN );
 		}
-
 	}
 
 	// index arrays
@@ -114,7 +113,7 @@ FBTest::init( ) {
 			"	s1 = texture( txCOL, vs2fs.texCoords );\n"
 			"	float s2 = texture( txZ, vs2fs.texCoords ).r;\n"
 			"	fColor = vec4( s2, s2, s2, 1 );\n"
-			"	fColor = mix( s1, fColor, vec4( vs2fs.texCoords.x > 0.5 ? 1 : 0 ) );\n"
+			"	fColor = mix( s1, fColor, vec4( vs2fs.texCoords.x > 0.5 + .5 * sin( time ) ? 1 : 0 ) );\n"
 			"}\n",
 			GLR::ShaderCode::FROM_CODE ).
 			addUniform( "time", GLR::Shader::FLOAT, GLR::Shader::SCALAR, & vcd->time );
@@ -246,13 +245,13 @@ FBTest::init( ) {
 	ccv.fixVCD ( vcd );
 
 	glFrontFace( GL_CCW );
-	glClearColor( 1.f, 1.f, 1.f, 1.0f );
+	glClearColor( 0.f, 0.f, 0.f, 1.f );
 
 	glEnable ( GL_DEPTH_TEST );
 	glDisable ( GL_CULL_FACE );
 	glCullFace( GL_BACK );
 
-	glr.createOffScreen ( );
+	glr.createOffScreen ( true );
 	glr.fb->addOutTexture( "T-FB-TEST-CANVAS-Z" );
 	glr.fb->addOutTexture( "T-FB-TEST-CANVAS-COL" );
 	glr.fb->fixedSize = true;
@@ -260,7 +259,6 @@ FBTest::init( ) {
 
 void
 FBTest::paint( ) {
-
 
 	ccv.fixView ( v );
 	ccv.fixModel( m );
@@ -275,7 +273,7 @@ FBTest::paint( ) {
 	t = m;
 
 	glr.screenoff ( );
-	glViewport ( 0, 0, 320, 200 );
+	glViewport ( 0, 0, 200, 100 );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	color = V4 ( .3 ,.2 ,.1 , 1. );
@@ -284,9 +282,8 @@ FBTest::paint( ) {
 	color = V4 ( 1, .5, .25, 1 );
 	glr.run( { "C-FB-TEST-TETRAHEDRON" } );
 
-	glr.screenon ( );
+	glr.screenon ( vcd->width, vcd->height );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-	glViewport ( 0, 0, vcd->width, vcd->height );
 
 	glr.run ( { "C-FB-TEST-CANVAS" } );
 

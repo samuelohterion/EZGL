@@ -344,9 +344,10 @@ GLR {
 
 			public :
 
-				FrameBuffer ( GLR & p_glr ) :
+				FrameBuffer ( bool const & p_fixedSize, GLR & p_glr ) :
 				GLRRef ( p_glr ),
-				__id( 0 ) {
+				__id( 0 ),
+				fixedSize ( p_fixedSize ) {
 
 					glGenFramebuffers ( 1, & __id );
 				}
@@ -356,12 +357,12 @@ GLR {
 					glDeleteFramebuffers ( 1, & __id );
 				}
 
+				bool
+				fixedSize;
+
 				std::vector< Str >
 				outTextures,
 				renderBuffers;
-
-				bool
-				fixedSize;
 
 				GLsizei
 				viewPortWidth,
@@ -403,6 +404,10 @@ GLR {
 
 				void
 				resize( GLsizei p_width = 0, GLsizei p_height = 0 ) {
+
+					if ( fixedSize )
+
+						return;
 
 					viewPortWidth = p_width;
 					viewPortHeight = p_height;
@@ -2014,6 +2019,10 @@ GLR {
 		MODE
 		mode;
 
+		GLsizei
+		viewPortWidth,
+		viewPortHeight;
+
 	public :
 
 		GLR ( ) :
@@ -2070,13 +2079,13 @@ GLR {
 		}
 
 		GLR
-		& createOffScreen ( ) {
+		& createOffScreen ( bool const & p_fixedSize = false ) {
 
 			if ( fb )
 
 				return * this;
 
-			fb = new FrameBuffer ( * this );
+			fb = new FrameBuffer ( p_fixedSize, * this );
 
 			return * this;
 		}
@@ -2231,10 +2240,17 @@ GLR {
 
 				glDrawBuffer( GL_NONE );
 			}
+
+			glViewport ( 0, 0, fb->viewPortWidth, fb->viewPortHeight );
 		}
 
 		void
-		screenon ( ) {
+		screenon ( GLsizei const & p_width, GLsizei const & p_height ) {
+
+			viewPortWidth = p_width;
+			viewPortHeight = p_height;
+
+			glViewport ( 0, 0, viewPortWidth, viewPortHeight );
 
 			if ( mode == ONSCREEN )
 
