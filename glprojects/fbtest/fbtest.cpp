@@ -21,7 +21,7 @@ FBTest::init( ) {
 					GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE,
 					GL_RGBA, GL_FLOAT, 32, 32 ) );
 		}
-		// T-MS-TEST-Z
+		// T-FB-TEST-CANVAS-Z
 		{
 			glr.texture(
 				"T-FB-TEST-CANVAS-Z",
@@ -107,11 +107,18 @@ FBTest::init( ) {
 			"} vs2fs;\n"
 			"uniform sampler2D txCOL;\n"
 			"uniform sampler2D txZ;\n"
+			"uniform float time;\n"
 			"out vec4 fColor;\n"
 			"void main( void ) {\n"
-			"	fColor = texture( txCOL, vs2fs.texCoords );\n"
+			"	vec4"
+			"	s1 = texture( txCOL, vs2fs.texCoords );\n"
+			"	float s2 = texture( txZ, vs2fs.texCoords ).r;\n"
+			"	s2 = s2 == 1. ? 1 : 0;"
+			"	fColor = vec4( s2, s2, s2, 1 );\n"
+//			"	fColor = mix( texture( txCOL, vs2fs.texCoords ).rgba, texture( txZ, vs2fs.texCoords ).rrrr, vec4( 1 ) );\n"
 			"}\n",
-			GLR::ShaderCode::FROM_CODE );
+			GLR::ShaderCode::FROM_CODE ).
+			addUniform( "time", GLR::Shader::FLOAT, GLR::Shader::SCALAR, & vcd->time );
 		}
 		//S-FB-TEST-QUAD-3D
 		{
@@ -211,18 +218,18 @@ FBTest::init( ) {
 		// C-FB-TEST-CANVAS
 		{
 			glr.container ( "C-FB-TEST-CANVAS" ).
-			addInTexture( "T-FB-TEST-CANVAS-COL" ).
-			addInTexture( "T-FB-TEST-CANVAS-Z" ).
-			setVertexArray ( "V-FB-TEST-CANVAS" ).
-			setShader ( "S-FB-TEST-CANVAS" ).
-			build ( );
+				addInTexture( "T-FB-TEST-CANVAS-COL" ).
+				addInTexture( "T-FB-TEST-CANVAS-Z" ).
+				setVertexArray ( "V-FB-TEST-CANVAS" ).
+				setShader ( "S-FB-TEST-CANVAS" ).
+				build ( );
 		}
 		// C-FB-TEST-QUAD-3D
 		{
 			glr.container ( "C-FB-TEST-QUAD-3D" ).
-			setVertexArray ( "V-FB-TEST-QUAD-3D" ).
-			setShader ( "S-FB-TEST-QUAD-3D" ).
-			build ( );
+				setVertexArray ( "V-FB-TEST-QUAD-3D" ).
+				setShader ( "S-FB-TEST-QUAD-3D" ).
+				build ( );
 		}
 		// C-FB-TEST-TETRAHEDRON
 		{
@@ -247,8 +254,8 @@ FBTest::init( ) {
 	glCullFace( GL_BACK );
 
 	glr.createOffScreen ( );
-	glr.fb->addOutTexture( "T-FB-TEST-CANVAS-COL" );
 	glr.fb->addOutTexture( "T-FB-TEST-CANVAS-Z" );
+	glr.fb->addOutTexture( "T-FB-TEST-CANVAS-COL" );
 }
 
 void
@@ -270,10 +277,10 @@ FBTest::paint( ) {
 	glr.screenoff ( );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-	color = V4 ( 0,0,1,1 );
+	color = V4 ( .3 ,.2 ,.1 , 1. );
 	glr.run( { "C-FB-TEST-QUAD-3D" } );
 
-	color = V4 ( 1,1,0,1 );
+	color = V4 ( 1, .5, .25, 1 );
 	glr.run( { "C-FB-TEST-TETRAHEDRON" } );
 
 	glr.screenon ( );
