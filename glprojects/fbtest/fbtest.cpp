@@ -19,7 +19,7 @@ FBTest::init( ) {
 					"txCOL", GL_TEXTURE_2D, 0, GL_RGBA32F,
 					GL_NEAREST, GL_NEAREST,
 					GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE,
-					GL_RGBA, GL_FLOAT, 32, 32 ) );
+					GL_RGBA, GL_FLOAT, 320, 200 ) );
 		}
 		// T-FB-TEST-CANVAS-Z
 		{
@@ -29,7 +29,7 @@ FBTest::init( ) {
 					"txZ", GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32,
 					GL_NEAREST, GL_NEAREST,
 					GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE,
-					GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 32, 32 ) );
+					GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 320, 200 ) );
 		}
 	}
 
@@ -113,9 +113,8 @@ FBTest::init( ) {
 			"	vec4"
 			"	s1 = texture( txCOL, vs2fs.texCoords );\n"
 			"	float s2 = texture( txZ, vs2fs.texCoords ).r;\n"
-			"	s2 = s2 == 1. ? 1 : 0;"
 			"	fColor = vec4( s2, s2, s2, 1 );\n"
-//			"	fColor = mix( texture( txCOL, vs2fs.texCoords ).rgba, texture( txZ, vs2fs.texCoords ).rrrr, vec4( 1 ) );\n"
+			"	fColor = mix( s1, fColor, vec4( vs2fs.texCoords.x > 0.5 ? 1 : 0 ) );\n"
 			"}\n",
 			GLR::ShaderCode::FROM_CODE ).
 			addUniform( "time", GLR::Shader::FLOAT, GLR::Shader::SCALAR, & vcd->time );
@@ -247,7 +246,7 @@ FBTest::init( ) {
 	ccv.fixVCD ( vcd );
 
 	glFrontFace( GL_CCW );
-	glClearColor( 0.2f, 0.3f, 0.4f, 1.0f );
+	glClearColor( 1.f, 1.f, 1.f, 1.0f );
 
 	glEnable ( GL_DEPTH_TEST );
 	glDisable ( GL_CULL_FACE );
@@ -256,6 +255,7 @@ FBTest::init( ) {
 	glr.createOffScreen ( );
 	glr.fb->addOutTexture( "T-FB-TEST-CANVAS-Z" );
 	glr.fb->addOutTexture( "T-FB-TEST-CANVAS-COL" );
+	glr.fb->fixedSize = true;
 }
 
 void
@@ -275,6 +275,7 @@ FBTest::paint( ) {
 	t = m;
 
 	glr.screenoff ( );
+	glViewport ( 0, 0, 320, 200 );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	color = V4 ( .3 ,.2 ,.1 , 1. );
@@ -285,6 +286,7 @@ FBTest::paint( ) {
 
 	glr.screenon ( );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	glViewport ( 0, 0, vcd->width, vcd->height );
 
 	glr.run ( { "C-FB-TEST-CANVAS" } );
 
