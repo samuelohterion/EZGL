@@ -112,6 +112,7 @@ GLRRef {
 		return __glr;
 	}
 };
+
 class
 GLR {
 
@@ -381,6 +382,7 @@ GLR {
 
 					return * this;
 				}
+
 				void
 				bind ( ) {
 
@@ -2015,7 +2017,8 @@ GLR {
 	public :
 
 		GLR ( ) :
-		fb ( nullptr ) {
+		fb ( nullptr ),
+		mode ( ONSCREEN ) {
 
 		}
 
@@ -2241,7 +2244,7 @@ GLR {
 
 			if ( fb == nullptr )
 
-				return
+				return;
 
 			fb->release( );
 
@@ -2251,7 +2254,6 @@ GLR {
 			}
 		}
 };
-
 
 class GLProject :
 public Named {
@@ -2301,4 +2303,5 @@ public Named {
 	virtual void
 	paint( ) = 0;
 };
+
 #endif // GLR_HPP

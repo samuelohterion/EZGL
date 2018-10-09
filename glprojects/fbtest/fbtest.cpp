@@ -9,285 +9,297 @@ GLProject ( p_name  ) {
 void
 FBTest::init( ) {
 
-    // textures
-    {
-        // T-MS-TEST-COL
-        {
-            glr.texture(
-                "T-FB-TEST-CANVAS-COL",
-                new GLR::Texture(
-                    "txCOL", GL_TEXTURE_2D, 0, GL_RGBA32F,
-                    GL_NEAREST, GL_NEAREST,
-                    GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE,
-                    GL_RGBA, GL_FLOAT, 32, 32 ) );
-        }
-        // T-MS-TEST-Z
-        {
-            glr.texture(
-                "T-FB-TEST-CANVAS-Z",
-                new GLR::Texture(
-                    "txZ", GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32,
-                    GL_NEAREST, GL_NEAREST,
-                    GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE,
-                    GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 32, 32 ) );
-        }
-    }
+	// textures
+	{
+		// T-MS-TEST-COL
+		{
+			glr.texture(
+				"T-FB-TEST-CANVAS-COL",
+				new GLR::Texture(
+					"txCOL", GL_TEXTURE_2D, 0, GL_RGBA32F,
+					GL_NEAREST, GL_NEAREST,
+					GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE,
+					GL_RGBA, GL_FLOAT, 32, 32 ) );
+		}
+		// T-MS-TEST-Z
+		{
+			glr.texture(
+				"T-FB-TEST-CANVAS-Z",
+				new GLR::Texture(
+					"txZ", GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32,
+					GL_NEAREST, GL_NEAREST,
+					GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE,
+					GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 32, 32 ) );
+		}
+	}
 
-    // vertex arrays
-    {
-        // V-FB-TEST-CANVAS
-        {
-            glr.vertices( "V-FB-TEST-CANVAS" ).
-            attrib( "vertex", 0, 2 ) <<
-            -1.f << -1.f <<
-            +1.f << -1.f <<
-            +1.f << +1.f <<
-            -1.f << +1.f <<
-            GLR::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
-        }
-        // V-FB-TEST-QUAD-3D
-        {
-            glr.vertices( "V-FB-TEST-QUAD-3D" ).
-            attrib( "vertex", 0, 3 ) <<
-            -1.f << -1.f << +0.f <<
-            +1.f << -1.f << +0.f <<
-            +1.f << +1.f << +0.f <<
-            -1.f << +1.f << +0.f <<
-            GLR::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
-        }
-        // V-FB-TEST-TETRAHEDRON
-        {
-            glr.vertices( "V-FB-TEST-TETRAHEDRON" ).
-            setUsage( GL_STATIC_DRAW ).
-            attrib( "vertex", 0, 3 ) <<
-            +0.f << -1.f << +0.f <<
-            +1.f << +0.f << +0.f <<
-            +0.f << +0.f << +1.f <<
-            -1.f << +0.f << +0.f <<
-            +0.f << +0.f << -1.f <<
-            +1.f << +0.f << +0.f <<
-            GLR::VertexArray::Object( 0, 6, GL_TRIANGLE_FAN ) <<
-            +0.f << +1.f << +0.f <<
-            -1.f << +0.f << +0.f <<
-            +0.f << +0.f << +1.f <<
-            +1.f << +0.f << +0.f <<
-            +0.f << +0.f << -1.f <<
-            -1.f << +0.f << +0.f <<
-            GLR::VertexArray::Object( 6, 6, GL_TRIANGLE_FAN );
-        }
+	// vertex arrays
+	{
+		// V-FB-TEST-CANVAS
+		{
+			glr.vertices( "V-FB-TEST-CANVAS" ).
+			attrib( "vertex", 0, 2 ) <<
+			-1.f << -1.f <<
+			+1.f << -1.f <<
+			+1.f << +1.f <<
+			-1.f << +1.f <<
+			GLR::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
+		}
+		// V-FB-TEST-QUAD-3D
+		{
+			glr.vertices( "V-FB-TEST-QUAD-3D" ).
+			attrib( "vertex", 0, 3 ) <<
+			-1.f << -1.f << +0.f <<
+			+1.f << -1.f << +0.f <<
+			+1.f << +1.f << +0.f <<
+			-1.f << +1.f << +0.f <<
+			GLR::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
+		}
+		// V-FB-TEST-TETRAHEDRON
+		{
+			glr.vertices( "V-FB-TEST-TETRAHEDRON" ).
+			setUsage( GL_STATIC_DRAW ).
+			attrib( "vertex", 0, 3 ) <<
+			+0.f << -1.f << +0.f <<
+			+1.f << +0.f << +0.f <<
+			+0.f << +0.f << +1.f <<
+			-1.f << +0.f << +0.f <<
+			+0.f << +0.f << -1.f <<
+			+1.f << +0.f << +0.f <<
+			GLR::VertexArray::Object( 0, 6, GL_TRIANGLE_FAN ) <<
+			+0.f << +1.f << +0.f <<
+			-1.f << +0.f << +0.f <<
+			+0.f << +0.f << +1.f <<
+			+1.f << +0.f << +0.f <<
+			+0.f << +0.f << -1.f <<
+			-1.f << +0.f << +0.f <<
+			GLR::VertexArray::Object( 6, 6, GL_TRIANGLE_FAN );
+		}
 
-    }
+	}
 
-    // index arrays
-    {
-    }
+	// index arrays
+	{
+	}
 
-    // shaders
-    {
-        //S-FB-TEST-CANVAS
-        {
-            glr.shader(
-            "S-FB-TEST-CANVAS",
+	// shaders
+	{
+		//S-FB-TEST-CANVAS
+		{
+			glr.shader(
+			"S-FB-TEST-CANVAS",
 
-            //Vertex Shader
-            "#version 330 core\n"
-            "layout( location = 0 ) in vec2 vertex;\n"
-            "out VS2FS {\n"
-            "   vec2 texCoords;\n"
-            "} vs2fs;\n"
-            "void main( void ) {\n"
-            "   vs2fs.texCoords = vertex.xy * .5 + .5;\n"
-            "	gl_Position = vec4( vertex, 1 );\n"
-            "}\n",
+			//Vertex Shader
+			"#version 330 core\n"
+			"layout( location = 0 ) in vec2 vertex;\n"
+			"out VS2FS {\n"
+			"   vec2 texCoords;\n"
+			"} vs2fs;\n"
+			"void main( void ) {\n"
+			"   vs2fs.texCoords = vertex * .5 + .5;\n"
+			"	gl_Position = vec4( vertex, 0, 1 );\n"
+			"}\n",
 
-            //Fragment Shader
-            "#version 330 core\n"
-            "in VS2FS {\n"
-            "   vec2 texCoords;\n"
-            "} vs2fs;\n"
-            "uniform sampler2D txCOL;\n"
-            "uniform sampler2D txZ;\n"
-            "out vec4 fColor;\n"
-            "void main( void ) {\n"
-            "	fColor = texture( txCOL, vs2fs.texCoords );\n"
-            "}\n",
-            GLR::ShaderCode::FROM_CODE );
-        }
-        //S-FB-TEST-QUAD-3D
-        {
-            glr.shader(
-            "S-FB-TEST-QUAD-3D",
+			//Fragment Shader
+			"#version 330 core\n"
+			"in VS2FS {\n"
+			"   vec2 texCoords;\n"
+			"} vs2fs;\n"
+			"uniform sampler2D txCOL;\n"
+			"uniform sampler2D txZ;\n"
+			"out vec4 fColor;\n"
+			"void main( void ) {\n"
+			"	fColor = texture( txCOL, vs2fs.texCoords );\n"
+			"}\n",
+			GLR::ShaderCode::FROM_CODE );
+		}
+		//S-FB-TEST-QUAD-3D
+		{
+			glr.shader(
+			"S-FB-TEST-QUAD-3D",
 
-            //Vertex Shader
-            "#version 330 core\n"
-            "layout( location = 0 ) in vec3 vertex;\n"
-            "uniform mat4 model, view, projection;\n"
-            "void main( void ) {\n"
-            "	gl_Position = projection * view * model * vec4( vertex, 1 );\n"
-            "}\n",
+			//Vertex Shader
+			"#version 330 core\n"
+			"layout( location = 0 ) in vec3 vertex;\n"
+			"uniform mat4 model, view, projection;\n"
+			"void main( void ) {\n"
+			"	gl_Position = projection * view * model * vec4( vertex, 1 );\n"
+			"}\n",
 
-            //Fragment Shader
-            "#version 330 core\n"
-            "uniform vec4 color;\n"
-            "out vec4 fColor;\n"
-            "void main( void ) {\n"
-            "	fColor = color;\n"
-            "}\n",
-            GLR::ShaderCode::FROM_CODE ).
-            addUniform( "model",      GLR::Shader::MAT4, GLR::Shader::SCALAR, & m ).
-            addUniform( "view",       GLR::Shader::MAT4, GLR::Shader::SCALAR, & v ).
-            addUniform( "projection", GLR::Shader::MAT4, GLR::Shader::SCALAR, & p ).
-            addUniform( "color",      GLR::Shader::VEC4, GLR::Shader::SCALAR, & color );
-        }
-        //S-FB-TEST-TETRAHEDRON
-        {
-            glr.shader(
-            "S-FB-TEST-TETRAHEDRON",
+			//Fragment Shader
+			"#version 330 core\n"
+			"uniform vec4 color;\n"
+			"out vec4 fColor;\n"
+			"void main( void ) {\n"
+			"	fColor = color;\n"
+			"}\n",
+			GLR::ShaderCode::FROM_CODE ).
+			addUniform( "model",      GLR::Shader::MAT4, GLR::Shader::SCALAR, & m ).
+			addUniform( "view",       GLR::Shader::MAT4, GLR::Shader::SCALAR, & v ).
+			addUniform( "projection", GLR::Shader::MAT4, GLR::Shader::SCALAR, & p ).
+			addUniform( "color",      GLR::Shader::VEC4, GLR::Shader::SCALAR, & color );
+		}
+		//S-FB-TEST-TETRAHEDRON
+		{
+			glr.shader(
+			"S-FB-TEST-TETRAHEDRON",
 
-            //Vertex Shader
-            "#version 330 core\n"
-            "layout( location = 0 ) in vec3 vertex;\n"
-            "uniform mat4 model, view, projection;\n"
-            "out VS2GS {\n"
-            "	vec4 v;\n"
-            "} vs2gs;"
-            "void main( void ) {\n"
-            "	vs2gs.v = model * vec4( vertex, 1 );\n"
-            "	gl_Position = projection * view * vs2gs.v;\n"
-            "}\n",
+			//Vertex Shader
+			"#version 330 core\n"
+			"layout( location = 0 ) in vec3 vertex;\n"
+			"uniform mat4 model, view, projection;\n"
+			"out VS2GS {\n"
+			"	vec4 v;\n"
+			"} vs2gs;"
+			"void main( void ) {\n"
+			"	vs2gs.v = model * vec4( vertex, 1 );\n"
+			"	gl_Position = projection * view * vs2gs.v;\n"
+			"}\n",
 
-            //Geometry Shader
-            "#version 330 core\n"
-            "layout ( triangles ) in;\n"
-            "layout ( triangle_strip, max_vertices = 3 ) out;\n"
+			//Geometry Shader
+			"#version 330 core\n"
+			"layout ( triangles ) in;\n"
+			"layout ( triangle_strip, max_vertices = 3 ) out;\n"
 
-            "in VS2GS {\n"
-            "	vec4 v;\n"
-            "} vs2gs[ ];\n"
-            "out GS2FS {\n"
-            "	vec4 v, n;\n"
-            "} gs2fs;\n"
-            "void main( ) {\n"
-            "	vec3 n = normalize( cross( vs2gs[ 1 ].v.xyz - vs2gs[ 0 ].v.xyz, vs2gs[ 2 ].v.xyz - vs2gs[ 0 ].v.xyz ) );\n"
-            "	gl_Position = gl_in[ 0 ].gl_Position;\n"
-            "	gs2fs.v = vs2gs[ 0 ].v;\n"
-            "	gs2fs.n = vec4( n, 1 );\n"
-            "	EmitVertex( );\n"
-            "	gl_Position = gl_in[ 1 ].gl_Position;\n"
-            "	gs2fs.v = vs2gs[ 1 ].v;\n"
-            "	gs2fs.n = vec4( n, 1 );\n"
-            "	EmitVertex( );\n"
-            "	gl_Position = gl_in[ 2 ].gl_Position;\n"
-            "	gs2fs.v = vs2gs[ 2 ].v;\n"
-            "	gs2fs.n = vec4( n, 1 );\n"
-            "	EmitVertex( );\n"
-            "	EndPrimitive( );\n"
-            "}\n",
+			"in VS2GS {\n"
+			"	vec4 v;\n"
+			"} vs2gs[ ];\n"
+			"out GS2FS {\n"
+			"	vec4 v, n;\n"
+			"} gs2fs;\n"
+			"void main( ) {\n"
+			"	vec3 n = normalize( cross( vs2gs[ 1 ].v.xyz - vs2gs[ 0 ].v.xyz, vs2gs[ 2 ].v.xyz - vs2gs[ 0 ].v.xyz ) );\n"
+			"	gl_Position = gl_in[ 0 ].gl_Position;\n"
+			"	gs2fs.v = vs2gs[ 0 ].v;\n"
+			"	gs2fs.n = vec4( n, 1 );\n"
+			"	EmitVertex( );\n"
+			"	gl_Position = gl_in[ 1 ].gl_Position;\n"
+			"	gs2fs.v = vs2gs[ 1 ].v;\n"
+			"	gs2fs.n = vec4( n, 1 );\n"
+			"	EmitVertex( );\n"
+			"	gl_Position = gl_in[ 2 ].gl_Position;\n"
+			"	gs2fs.v = vs2gs[ 2 ].v;\n"
+			"	gs2fs.n = vec4( n, 1 );\n"
+			"	EmitVertex( );\n"
+			"	EndPrimitive( );\n"
+			"}\n",
 
-            //Fragment Shader
-            "#version 330 core\n"
-            "in GS2FS {\n"
-            "	vec4 v, n;\n"
-            "} gs2fs;\n"
-            "uniform mat4 model, view;\n"
-            "uniform vec4 color;\n"
-            "out vec4 fColor;\n"
-            "const vec3 light = vec3( 0, 0, 0 );\n"
-            "void main( void ) {\n"
-            "	vec3 d = normalize( vec3( view * model * vec4( light, 1 ) - gs2fs.v ) );\n"
-            "	float amp = max( 0, - dot( gs2fs.n.xyz, d ) );\n"
-            "	fColor = vec4( amp * color.rgb, 1 );\n"
-            "}\n",
-            GLR::ShaderCode::FROM_CODE ).
-            addUniform( "model",      GLR::Shader::MAT4, GLR::Shader::SCALAR, & m ).
-            addUniform( "view",       GLR::Shader::MAT4, GLR::Shader::SCALAR, & v ).
-            addUniform( "projection", GLR::Shader::MAT4, GLR::Shader::SCALAR, & p ).
-            addUniform( "color",      GLR::Shader::VEC4, GLR::Shader::SCALAR, & color );
-        }
-    }
+			//Fragment Shader
+			"#version 330 core\n"
+			"in GS2FS {\n"
+			"	vec4 v, n;\n"
+			"} gs2fs;\n"
+			"uniform mat4 model, view;\n"
+			"uniform vec4 color;\n"
+			"out vec4 fColor;\n"
+			"const vec3 light = vec3( 0, 0, 0 );\n"
+			"void main( void ) {\n"
+			"	vec3 d = normalize( vec3( view * model * vec4( light, 1 ) - gs2fs.v ) );\n"
+			"	float amp = max( 0, - dot( gs2fs.n.xyz, d ) );\n"
+			"	fColor = vec4( amp * color.rgb, 1 );\n"
+			"}\n",
+			GLR::ShaderCode::FROM_CODE ).
+			addUniform( "model",      GLR::Shader::MAT4, GLR::Shader::SCALAR, & m ).
+			addUniform( "view",       GLR::Shader::MAT4, GLR::Shader::SCALAR, & v ).
+			addUniform( "projection", GLR::Shader::MAT4, GLR::Shader::SCALAR, & p ).
+			addUniform( "color",      GLR::Shader::VEC4, GLR::Shader::SCALAR, & color );
+		}
+	}
 
-    // container
-    {
-        // C-FB-TEST-CANVAS
-        {
-            glr.container ( "C-FB-TEST-CANVAS" ).
-            addInTexture( "T-FB-TEST-CANVAS-COL" ).
-            addInTexture( "T-FB-TEST-CANVAS-Z" ).
-            setVertexArray ( "V-FB-TEST-CANVAS" ).
-            setShader ( "S-FB-TEST-CANVAS" ).
-            build ( );
-        }
-        // C-FB-TEST-QUAD-3D
-        {
-            glr.container ( "C-FB-TEST-QUAD-3D" ).
-            setVertexArray ( "V-FB-TEST-QUAD-3D" ).
-            setShader ( "S-FB-TEST-QUAD-3D" ).
-            build ( );
-        }
-        // C-FB-TEST-TETRAHEDRON
-        {
-            glr.container ( "C-FB-TEST-TETRAHEDRON" ).
-                setVertexArray ( "V-FB-TEST-TETRAHEDRON" ).
-                setShader ( "S-FB-TEST-TETRAHEDRON" ).
-                build ( );
-        }
-    }
+	// container
+	{
+		// C-FB-TEST-CANVAS
+		{
+			glr.container ( "C-FB-TEST-CANVAS" ).
+			addInTexture( "T-FB-TEST-CANVAS-COL" ).
+			addInTexture( "T-FB-TEST-CANVAS-Z" ).
+			setVertexArray ( "V-FB-TEST-CANVAS" ).
+			setShader ( "S-FB-TEST-CANVAS" ).
+			build ( );
+		}
+		// C-FB-TEST-QUAD-3D
+		{
+			glr.container ( "C-FB-TEST-QUAD-3D" ).
+			setVertexArray ( "V-FB-TEST-QUAD-3D" ).
+			setShader ( "S-FB-TEST-QUAD-3D" ).
+			build ( );
+		}
+		// C-FB-TEST-TETRAHEDRON
+		{
+			glr.container ( "C-FB-TEST-TETRAHEDRON" ).
+				setVertexArray ( "V-FB-TEST-TETRAHEDRON" ).
+				setShader ( "S-FB-TEST-TETRAHEDRON" ).
+				build ( );
+		}
+	}
 
-    p = v = m = glm::mat4( 1. );
+	p = v = m = glm::mat4( 1. );
 
-    v = glm::translate( v, glm::vec3( 0.f, 0.f, -2.f ) );
+	v = glm::translate( v, glm::vec3( 0.f, 0.f, -2.f ) );
 
-    ccv.fixVCD ( vcd );
+	ccv.fixVCD ( vcd );
 
-    glFrontFace( GL_CCW );
-    glClearColor( 0.2f, 0.3f, 0.4f, 1.0f );
+	glFrontFace( GL_CCW );
+	glClearColor( 0.2f, 0.3f, 0.4f, 1.0f );
 
-    glEnable ( GL_DEPTH_TEST );
-    glDisable ( GL_CULL_FACE );
-    glCullFace( GL_BACK );
+	glEnable ( GL_DEPTH_TEST );
+	glDisable ( GL_CULL_FACE );
+	glCullFace( GL_BACK );
+
+	glr.createOffScreen ( );
+	glr.fb->addOutTexture( "T-FB-TEST-CANVAS-COL" );
+	glr.fb->addOutTexture( "T-FB-TEST-CANVAS-Z" );
 }
 
 void
 FBTest::paint( ) {
 
-    glr.screenon ( );
 
-    ccv.fixView ( v );
-    ccv.fixModel( m );
+	ccv.fixView ( v );
+	ccv.fixModel( m );
 
-    ccv.reactOnMouse( );
+	ccv.reactOnMouse( );
 
-    m = ccv.model( );
+	m = ccv.model( );
 
-    v  = ccv.view( );
+	v  = ccv.view( );
 
-    M4
-    t = m;
+	M4
+	t = m;
 
-    color = V4 ( 1,1,1,.5 );
+	glr.screenoff ( );
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	color = V4 ( 0,0,1,1 );
+	glr.run( { "C-FB-TEST-QUAD-3D" } );
 
-    color = V4 ( 0,0,1,1 );
-    glr.run( { "C-FB-TEST-QUAD-3D" } );
+	color = V4 ( 1,1,0,1 );
+	glr.run( { "C-FB-TEST-TETRAHEDRON" } );
 
-    color = V4 ( 1,1,0,1 );
-    glr.run( { "C-FB-TEST-TETRAHEDRON" } );
+	glr.screenon ( );
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-    m = t;
+	glr.run ( { "C-FB-TEST-CANVAS" } );
+
+	m = t;
 }
 
 void
 FBTest::resize( int p_width, int p_height ) {
 
-    float
-    w = p_width,
-    h = p_height,
-    ratio = w / h;
+	float
+	w = p_width,
+	h = p_height,
+	ratio = w / h;
 
-    p = glm::perspective(  45.0f, ratio, 1.0f, 100.f );
+	p = glm::perspective(  45.0f, ratio, 1.0f, 100.f );
 
-    std::cout << std::endl;
+	std::cout << std::endl;
 
-    glViewport ( 0, 0, p_width, p_height );
+	if ( glr.fb ) {
+
+		glr.fb->resize( p_width, p_height );
+	}
+
+	glViewport ( 0, 0, p_width, p_height );
 }
