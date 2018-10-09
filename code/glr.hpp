@@ -88,6 +88,31 @@ ViewControlData {
 };
 
 class
+GLR;
+
+class
+GLRRef {
+
+	public :
+
+	GLRRef ( GLR & p_glr ) :
+	__glr ( p_glr ) {
+	}
+
+	private :
+
+	GLR
+	& __glr;
+
+	public :
+
+	GLR
+	& glr ( ) {
+
+		return __glr;
+	}
+};
+class
 GLR {
 
 	public :
@@ -308,7 +333,8 @@ GLR {
 			ONSCREEN
 		};
 
-		class FrameBuffer {
+		class FrameBuffer :
+		public GLRRef {
 
 			private:
 
@@ -317,7 +343,8 @@ GLR {
 
 			public :
 
-				FrameBuffer ( ) :
+				FrameBuffer ( GLR & p_glr ) :
+				GLRRef ( p_glr ),
 				__id( 0 ) {
 
 					glGenFramebuffers ( 1, & __id );
@@ -331,6 +358,13 @@ GLR {
 				std::vector< Str >
 				outTextures,
 				renderBuffers;
+
+				bool
+				fixedSize;
+
+				GLsizei
+				viewPortWidth,
+				viewPortHeight;
 
 				FrameBuffer
 				& addOutTexture ( CStr & p_textureName ) {
@@ -364,6 +398,22 @@ GLR {
 
 					glBindFramebuffer ( GL_FRAMEBUFFER, 0 );
 				}
+
+				void
+				resize( GLsizei p_width = 0, GLsizei p_height = 0 ) {
+
+					viewPortWidth = p_width;
+					viewPortHeight = p_height;
+
+					if( ! fixedSize ) {
+
+						for( auto ot : outTextures ) {
+
+							glr ( ).tx[ ot ]->resize( viewPortWidth, viewPortHeight );
+						}
+					}
+				}
+
 		};
 
 		class Texture :
@@ -397,7 +447,7 @@ GLR {
 			GLuint
 			id;
 
-			public :
+		public :
 
 			Texture(
 			CStr p_name,
@@ -512,24 +562,24 @@ GLR {
 			}
 
 			void
-				release( ) {
+			release( ) {
 
-					glBindTexture( target, 0 );
-				}
+				glBindTexture( target, 0 );
+			}
 
-				void
-				resize( GLuint p_width, GLuint p_height ) {
+			void
+			resize( GLuint p_width, GLuint p_height ) {
 
-					width = p_width;
-					height = p_height;
+				width = p_width;
+				height = p_height;
 
-						glBindTexture( target, id );
+					glBindTexture( target, id );
 
-						//glTexStorage2D( target, 0, GL_RG32F, width, height );
-						glTexImage2D( target, level, internal_format, width, height, 0, format, type, nullptr );
+					//glTexStorage2D( target, 0, GL_RG32F, width, height );
+					glTexImage2D( target, level, internal_format, width, height, 0, format, type, nullptr );
 
-						glBindTexture( GL_TEXTURE_2D, 0 );
-				}
+					glBindTexture( GL_TEXTURE_2D, 0 );
+			}
 		};
 
 		class RenderBuffer :
@@ -1962,12 +2012,10 @@ GLR {
 		MODE
 		mode;
 
-		bool
-		fixedSize;
-
 	public :
 
-		GLR ( ) {
+		GLR ( ) :
+		fb ( nullptr ) {
 
 		}
 
@@ -1985,9 +2033,7 @@ GLR {
 
 				delete v.second;
 
-			for ( auto f : fb )
-
-				delete f.second;
+			delete fb;
 
 			for ( auto c : co )
 
@@ -2027,7 +2073,7 @@ GLR {
 
 				return * this;
 
-			fb = new FrameBuffer ( );
+			fb = new FrameBuffer ( * this );
 
 			return * this;
 		}
@@ -2112,22 +2158,6 @@ GLR {
 
 			return * currentContainer;
 		}
-
-		void
-		resize( GLsizei p_width = 0, GLsizei p_height = 0 ) {
-
-			viewPortWidth = p_width;
-			viewPortHeight = p_height;
-
-			if( ! fixSize ) {
-
-				for( auto ot : fb->outTextures ) {
-
-					tx[ ot ]->resize( viewPortWidth, viewPortHeight );
-				}
-			}
-		}
-
 
 		void
 		run ( std::initializer_list< CStr > const & p_containers ) {
@@ -2222,28 +2252,6 @@ GLR {
 		}
 };
 
-class
-GLRRef {
-
-	public :
-
-	GLRRef ( GLR & p_glr ) :
-	__glr ( p_glr ) {
-	}
-
-	private :
-
-	GLR
-	& __glr;
-
-	public :
-
-	GLR
-	& glr ( ) {
-
-		return __glr;
-	}
-};
 
 class GLProject :
 public Named {
@@ -2284,10 +2292,10 @@ public Named {
 	void
 	resizeViewport( int p_width, int p_height ) {
 
-		for( auto & p : glr.co ) {
+		if ( glr.fb != nullptr )
 
-			p.second->resize( p_width, p_height );
-		}
+			glr.fb->resize( p_width, p_height );
+
 	}
 
 	virtual void

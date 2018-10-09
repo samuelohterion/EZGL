@@ -23,7 +23,7 @@ code/glmprinter.cpp \
 #glprojects/quad3d/quad3d.cpp \
 #glprojects/coordinateSystem/coordinatesystem.cpp \
 #glprojects/cubewithtexture/cubewithtexture.cpp \
-glprojects/zbuffertexture/zbuffertexture.cpp \
+#glprojects/zbuffertexture/zbuffertexture.cpp \
 #glprojects/cube/cube.cpp \
 #glprojects/funIn2D/funIn2D.cpp \
 #	glprojects/lighttest/lighttest.cpp \
@@ -33,16 +33,17 @@ glprojects/zbuffertexture/zbuffertexture.cpp \
 #	glprojects/ballandlight/ballandlight.cpp \
 #	glprojects/ballandlight/interaction.cpp \
 #	glprojects/texturetest/texturetest.cpp \
-glprojects/multisampling/multisampling.cpp \
+#glprojects/multisampling/multisampling.cpp \
 #glprojects/sometext/sometext.cpp \
 #glprojects/yetanothersphere/yetanothersphere.cpp \
 #	glprojects/spherewithtexture/spherewithtexture.cpp \
 #glprojects/solarsystem/solarsystem.cpp \
 #glprojects/space/space.cpp \
-glprojects/dummy/dummy.cpp \
+#glprojects/dummy/dummy.cpp \
 #glprojects/sceneexample/sceneexample.cpp \
-glprojects/obj/obj.cpp \
-glprojects/mstest/mstest.cpp
+#glprojects/obj/obj.cpp \
+#glprojects/mstest/mstest.cpp \
+glprojects/fbtest/fbtest.cpp
 
 HEADERS += \
 code/widget.hpp \
@@ -55,8 +56,8 @@ code/filesys.hpp \
 #glprojects/quad3d/quad3d.hpp \
 #glprojects/coordinateSystem/coordinatesystem.hpp \
 #glprojects/cubewithtexture/cubewithtexture.hpp \
-glprojects/zbuffertexture/zbuffertexture.hpp \
-glprojects/multisampling/multisampling.hpp \
+#glprojects/zbuffertexture/zbuffertexture.hpp \
+#glprojects/multisampling/multisampling.hpp \
 #glprojects/cube/cube.hpp \
 #glprojects/funIn2D/funIn2D.hpp \
 #	glprojects/lighttest/lighttest.hpp \
@@ -71,10 +72,11 @@ glprojects/multisampling/multisampling.hpp \
 #	glprojects/spherewithtexture/spherewithtexture.hpp \
 #glprojects/solarsystem/solarsystem.hpp \
 #glprojects/space/space.hpp \
-glprojects/dummy/dummy.hpp \
+#glprojects/dummy/dummy.hpp \
 #glprojects/sceneexample/sceneexample.hpp \
-glprojects/obj/obj.cpp \
-glprojects/mstest/mstest.cpp
+#glprojects/obj/obj.hpp \
+#glprojects/mstest/mstest.hpp \
+glprojects/fbtest/fbtest.hpp
 
 
 FORMS += \
