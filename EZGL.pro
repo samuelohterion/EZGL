@@ -39,7 +39,7 @@ code/glmprinter.cpp \
 #	glprojects/spherewithtexture/spherewithtexture.cpp \
 #glprojects/solarsystem/solarsystem.cpp \
 #glprojects/space/space.cpp \
-#glprojects/dummy/dummy.cpp \
+glprojects/dummy/dummy.cpp \
 #glprojects/sceneexample/sceneexample.cpp \
 #glprojects/obj/obj.cpp \
 #glprojects/mstest/mstest.cpp \
@@ -72,7 +72,7 @@ code/filesys.hpp \
 #	glprojects/spherewithtexture/spherewithtexture.hpp \
 #glprojects/solarsystem/solarsystem.hpp \
 #glprojects/space/space.hpp \
-#glprojects/dummy/dummy.hpp \
+glprojects/dummy/dummy.hpp \
 #glprojects/sceneexample/sceneexample.hpp \
 #glprojects/obj/obj.hpp \
 #glprojects/mstest/mstest.hpp \

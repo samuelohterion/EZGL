@@ -35,7 +35,7 @@ tetrahedron(
 	tetrahedron.c = Triangle( p0, p3, p1, glm::vec3( 0,0,1 ) );
 	tetrahedron.d = Triangle( p3, p2, p1, glm::vec3( 1,1,0 ) );
 
-	tetrahedron . divide ( 7 );
+	tetrahedron . divide ( 6 );
 }
 
 Dummy::~Dummy ( ){
@@ -199,4 +199,11 @@ Dummy::resize( int p_width, int p_height ) {
 	ratio = w / h;
 
 	p = glm::perspective(  45.0f, ratio, .1f, 50.f );
+
+		if ( glr.fb ) {
+
+		glr.fb->resize ( p_width, p_height );
+	}
+
+	glViewport ( 0, 0, p_width, p_height );
 }

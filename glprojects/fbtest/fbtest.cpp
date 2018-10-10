@@ -240,20 +240,20 @@ FBTest::init( ) {
 
 	p = v = m = glm::mat4( 1. );
 
-	v = glm::translate( v, glm::vec3( 0.f, 0.f, -2.f ) );
+	v = glm::translate ( v, glm::vec3 ( 0.f, 0.f, -2.f ) );
 
 	ccv.fixVCD ( vcd );
 
-	glFrontFace( GL_CCW );
-	glClearColor( 0.f, 0.f, 0.f, 1.f );
+	glFrontFace ( GL_CCW );
+	glClearColor ( 0.f, 0.f, 0.f, 1.f );
 
 	glEnable ( GL_DEPTH_TEST );
 	glDisable ( GL_CULL_FACE );
-	glCullFace( GL_BACK );
+	glCullFace ( GL_BACK );
 
 	glr.createOffScreen ( true );
-	glr.fb->addOutTexture( "T-FB-TEST-CANVAS-Z" );
-	glr.fb->addOutTexture( "T-FB-TEST-CANVAS-COL" );
+	glr.fb->addOutTexture ( "T-FB-TEST-CANVAS-Z" );
+	glr.fb->addOutTexture ( "T-FB-TEST-CANVAS-COL" );
 	glr.fb->fixedSize = true;
 }
 
@@ -261,29 +261,29 @@ void
 FBTest::paint( ) {
 
 	ccv.fixView ( v );
-	ccv.fixModel( m );
+	ccv.fixModel ( m );
 
-	ccv.reactOnMouse( );
+	ccv.reactOnMouse ( );
 
-	m = ccv.model( );
+	m = ccv.model ( );
 
-	v  = ccv.view( );
+	v  = ccv.view ( );
 
 	M4
 	t = m;
 
 	glr.screenoff ( );
 	glViewport ( 0, 0, 200, 100 );
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	color = V4 ( .3 ,.2 ,.1 , 1. );
-	glr.run( { "C-FB-TEST-QUAD-3D" } );
+	glr.run ( { "C-FB-TEST-QUAD-3D" } );
 
 	color = V4 ( 1, .5, .25, 1 );
-	glr.run( { "C-FB-TEST-TETRAHEDRON" } );
+	glr.run ( { "C-FB-TEST-TETRAHEDRON" } );
 
 	glr.screenon ( vcd->width, vcd->height );
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	glr.run ( { "C-FB-TEST-CANVAS" } );
 
@@ -291,20 +291,20 @@ FBTest::paint( ) {
 }
 
 void
-FBTest::resize( int p_width, int p_height ) {
+FBTest::resize ( int p_width, int p_height ) {
 
 	float
 	w = p_width,
 	h = p_height,
 	ratio = w / h;
 
-	p = glm::perspective(  45.0f, ratio, 1.0f, 100.f );
+	p = glm::perspective (  45.0f, ratio, 1.0f, 100.f );
 
 	std::cout << std::endl;
 
 	if ( glr.fb ) {
 
-		glr.fb->resize( p_width, p_height );
+		glr.fb->resize ( p_width, p_height );
 	}
 
 	glViewport ( 0, 0, p_width, p_height );
