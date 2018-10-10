@@ -176,9 +176,25 @@ GLWidget::paintGL( ) {
 	viewControlData.ticks = 0;
 }
 
-void GLWidget::addGLProject( GLProject * p_glProject ) {
+void
+GLWidget::addGLProject( GLProject * p_glProject ) {
 
 	projects[ p_glProject->name( ).c_str( ) ] = p_glProject;
+}
+
+void
+GLWidget::removeGLProject( QString const & p_name ) {
+
+	projects.remove ( p_name );
+}
+
+void
+GLWidget::selectGLProject( QString const & p_name ) {
+
+	currentProject = p_name;
+
+	projects[ currentProject ]->resizeViewport( viewControlData.width, viewControlData.height );
+	projects[ currentProject ]->resize( viewControlData.width, viewControlData.height );
 }
 
 void
@@ -206,7 +222,7 @@ GLWidget::slotTimerFun( ) {
 void
 GLWidget::slotStopTimer( ) {
 
-		timer.stop( );
+	timer.stop( );
 }
 
 void GLWidget::slotSetGLProject( QString const & p_name ) {

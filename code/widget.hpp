@@ -79,10 +79,10 @@ public QGLWidget {
 	public:
 
 		void
-		initializeGL( );
+		initializeGL ( );
 
 		void
-		resizeGL( int p_width, int p_height );
+		resizeGL ( int p_width, int p_height );
 
 		void
 		paintGL( );
@@ -90,24 +90,30 @@ public QGLWidget {
 	public:
 
 		void
-		addGLProject( GLProject * p_glProject );
+		addGLProject ( GLProject * p_glProject );
 
 		void
-		updateShaderUniforms( );
+		updateShaderUniforms ( );
 
 		void
-		toggleFullscreen( );
+		toggleFullscreen ( );
+
+		void
+		selectGLProject ( QString const & p_name );
+
+		void
+		removeGLProject ( QString const & p_name );
 
 	public slots:
 
 		void
-		slotStartTimer( );
+		slotStartTimer ( );
 
 		void
-		slotTimerFun( );
+		slotTimerFun ( );
 
 		void
-		slotStopTimer( );
+		slotStopTimer ( );
 
 		void
 		slotSetGLProject( QString const & p_name );

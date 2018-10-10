@@ -216,8 +216,8 @@ FBTest::init( ) {
 		// C-FB-TEST-CANVAS
 		{
 			glr.container ( "C-FB-TEST-CANVAS" ).
-				addInTexture( "T-FB-TEST-CANVAS-COL" ).
-				addInTexture( "T-FB-TEST-CANVAS-Z" ).
+				addInTexture ( "T-FB-TEST-CANVAS-COL" ).
+				addInTexture ( "T-FB-TEST-CANVAS-Z" ).
 				setVertexArray ( "V-FB-TEST-CANVAS" ).
 				setShader ( "S-FB-TEST-CANVAS" ).
 				build ( );
@@ -238,27 +238,26 @@ FBTest::init( ) {
 		}
 	}
 
-	p = v = m = glm::mat4( 1. );
+	p = v = m = glm::mat4 ( 1. );
 
 	v = glm::translate ( v, glm::vec3 ( 0.f, 0.f, -2.f ) );
 
 	ccv.fixVCD ( vcd );
 
 	glFrontFace ( GL_CCW );
-	glClearColor ( 0.f, 0.f, 0.f, 1.f );
+	glClearColor ( .99f, .98f, .97f, 1.f );
 
 	glEnable ( GL_DEPTH_TEST );
 	glDisable ( GL_CULL_FACE );
 	glCullFace ( GL_BACK );
 
-	glr.createOffScreen ( true );
-	glr.fb->addOutTexture ( "T-FB-TEST-CANVAS-Z" );
-	glr.fb->addOutTexture ( "T-FB-TEST-CANVAS-COL" );
-	glr.fb->fixedSize = true;
+	glr.createOffScreen ( 200, 100 ).
+		addOutTexture ( "T-FB-TEST-CANVAS-Z" ).
+		addOutTexture ( "T-FB-TEST-CANVAS-COL" );
 }
 
 void
-FBTest::paint( ) {
+FBTest::paint ( ) {
 
 	ccv.fixView ( v );
 	ccv.fixModel ( m );
@@ -273,16 +272,12 @@ FBTest::paint( ) {
 	t = m;
 
 	glr.screenoff ( );
-	glViewport ( 0, 0, 200, 100 );
 	glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-	color = V4 ( .3 ,.2 ,.1 , 1. );
-	glr.run ( { "C-FB-TEST-QUAD-3D" } );
-
-	color = V4 ( 1, .5, .25, 1 );
+	color = V4 ( .5, .5, .5, 1 );
 	glr.run ( { "C-FB-TEST-TETRAHEDRON" } );
 
-	glr.screenon ( vcd->width, vcd->height );
+	glr.screenon ( );
 	glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	glr.run ( { "C-FB-TEST-CANVAS" } );
@@ -298,14 +293,7 @@ FBTest::resize ( int p_width, int p_height ) {
 	h = p_height,
 	ratio = w / h;
 
-	p = glm::perspective (  45.0f, ratio, 1.0f, 100.f );
+	p = glm::perspective ( 45.0f, ratio, 1.0f, 100.f );
 
 	std::cout << std::endl;
-
-	if ( glr.fb ) {
-
-		glr.fb->resize ( p_width, p_height );
-	}
-
-	glViewport ( 0, 0, p_width, p_height );
 }

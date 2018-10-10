@@ -137,7 +137,7 @@ main( int argc, char *argv[ ] ) {
 //	w.addGLProject( mstest );
 
 	w.addGLProject( fbTest );
-	w.slotSetGLProject( "Dummy" );
+	w.slotSetGLProject( "FBTest" );
 
 	w.show( );
 

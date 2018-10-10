@@ -15,6 +15,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <set>
 #include "../../glm/glm/glm.hpp"
 #include "../../glm/glm/vec3.hpp" // glm::vec3
 #include "../../glm/glm/vec4.hpp" // glm::vec4
@@ -360,7 +361,7 @@ GLR {
 				bool
 				fixedSize;
 
-				std::vector< Str >
+				std::set< Str >
 				outTextures,
 				renderBuffers;
 
@@ -371,7 +372,15 @@ GLR {
 				FrameBuffer
 				& addOutTexture ( CStr & p_textureName ) {
 
-					outTextures.push_back ( p_textureName );
+					outTextures.insert ( p_textureName );
+
+					return * this;
+				}
+
+				FrameBuffer
+				& delOutTexture ( CStr & p_textureName ) {
+
+					outTextures.erase ( p_textureName );
 
 					return * this;
 				}
@@ -379,7 +388,7 @@ GLR {
 				FrameBuffer
 				& addRenderBuffer ( CStr & p_colorRenderBufferName ) {
 
-					renderBuffers.push_back ( p_colorRenderBufferName );
+					renderBuffers.insert ( p_colorRenderBufferName );
 
 					return * this;
 				}
@@ -403,7 +412,7 @@ GLR {
 				}
 
 				void
-				resize( GLsizei p_width = 0, GLsizei p_height = 0 ) {
+				resize( GLsizei p_width, GLsizei p_height ) {
 
 					if ( fixedSize )
 
@@ -492,16 +501,16 @@ GLR {
 					glTexParameteri( target, GL_TEXTURE_WRAP_S, wrap_s );
 					glTexParameteri( target, GL_TEXTURE_WRAP_T, wrap_t );
 
-						if( format == GL_DEPTH_COMPONENT ) {
+					if( format == GL_DEPTH_COMPONENT ) {
 
-							glTexParameteri( GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY );
-							glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE );
-							glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL );
-						}
+						glTexParameteri( GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY );
+						glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE );
+						glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL );
+					}
 
-						glTexImage2D( target, level, internal_format, width, height, 0, format, type, nullptr );
+					glTexImage2D( target, level, internal_format, width, height, 0, format, type, nullptr );
 
-						glBindTexture( GL_TEXTURE_2D, 0 );
+					glBindTexture( GL_TEXTURE_2D, 0 );
 			}
 
 			Texture(
@@ -1778,7 +1787,7 @@ GLR {
 				Str
 				indexArray;
 
-				std::vector< Str >
+				std::set< Str >
 				inTextures;
 
 				Str
@@ -1805,7 +1814,15 @@ GLR {
 				Container
 				& addInTexture( CStr & p_textureName ) {
 
-					inTextures.push_back( p_textureName );
+					inTextures.insert( p_textureName );
+
+					return *this;
+				}
+
+				Container
+				& removeInTexture( CStr & p_textureName ) {
+
+					inTextures.erase( p_textureName );
 
 					return *this;
 				}
@@ -1869,21 +1886,26 @@ GLR {
 						}
 					}
 
-					for( std::size_t i = 0; i < inTextures.size( ); ++ i ) {
+					std::size_t
+					i = 0;
+
+					for( auto t : inTextures ) {
 
 						glActiveTexture( GL_TEXTURE0 + i );
 
 						Texture
-						*tx = __glr->tx[ inTextures[ i ] ];
+						*tx = __glr->tx[ t ];
 
 						tx->bind( );
 
 						shLoc->setUniformSamplerId( tx->name( ).c_str( ), i );
+
+						++ i;
 					}
 
-					for( std::size_t i = 0; i < inTextures.size( ); ++ i ) {
+					for( auto t : inTextures ) {
 
-						__glr->tx[ inTextures[ i ] ]->release( );
+						__glr->tx[ t ]->release( );
 					}
 
 					if( shLoc ) {
@@ -1941,14 +1963,19 @@ GLR {
 						sh->sendUniforms( );
 					}
 
-					for( GLuint i = 0; i < inTextures.size( ); ++ i ) {
+					std::size_t
+					i = 0;
+
+					for( auto t : inTextures ) {
 
 						glActiveTexture( GL_TEXTURE0 + i );
 
 						Texture
-						*tx = __glr->tx[ inTextures[ i ] ];
+						*tx = __glr->tx[ t ];
 
 						tx->bind( );
+
+						++ i;
 					}
 
 					//addUniformInt( tx->name( ).c_str( ), i );
@@ -1971,16 +1998,16 @@ GLR {
 
 //					glDrawArrays( mode, 0, va->vertexCount );
 
-					for( GLuint i = 0; i < inTextures.size( ); ++ i ) {
+					for ( auto t : inTextures ) {
 
-						__glr->tx[ inTextures[ i ] ]->release( );
+						__glr->tx[ t ]->release ( );
 					}
 
-					if( sh ) sh->release( );
+					if ( sh ) sh->release ( );
 
-					if( va ) va->release( );
+					if ( va ) va->release ( );
 
-					if( ia ) ia->release( );
+					if ( ia ) ia->release ( );
 				}
 		};
 
@@ -2020,8 +2047,10 @@ GLR {
 		mode;
 
 		GLsizei
-		viewPortWidth,
-		viewPortHeight;
+		screenWidth,
+		screenHeight,
+		offscreenWidth,
+		offscreenHeight;
 
 	public :
 
@@ -2078,16 +2107,31 @@ GLR {
 			return * currentIndexArray;
 		}
 
-		GLR
-		& createOffScreen ( bool const & p_fixedSize = false ) {
+		FrameBuffer
+		& createOffScreen ( GLsizei const & p_width, GLsizei const & p_height ) {
 
-			if ( fb )
+			offscreenWidth  = p_width;
+			offscreenHeight = p_height;
 
-				return * this;
+			if ( fb == nullptr )
 
-			fb = new FrameBuffer ( p_fixedSize, * this );
+				fb = new FrameBuffer ( true, * this );
 
-			return * this;
+			else
+
+				fb->resize ( offscreenWidth, offscreenHeight );
+
+			return * fb;
+		}
+
+		FrameBuffer
+		& createOffScreen ( ) {
+
+			if ( fb == nullptr )
+
+				fb = new FrameBuffer ( false, * this );
+
+			return * fb;
 		}
 
 		Texture
@@ -2241,16 +2285,20 @@ GLR {
 				glDrawBuffer( GL_NONE );
 			}
 
-			glViewport ( 0, 0, fb->viewPortWidth, fb->viewPortHeight );
+			if ( fb->fixedSize ) {
+
+				glViewport ( 0, 0, offscreenWidth, offscreenHeight );
+			}
+			else {
+
+				glViewport ( 0, 0, screenWidth, screenHeight );
+			}
 		}
 
 		void
-		screenon ( GLsizei const & p_width, GLsizei const & p_height ) {
+		screenon ( ) {
 
-			viewPortWidth = p_width;
-			viewPortHeight = p_height;
-
-			glViewport ( 0, 0, viewPortWidth, viewPortHeight );
+			glViewport ( 0, 0, screenWidth, screenHeight );
 
 			if ( mode == ONSCREEN )
 
@@ -2296,23 +2344,26 @@ public Named {
 	* vcd;
 
 	void
-	setViewControlData( ViewControlData * p_vcd ) {
+	setViewControlData ( ViewControlData * p_vcd ) {
 
 		vcd = p_vcd;
 	}
 
 	virtual void
-	init( ) = 0;
+	init ( ) = 0;
 
 	virtual void
-	resize( int p_width, int p_height ) = 0;
+	resize ( int p_width, int p_height ) = 0;
 
 	void
-	resizeViewport( int p_width, int p_height ) {
+	resizeViewport ( int p_width, int p_height ) {
+
+		glr.screenWidth = p_width;
+		glr.screenHeight = p_height;
 
 		if ( glr.fb != nullptr )
 
-			glr.fb->resize( p_width, p_height );
+			glr.fb->resize ( p_width, p_height );
 
 	}
 
