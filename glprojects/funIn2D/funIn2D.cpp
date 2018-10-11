@@ -2,8 +2,8 @@
 #include <string>
 #include <dirent.h>
 
-FunIn2D::FunIn2D( CStr const & p_name, ViewControlData * p_vcd ) :
-GLProject( p_name, p_vcd ) {
+FunIn2D::FunIn2D( CStr const & p_name ) :
+GLProject( p_name ) {
 
 }
 
@@ -76,10 +76,10 @@ FunIn2D::init( ) {
 void
 FunIn2D::resize( int p_width, int p_height ) {
 
-	// no depth test neccassary
 	glDisable( GL_DEPTH_TEST );
-	// no cull face test neccassary
 	glDisable( GL_CULL_FACE );
+
+	glr.screenon ( );
 }
 
 void

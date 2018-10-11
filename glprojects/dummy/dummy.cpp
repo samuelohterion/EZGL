@@ -131,6 +131,8 @@ Dummy::init ( ) {
 void
 Dummy::paint( ) {
 
+	glr.screenon ( );
+
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	glm::vec3 const
@@ -199,11 +201,4 @@ Dummy::resize( int p_width, int p_height ) {
 	ratio = w / h;
 
 	p = glm::perspective(  45.0f, ratio, .1f, 50.f );
-
-		if ( glr.fb ) {
-
-		glr.fb->resize ( p_width, p_height );
-	}
-
-	glViewport ( 0, 0, p_width, p_height );
 }

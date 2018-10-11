@@ -8,7 +8,7 @@ public GLProject {
 
 	public:
 
-		YetAnotherSphere( CStr const & p_name = "YetAnotherSphere", ViewControlData * p_vcd = nullptr );
+		YetAnotherSphere( CStr const & p_name = "YetAnotherSphere" );
 
 	public:
 

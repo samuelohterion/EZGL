@@ -1,8 +1,8 @@
 #include "coordinatesystem.hpp"
 #include "../../code/glmprinter.hpp"
 
-CoordinateSystem::CoordinateSystem( CStr const & p_name, ViewControlData *p_vcd ) :
-GLProject ( p_name, p_vcd ) {
+CoordinateSystem::CoordinateSystem ( CStr const & p_name ) :
+GLProject ( p_name ) {
 
 }
 
@@ -26,15 +26,15 @@ CoordinateSystem::init( ) {
 		// V-COORDINATE-SYSTEM
 		{
 			glr.vertices( "V-COORDINATE-SYSTEM" ).
-				setUsage( GL_STATIC_DRAW ).
-				attrib( "vertex", 0, 3 ) <<
-				+0.f << +0.f << +0.f <<
-				+1.f << +0.f << +0.f <<
-				+0.f << +0.f << +0.f <<
-				+0.f << +1.f << +0.f <<
-				+0.f << +0.f << +0.f <<
-				+0.f << +0.f << +1.f <<
-				GLR::VertexArray::Object( 0, 6, GL_LINES );
+			setUsage( GL_STATIC_DRAW ).
+			attrib( "vertex", 0, 3 ) <<
+			+0.f << +0.f << +0.f <<
+			+1.f << +0.f << +0.f <<
+			+0.f << +0.f << +0.f <<
+			+0.f << +1.f << +0.f <<
+			+0.f << +0.f << +0.f <<
+			+0.f << +0.f << +1.f <<
+			GLR::VertexArray::Object( 0, 6, GL_LINES );
 		}
 	}
 
@@ -47,48 +47,48 @@ CoordinateSystem::init( ) {
 		// S-COORDINATE-SYSTEM
 		{
 			glr.shader(
-				"S-COORDINATE-SYSTEM",
+			"S-COORDINATE-SYSTEM",
 
-				//Vertex Shader
-				"#version 330 core\n"
-				"layout( location = 0 ) in vec3 vertex;\n"
-				"uniform mat4 mv;\n"
-				"uniform mat4 p;\n"
-				"out VS2GS { vec4 vertex, mvv; } vs2gs;\n"
-				"void main( void ) {\n"
-					"vec4 v = mv * vec4( vertex, 1. );"
-					"vs2gs.mvv = v;\n"
-					"vs2gs.vertex = p * v;\n"
-					"gl_Position = p * v;\n"
-				"}\n",
+			//Vertex Shader
+			"#version 330 core\n"
+			"layout( location = 0 ) in vec3 vertex;\n"
+			"uniform mat4 mv;\n"
+			"uniform mat4 p;\n"
+			"out VS2GS { vec4 vertex, mvv; } vs2gs;\n"
+			"void main( void ) {\n"
+			"vec4 v = mv * vec4( vertex, 1. );"
+			"vs2gs.mvv = v;\n"
+			"vs2gs.vertex = p * v;\n"
+			"gl_Position = p * v;\n"
+			"}\n",
 
-				//Geometry Shader
-				"#version 330 core\n"
-				"layout ( lines ) in;\n"
-				"layout ( line_strip, max_vertices = 2 ) out;\n"
-				"in VS2GS { vec4 vertex, mvv; } vs2gs[ ];\n"
-				"out GS2FS { vec4 color; } gs2fs;\n"
-				"void main( void ) {\n"
-					"gs2fs.color  = vec4( max( vec3( .5 ), vec3( 1. ) ), 1. );\n"
-					"gl_Position  = gl_in[ 0 ].gl_Position;\n"
-					"EmitVertex( );\n"
-					"gs2fs.color  = vec4( max( vec3( 0. ), vs2gs[ 1 ].mvv.xyz - vs2gs[ 0 ].mvv.xyz ), 1. );\n"
-					"gl_Position = gl_in[ 1 ].gl_Position;\n"
-					"EmitVertex( );\n"
-					"EndPrimitive( );\n"
-				"}\n",
+			//Geometry Shader
+			"#version 330 core\n"
+			"layout ( lines ) in;\n"
+			"layout ( line_strip, max_vertices = 2 ) out;\n"
+			"in VS2GS { vec4 vertex, mvv; } vs2gs[ ];\n"
+			"out GS2FS { vec4 color; } gs2fs;\n"
+			"void main( void ) {\n"
+			"gs2fs.color  = vec4( max( vec3( .5 ), vec3( 1. ) ), 1. );\n"
+			"gl_Position  = gl_in[ 0 ].gl_Position;\n"
+			"EmitVertex( );\n"
+			"gs2fs.color  = vec4( max( vec3( 0. ), vs2gs[ 1 ].mvv.xyz - vs2gs[ 0 ].mvv.xyz ), 1. );\n"
+			"gl_Position = gl_in[ 1 ].gl_Position;\n"
+			"EmitVertex( );\n"
+			"EndPrimitive( );\n"
+			"}\n",
 
-				//Fragment Shader
-				"#version 330 core\n"
-				"in GS2FS { vec4 color; } gs2fs;\n"
-				"out vec4 fColor;\n"
-				"void main( void ) {\n"
-					"fColor = gs2fs.color;\n"
-				"}\n",
+			//Fragment Shader
+			"#version 330 core\n"
+			"in GS2FS { vec4 color; } gs2fs;\n"
+			"out vec4 fColor;\n"
+			"void main( void ) {\n"
+			"fColor = gs2fs.color;\n"
+			"}\n",
 
-				GLR::ShaderCode::FROM_CODE ).
-					addUniform( "mv", GLR::Shader::MAT4, GLR::Shader::SCALAR, & modelView ).
-					addUniform( "p",  GLR::Shader::MAT4, GLR::Shader::SCALAR, & projection );
+			GLR::ShaderCode::FROM_CODE ).
+			addUniform( "mv", GLR::Shader::MAT4, GLR::Shader::SCALAR, & modelView ).
+			addUniform( "p",  GLR::Shader::MAT4, GLR::Shader::SCALAR, & projection );
 		}
 	}
 
@@ -97,9 +97,9 @@ CoordinateSystem::init( ) {
 		// C-COORDINATE-SYSTEM
 		{
 			glr.container( "C-COORDINATE-SYSTEM" ).
-					setVertexArray( "V-COORDINATE-SYSTEM" ).
-					setShader( "S-COORDINATE-SYSTEM" ).
-					build( );
+			setVertexArray( "V-COORDINATE-SYSTEM" ).
+			setShader( "S-COORDINATE-SYSTEM" ).
+			build( );
 		}
 	}
 
@@ -171,4 +171,6 @@ CoordinateSystem::resize( int p_width, int p_height ) {
 	ratio = ( 1.f * p_width / p_height );
 
 	projection = glm::perspective( 45.0f, ratio, 1.0f, 100.f );
+
+	glr.screenon ( );
 }

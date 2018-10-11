@@ -7,7 +7,7 @@ public GLProject {
 
 	public:
 
-		Sphere( CStr const & p_name = "Sphere", ViewControlData *p_vcd = nullptr );
+		Sphere( CStr const & p_name = "Sphere" );
 
 	public:
 

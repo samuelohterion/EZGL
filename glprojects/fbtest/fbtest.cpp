@@ -26,7 +26,8 @@ FBTest::init( ) {
 			glr.texture(
 				"T-FB-TEST-CANVAS-Z",
 				new GLR::Texture(
-					"txZ", GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32,
+					"txZ", GL_TEXTURE_2D, 0,
+					GL_DEPTH_COMPONENT32,
 					GL_LINEAR, GL_LINEAR,
 					GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE,
 					GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 200, 100 ) );
@@ -86,128 +87,128 @@ FBTest::init( ) {
 		//S-FB-TEST-CANVAS
 		{
 			glr.shader(
-			"S-FB-TEST-CANVAS",
+				"S-FB-TEST-CANVAS",
 
-			//Vertex Shader
-			"#version 330 core\n"
-			"layout( location = 0 ) in vec2 vertex;\n"
-			"out VS2FS {\n"
-			"   vec2 texCoords;\n"
-			"} vs2fs;\n"
-			"void main( void ) {\n"
-			"   vs2fs.texCoords = vertex * .5 + .5;\n"
-			"	gl_Position = vec4( vertex, 0, 1 );\n"
-			"}\n",
+				//Vertex Shader
+				"#version 330 core\n"
+				"layout( location = 0 ) in vec2 vertex;\n"
+				"out VS2FS {\n"
+				"   vec2 texCoords;\n"
+				"} vs2fs;\n"
+				"void main( void ) {\n"
+				"   vs2fs.texCoords = vertex * .5 + .5;\n"
+				"	gl_Position = vec4( vertex, 0, 1 );\n"
+				"}\n",
 
-			//Fragment Shader
-			"#version 330 core\n"
-			"in VS2FS {\n"
-			"   vec2 texCoords;\n"
-			"} vs2fs;\n"
-			"uniform sampler2D txCOL;\n"
-			"uniform sampler2D txZ;\n"
-			"uniform float time;\n"
-			"out vec4 fColor;\n"
-			"void main( void ) {\n"
-			"	vec4"
-			"	s1 = texture( txCOL, vs2fs.texCoords );\n"
-			"	float s2 = texture( txZ, vs2fs.texCoords ).r;\n"
-			"	fColor = vec4( s2, s2, s2, 1 );\n"
-			"	fColor = mix( s1, fColor, vec4( vs2fs.texCoords.x > 0.5 + .5 * sin( time ) ? 1 : 0 ) );\n"
-			"}\n",
-			GLR::ShaderCode::FROM_CODE ).
-			addUniform( "time", GLR::Shader::FLOAT, GLR::Shader::SCALAR, & vcd->time );
+				//Fragment Shader
+				"#version 330 core\n"
+				"in VS2FS {\n"
+				"   vec2 texCoords;\n"
+				"} vs2fs;\n"
+				"uniform sampler2D txCOL;\n"
+				"uniform sampler2D txZ;\n"
+				"uniform float time;\n"
+				"out vec4 fColor;\n"
+				"void main( void ) {\n"
+				"	vec4"
+				"	s1 = texture( txCOL, vs2fs.texCoords );\n"
+				"	float s2 = texture( txZ, vs2fs.texCoords ).r;\n"
+				"	fColor = vec4( s2, s2, s2, 1 );\n"
+				"	fColor = mix( s1, fColor, vec4( vs2fs.texCoords.x > 0.5 + .5 * sin( time ) ? 1 : 0 ) );\n"
+				"}\n",
+				GLR::ShaderCode::FROM_CODE ).
+				addUniform( "time", GLR::Shader::FLOAT, GLR::Shader::SCALAR, & vcd->time );
 		}
 		//S-FB-TEST-QUAD-3D
 		{
 			glr.shader(
-			"S-FB-TEST-QUAD-3D",
+				"S-FB-TEST-QUAD-3D",
 
-			//Vertex Shader
-			"#version 330 core\n"
-			"layout( location = 0 ) in vec3 vertex;\n"
-			"uniform mat4 model, view, projection;\n"
-			"void main( void ) {\n"
-			"	gl_Position = projection * view * model * vec4( vertex, 1 );\n"
-			"}\n",
+				//Vertex Shader
+				"#version 330 core\n"
+				"layout( location = 0 ) in vec3 vertex;\n"
+				"uniform mat4 model, view, projection;\n"
+				"void main( void ) {\n"
+				"	gl_Position = projection * view * model * vec4( vertex, 1 );\n"
+				"}\n",
 
-			//Fragment Shader
-			"#version 330 core\n"
-			"uniform vec4 color;\n"
-			"out vec4 fColor;\n"
-			"void main( void ) {\n"
-			"	fColor = color;\n"
-			"}\n",
-			GLR::ShaderCode::FROM_CODE ).
-			addUniform( "model",      GLR::Shader::MAT4, GLR::Shader::SCALAR, & m ).
-			addUniform( "view",       GLR::Shader::MAT4, GLR::Shader::SCALAR, & v ).
-			addUniform( "projection", GLR::Shader::MAT4, GLR::Shader::SCALAR, & p ).
-			addUniform( "color",      GLR::Shader::VEC4, GLR::Shader::SCALAR, & color );
+				//Fragment Shader
+				"#version 330 core\n"
+				"uniform vec4 color;\n"
+				"out vec4 fColor;\n"
+				"void main( void ) {\n"
+				"	fColor = color;\n"
+				"}\n",
+				GLR::ShaderCode::FROM_CODE ).
+				addUniform( "model",      GLR::Shader::MAT4, GLR::Shader::SCALAR, & m ).
+				addUniform( "view",       GLR::Shader::MAT4, GLR::Shader::SCALAR, & v ).
+				addUniform( "projection", GLR::Shader::MAT4, GLR::Shader::SCALAR, & p ).
+				addUniform( "color",      GLR::Shader::VEC4, GLR::Shader::SCALAR, & color );
 		}
 		//S-FB-TEST-TETRAHEDRON
 		{
 			glr.shader(
-			"S-FB-TEST-TETRAHEDRON",
+				"S-FB-TEST-TETRAHEDRON",
 
-			//Vertex Shader
-			"#version 330 core\n"
-			"layout( location = 0 ) in vec3 vertex;\n"
-			"uniform mat4 model, view, projection;\n"
-			"out VS2GS {\n"
-			"	vec4 v;\n"
-			"} vs2gs;"
-			"void main( void ) {\n"
-			"	vs2gs.v = model * vec4( vertex, 1 );\n"
-			"	gl_Position = projection * view * vs2gs.v;\n"
-			"}\n",
+				//Vertex Shader
+				"#version 330 core\n"
+				"layout( location = 0 ) in vec3 vertex;\n"
+				"uniform mat4 model, view, projection;\n"
+				"out VS2GS {\n"
+				"	vec4 v;\n"
+				"} vs2gs;"
+				"void main( void ) {\n"
+				"	vs2gs.v = model * vec4( vertex, 1 );\n"
+				"	gl_Position = projection * view * vs2gs.v;\n"
+				"}\n",
 
-			//Geometry Shader
-			"#version 330 core\n"
-			"layout ( triangles ) in;\n"
-			"layout ( triangle_strip, max_vertices = 3 ) out;\n"
+				//Geometry Shader
+				"#version 330 core\n"
+				"layout ( triangles ) in;\n"
+				"layout ( triangle_strip, max_vertices = 3 ) out;\n"
 
-			"in VS2GS {\n"
-			"	vec4 v;\n"
-			"} vs2gs[ ];\n"
-			"out GS2FS {\n"
-			"	vec4 v, n;\n"
-			"} gs2fs;\n"
-			"void main( ) {\n"
-			"	vec3 n = normalize( cross( vs2gs[ 1 ].v.xyz - vs2gs[ 0 ].v.xyz, vs2gs[ 2 ].v.xyz - vs2gs[ 0 ].v.xyz ) );\n"
-			"	gl_Position = gl_in[ 0 ].gl_Position;\n"
-			"	gs2fs.v = vs2gs[ 0 ].v;\n"
-			"	gs2fs.n = vec4( n, 1 );\n"
-			"	EmitVertex( );\n"
-			"	gl_Position = gl_in[ 1 ].gl_Position;\n"
-			"	gs2fs.v = vs2gs[ 1 ].v;\n"
-			"	gs2fs.n = vec4( n, 1 );\n"
-			"	EmitVertex( );\n"
-			"	gl_Position = gl_in[ 2 ].gl_Position;\n"
-			"	gs2fs.v = vs2gs[ 2 ].v;\n"
-			"	gs2fs.n = vec4( n, 1 );\n"
-			"	EmitVertex( );\n"
-			"	EndPrimitive( );\n"
-			"}\n",
+				"in VS2GS {\n"
+				"	vec4 v;\n"
+				"} vs2gs[ ];\n"
+				"out GS2FS {\n"
+				"	vec4 v, n;\n"
+				"} gs2fs;\n"
+				"void main( ) {\n"
+				"	vec3 n = normalize( cross( vs2gs[ 1 ].v.xyz - vs2gs[ 0 ].v.xyz, vs2gs[ 2 ].v.xyz - vs2gs[ 0 ].v.xyz ) );\n"
+				"	gl_Position = gl_in[ 0 ].gl_Position;\n"
+				"	gs2fs.v = vs2gs[ 0 ].v;\n"
+				"	gs2fs.n = vec4( n, 1 );\n"
+				"	EmitVertex( );\n"
+				"	gl_Position = gl_in[ 1 ].gl_Position;\n"
+				"	gs2fs.v = vs2gs[ 1 ].v;\n"
+				"	gs2fs.n = vec4( n, 1 );\n"
+				"	EmitVertex( );\n"
+				"	gl_Position = gl_in[ 2 ].gl_Position;\n"
+				"	gs2fs.v = vs2gs[ 2 ].v;\n"
+				"	gs2fs.n = vec4( n, 1 );\n"
+				"	EmitVertex( );\n"
+				"	EndPrimitive( );\n"
+				"}\n",
 
-			//Fragment Shader
-			"#version 330 core\n"
-			"in GS2FS {\n"
-			"	vec4 v, n;\n"
-			"} gs2fs;\n"
-			"uniform mat4 model, view;\n"
-			"uniform vec4 color;\n"
-			"out vec4 fColor;\n"
-			"const vec3 light = vec3( 0, 0, 0 );\n"
-			"void main( void ) {\n"
-			"	vec3 d = normalize( vec3( view * model * vec4( light, 1 ) - gs2fs.v ) );\n"
-			"	float amp = max( 0, - dot( gs2fs.n.xyz, d ) );\n"
-			"	fColor = vec4( amp * color.rgb, 1 );\n"
-			"}\n",
-			GLR::ShaderCode::FROM_CODE ).
-			addUniform( "model",      GLR::Shader::MAT4, GLR::Shader::SCALAR, & m ).
-			addUniform( "view",       GLR::Shader::MAT4, GLR::Shader::SCALAR, & v ).
-			addUniform( "projection", GLR::Shader::MAT4, GLR::Shader::SCALAR, & p ).
-			addUniform( "color",      GLR::Shader::VEC4, GLR::Shader::SCALAR, & color );
+				//Fragment Shader
+				"#version 330 core\n"
+				"in GS2FS {\n"
+				"	vec4 v, n;\n"
+				"} gs2fs;\n"
+				"uniform mat4 model, view;\n"
+				"uniform vec4 color;\n"
+				"out vec4 fColor;\n"
+				"const vec3 light = vec3( 0, 0, 0 );\n"
+				"void main( void ) {\n"
+				"	vec3 d = normalize( vec3( view * model * vec4( light, 1 ) - gs2fs.v ) );\n"
+				"	float amp = max( 0, - dot( gs2fs.n.xyz, d ) );\n"
+				"	fColor = vec4( amp * color.rgb, 1 );\n"
+				"}\n",
+				GLR::ShaderCode::FROM_CODE ).
+				addUniform( "model",      GLR::Shader::MAT4, GLR::Shader::SCALAR, & m ).
+				addUniform( "view",       GLR::Shader::MAT4, GLR::Shader::SCALAR, & v ).
+				addUniform( "projection", GLR::Shader::MAT4, GLR::Shader::SCALAR, & p ).
+				addUniform( "color",      GLR::Shader::VEC4, GLR::Shader::SCALAR, & color );
 		}
 	}
 
@@ -294,6 +295,4 @@ FBTest::resize ( int p_width, int p_height ) {
 	ratio = w / h;
 
 	p = glm::perspective ( 45.0f, ratio, 1.0f, 100.f );
-
-	std::cout << std::endl;
 }

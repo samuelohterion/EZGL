@@ -14,7 +14,7 @@ public:
 	Interaction(glm::vec3 iVel, glm::vec3 iAcc, glm::vec3 iPos, glm::vec3 iG, float iRad );
 
 	public:
-			glm::vec3
+	glm::vec3
 			vel,
 			acc,
 			pos,
@@ -28,9 +28,6 @@ public:
 			Bounds(float time);
 
 			void hitGround();
-
-
-
 };
 
 #endif // INTERACTION_H

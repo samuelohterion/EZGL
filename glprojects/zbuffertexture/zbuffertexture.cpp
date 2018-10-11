@@ -9,14 +9,6 @@ GLProject ( p_name ) {
 void
 ZBufferTexture::init( ) {
 
-	// frame buffers
-	{
-		// F-Z-BUFFER-TEXTURE
-		{
-			glr.frameBuffer( "F-Z-BUFFER-TEXTURE" );
-		}
-	}
-
 	// textures
 	{
 		// T-Z-BUFFER-TEXTURE-Z
@@ -24,8 +16,11 @@ ZBufferTexture::init( ) {
 			glr.texture(
 				"T-Z-BUFFER-TEXTURE-Z",
 				new GLR::Texture(
-				"txZ", GL_TEXTURE_2D, 0,
-				GL_DEPTH_COMPONENT32, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 32, 32 ) );
+					"txZ", GL_TEXTURE_2D, 0,
+					GL_DEPTH_COMPONENT32,
+					GL_NEAREST, GL_NEAREST,
+					GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE,
+					GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 32, 32 ) );
 		}
 	}
 
@@ -34,33 +29,33 @@ ZBufferTexture::init( ) {
 		// V-Z-BUFFER-TEXTURE-QUAD-2D
 		{
 			glr.vertices( "V-Z-BUFFER-TEXTURE-QUAD-2D" ).
-				setUsage( GL_STATIC_DRAW ).
-				attrib( "vertex", 0, 2 ) <<
-				-1.f << -1.f <<
-				+1.f << -1.f <<
-				+1.f << +1.f <<
-				-1.f << +1.f <<
-				GLR::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
+			setUsage( GL_STATIC_DRAW ).
+			attrib( "vertex", 0, 2 ) <<
+			-1.f << -1.f <<
+			+1.f << -1.f <<
+			+1.f << +1.f <<
+			-1.f << +1.f <<
+			GLR::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
 		}
 		// V-Z-BUFFER-TEXTURE-QUAD-3D
 		{
 			glr.vertices( "V-Z-BUFFER-TEXTURE-QUAD-3D" ).
-				setUsage( GL_STATIC_DRAW ).
-				attrib( "vertex", 0, 3 ) <<
-				+0.f << -1.f << +0.f <<
-				+1.f << +0.f << +0.f <<
-				+0.f << +0.f << +1.f <<
-				-1.f << +0.f << +0.f <<
-				+0.f << +0.f << -1.f <<
-				+1.f << +0.f << +0.f <<
-				GLR::VertexArray::Object( 0, 6, GL_TRIANGLE_FAN ) <<
-				+0.f << +1.f << +0.f <<
-				-1.f << +0.f << +0.f <<
-				+0.f << +0.f << +1.f <<
-				+1.f << +0.f << +0.f <<
-				+0.f << +0.f << -1.f <<
-				-1.f << +0.f << +0.f <<
-				GLR::VertexArray::Object( 6, 6, GL_TRIANGLE_FAN );
+			setUsage( GL_STATIC_DRAW ).
+			attrib( "vertex", 0, 3 ) <<
+			+0.f << -1.f << +0.f <<
+			+1.f << +0.f << +0.f <<
+			+0.f << +0.f << +1.f <<
+			-1.f << +0.f << +0.f <<
+			+0.f << +0.f << -1.f <<
+			+1.f << +0.f << +0.f <<
+			GLR::VertexArray::Object( 0, 6, GL_TRIANGLE_FAN ) <<
+			+0.f << +1.f << +0.f <<
+			-1.f << +0.f << +0.f <<
+			+0.f << +0.f << +1.f <<
+			+1.f << +0.f << +0.f <<
+			+0.f << +0.f << -1.f <<
+			-1.f << +0.f << +0.f <<
+			GLR::VertexArray::Object( 6, 6, GL_TRIANGLE_FAN );
 		}
 	}
 
@@ -82,8 +77,8 @@ ZBufferTexture::init( ) {
 				"	vec2 coord;\n"
 				"} vs2fs;\n"
 				"void main( void ) {\n"
-					"vs2fs.coord = .5 + .5 * vertex;\n"
-					"gl_Position = vec4( vertex, 0, 1. );"
+				"vs2fs.coord = .5 + .5 * vertex;\n"
+				"gl_Position = vec4( vertex, 0, 1. );"
 				"}\n",
 
 				//Fragment Shader
@@ -110,7 +105,7 @@ ZBufferTexture::init( ) {
 				"layout( location = 1 ) in vec3 color;\n"
 				"uniform mat4 mvp;\n"
 				"void main( void ) {\n"
-					"gl_Position = mvp * vec4( vertex, 1. );"
+				"gl_Position = mvp * vec4( vertex, 1. );"
 				"}\n",
 
 				//Fragment Shader
@@ -127,11 +122,8 @@ ZBufferTexture::init( ) {
 		// C-Z-BUFFER-TEXTURE-QUAD-3D
 		{
 			glr.container( "C-Z-BUFFER-TEXTURE-QUAD-3D" ).
-				setFrameBuffer( "F-Z-BUFFER-TEXTURE" ).
-				addOutTexture( "T-Z-BUFFER-TEXTURE-Z" ).
 				setVertexArray( "V-Z-BUFFER-TEXTURE-QUAD-3D" ).
 				setShader( "S-Z-BUFFER-TEXTURE-QUAD-3D" ).
-				addClearBits( GL_DEPTH_BUFFER_BIT ).
 				build( );
 		}
 		// C-Z-BUFFER-TEXTURE-QUAD-2D
@@ -144,9 +136,19 @@ ZBufferTexture::init( ) {
 		}
 	}
 
+	// offscreen
+	{
+		glr.createOffScreen ( ).
+			addOutTexture( "T-Z-BUFFER-TEXTURE-Z" );
+	}
+
 	p = v = m = glm::mat4( 1. );
 
 	v = glm::translate( v, glm::vec3( 0.f, 0.f, -2.f ) );
+
+	glDisable( GL_CULL_FACE );
+
+	glClearColor( .11f, .12f, .13f, 1.f );
 }
 
 void
@@ -155,7 +157,7 @@ ZBufferTexture::paint( ) {
 	GLR::CameraCenterView
 	ccv( m, v, vcd, glm::vec3( .02f, .02f, .1f ) );
 
-	ccv.reactOnMouse( );
+	ccv.reactOnMouse ( );
 
 	m = ccv.model( );
 
@@ -163,13 +165,14 @@ ZBufferTexture::paint( ) {
 
 	mvp = p * v * m;
 
-	glClearColor( .11f, .12f, .13f, 1.f );
-	glDisable( GL_CULL_FACE );
-
+	glr.screenoff ( );
 	glEnable( GL_DEPTH_TEST );
+	glClear ( GL_DEPTH_BUFFER_BIT );
 	glr.run( { "C-Z-BUFFER-TEXTURE-QUAD-3D" } );
 
+	glr.screenon ( );
 	glDisable( GL_DEPTH_TEST );
+	glClear ( GL_COLOR_BUFFER_BIT );
 	glr.run( { "C-Z-BUFFER-TEXTURE-QUAD-2D" } );
 }
 
@@ -182,6 +185,4 @@ ZBufferTexture::resize( int p_width, int p_height ) {
 	ratio = w / h;
 
 	p = glm::perspective(  45.0f, ratio, 1.0f, 100.f );
-
-	std::cout << std::endl;
 }

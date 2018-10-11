@@ -8,7 +8,7 @@ public GLProject {
 
 	public:
 
-		CubeWithTexture( CStr const & p_name = "CubeWithTexture", ViewControlData * p_vcd = nullptr );
+		CubeWithTexture( CStr const & p_name = "CubeWithTexture" );
 
 	public:
 

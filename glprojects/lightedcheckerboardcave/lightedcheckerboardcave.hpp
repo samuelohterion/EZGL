@@ -8,7 +8,7 @@ public GLProject {
 
 	public:
 
-		LightedCheckerboardCave( CStr const & p_name = "FunWithTextures", ViewControlData * p_vcd = nullptr );
+		LightedCheckerboardCave( CStr const & p_name = "LightedCheckerboardCave" );
 
 	public:
 

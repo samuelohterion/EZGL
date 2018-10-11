@@ -1,7 +1,7 @@
 #include "yetanothersphere.hpp"
 
-YetAnotherSphere::YetAnotherSphere( const CStr &p_name, ViewControlData *p_vcd ) :
-GLProject ( p_name, p_vcd ) {
+YetAnotherSphere::YetAnotherSphere( const CStr &p_name ) :
+GLProject ( p_name ) {
 
 }
 
@@ -14,13 +14,9 @@ YetAnotherSphere::init( ) {
 
 	view = glm::lookAt( glm::vec3( 0., 0., 4. ), glm::vec3( 0., 0., 0. ), glm::vec3( 0., 1., 0. ) );
 
-	// frame buffer
-	{
-	}
-
 	// vertex arrays
 	{
-		// VERTEX-ARRAY-QUAD-3D
+		// V-QUAD-3D
 		{
 			glr.vertices( "V-QUAD-3D" ).
 				setUsage( GL_STATIC_DRAW ).
@@ -107,7 +103,7 @@ YetAnotherSphere::init( ) {
 
 	// index arrays
 	{
-		// INDEX-ARRAY-QUAD-3D
+		// I-QUAD-3D
 		{
 			glr.indices( "I-QUAD-3D" ).
 				setUsage( GL_STATIC_DRAW ) <<
@@ -280,7 +276,7 @@ YetAnotherSphere::init( ) {
 		{
 			glr.texture(
 			"T-CHARACTERS",
-			new GLR::Texture( "txChars", "../EZGL/pix/characters.png" ) );
+			new GLR::Texture( "txChars", "../pix/characters.png" ) );
 		}
 	}
 
@@ -307,7 +303,7 @@ YetAnotherSphere::init( ) {
 }
 
 void
-YetAnotherSphere::paint( ) {
+YetAnotherSphere::paint ( ) {
 
 	glEnable( GL_DEPTH_TEST );
 	glDisable( GL_CULL_FACE );
@@ -341,7 +337,7 @@ YetAnotherSphere::paint( ) {
 }
 
 void
-YetAnotherSphere::resize( int p_width, int p_height ) {
+YetAnotherSphere::resize ( int p_width, int p_height ) {
 
 	// get aspect ratio
 	float
@@ -349,4 +345,6 @@ YetAnotherSphere::resize( int p_width, int p_height ) {
 
 	// create a projection matrix
 	projection = glm::perspective( 45.0f, ratio, 1.0f, 100.f );
+
+	glr.screenon ( );
 }

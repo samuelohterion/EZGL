@@ -1,220 +1,6 @@
 #include "obj.hpp"
 #include "../../code/glmprinter.hpp"
 
-/*
-Obj:: Obj ( CStr const & p_name) :
-Named ( p_name ) {
-
-}
-
-Obj:: ~ Obj( ) {
-
-}
-
-bool
-Obj:: load ( CStr & p_filename ) {
-
-	std::ifstream
-	file( p_filename );
-
-	if( ! file.is_open( ) ) {
-
-		std::cout << "couldn't find file " << p_filename << ".\n exit...\n";
-
-		return false;
-	}
-
-	GLuint
-	faceId = 0,
-	vertexId = 0,
-	normalId = 0,
-	textureId = 0;
-
-	while ( file.good ( ) ) {
-
-		std::string
-		line,
-		arg;
-
-		std::getline ( file, line );
-
-		std::istringstream
-		iss( line, std::istringstream::in );
-
-		while( iss >> arg ) {
-
-			if ( arg == "mtllib" ) {
-
-				iss >> mtllib;
-				std::cout << "mtllib: " << mtllib << std::endl;
-			}
-			else if( arg == "v" ) {
-
-				std::cout << "v[" << vertexId ++ << "]:\n";
-
-				GLfloat
-				p;
-
-				iss >> p;
-				v.push_back( p );
-				std::cout << "  x: " << p << std::endl;
-
-				iss >> p;
-				v.push_back( p );
-				std::cout << "  y: " << p << std::endl;
-
-				iss >> p;
-				v.push_back( p );
-				std::cout << "  z: " << p << std::endl;
-			}
-			else if( arg == "vt" ) {
-
-				std::cout << "vt[" << textureId ++ << "]:\n";
-
-				GLfloat
-				p;
-
-				iss >> p;
-				vt.push_back( p );
-				std::cout << "  u: " << p << std::endl;
-
-				iss >> p;
-				vt.push_back( p );
-				std::cout << "  v: " << p << std::endl;
-			}
-			else if( arg == "vn" ) {
-
-				std::cout << "vn[" << normalId ++ << "]\n";
-
-				GLfloat
-				p;
-
-				iss >> p;
-				vn.push_back( p );
-				std::cout << "  x: " << p << std::endl;
-
-				iss >> p;
-				vn.push_back( p );
-				std::cout << "  y: " << p << std::endl;
-
-				iss >> p;
-				vn.push_back( p );
-				std::cout << "  z: " << p << std::endl;
-			}
-			else if( arg == "f" ) {
-
-				std::cout << "face[" << faceId ++ << "]:\n";
-
-				std::regex
-				re_v   ( "([0-9]+)[:space:]+([0-9]+)[:space:]+([0-9]+)" ),
-				re_vt  ( "([0-9]+)[:space:]* /[:space:]*([0-9]+)" ),
-				re_vn  ( "([0-9]+)[:space:]* /[:space:]* /[:space:]*([0-9]+)" ),
-				re_vtn ( "([0-9]+)[:space:]* /[:space:]*([0-9]+)[:space:]* /[:space:]*([0-9]+)" );
-
-				std::smatch
-				sm;
-
-				std::string
-				loc;
-
-				GLuint
-				vertexID = 0;
-
-				while( iss >> loc ) {
-
-					if ( std::regex_search ( loc, sm, re_vtn ) ) {
-
-						std::cout << "  vertex[" << vertexID ++ << "]:\n";
-
-						std::string
-						v  = sm[ 1 ].str( ),
-						vt = sm[ 2 ].str( ),
-						vn = sm[ 3 ].str( );
-
-						std::cout << "    v:  " << v << "\n    vt: " << vt << "\n    vn: " << vn << std::endl;
-					}
-					else if ( std::regex_search ( loc, sm, re_vn ) ) {
-
-						std::cout << "  vertex[" << vertexID ++ << "]:\n";
-
-						std::string
-						v  = sm[ 1 ].str( ),
-						vn = sm[ 2 ].str( );
-
-						std::cout << "    v:  " << v << "\n    vn: " << vn << std::endl;
-					}
-					else if ( std::regex_search ( loc, sm, re_vt ) ) {
-
-						std::cout << "  vertex[" << vertexID ++ << "]:\n";
-
-						std::string
-						v  = sm[ 1 ].str( ),
-						vt = sm[ 2 ].str( );
-
-						std::cout << "    v:  " << v << "\n    vt: " << vt << std::endl;
-					}
-					else {
-
-							std::cout << "  vertex[" << vertexID ++ << "]:\n";
-
-						GLint
-						i = atoi( loc.c_str ( ) );
-
-						std::cout << "    v: " << i << std::endl;
-
-						while( iss >> i ) {
-
-							std::cout << "  vertex[" << vertexID ++ << "]:\n";
-							std::cout << "    v:  " << i << std::endl;
-						}
-					}
-				}
-			}
-			else if( arg == "s" ) {
-
-				GLint
-				s = -1;
-
-				iss >> s;
-
-				std::cout << "smoothing factor: " << s << std::endl;
-			}
-			else if( arg == "o" ) {
-
-				Str
-				s;
-
-				iss >> s;
-
-				std::cout << "object: " << s << std::endl;
-			}
-			else if( arg == "#" ) {
-
-				Str
-				s = "comment";
-
-				iss >> s;
-
-				std::cout << "comment: " << s << std::endl;
-			}
-			else if( arg == "usemtl" ) {
-
-				Str
-				s = "no material";
-
-				iss >> s;
-
-				std::cout << "material: " << s << std::endl;
-			}
-		}
-	}
-
-	file.close ( );
-
-	return true;
-}
-*/
-
 ObjExample::ObjExample ( CStr & p_name ) :
 GLProject ( p_name ),
 obj1 ( 0x100000 ),
@@ -309,9 +95,6 @@ ObjExample::add2GLR ( OBJ & p_obj, std::string const & p_objName, std::string co
 						addUniform ( "Ns",         GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->Ns ).
 						addUniform ( "d",          GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->d );
 
-						co.setFrameBuffer( "F-PASS1" );
-						co.addClearBits( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-						co.addOutTexture ( "T-PASS1" );
 						co.setShader ( "S-PASS1-" + name );
 
 						contNames[ PASSES_1 ].push_back( coName );
@@ -335,7 +118,8 @@ ObjExample::add2GLR ( OBJ & p_obj, std::string const & p_objName, std::string co
 							addUniform ( "Ns",         GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->Ns ).
 							addUniform ( "d",          GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->d );
 
-						co.addInTexture ( "T-PASS1" );
+						co.addInTexture ( "T-PASS1-COL" );
+
 						co.setShader ( "S-PASS2-" + name );
 
 						contNames[ PASSES_2 ].push_back ( coName );
@@ -389,9 +173,6 @@ ObjExample::add2GLR ( OBJ & p_obj, std::string const & p_objName, std::string co
 						addUniform ( "Ns",         GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->Ns ).
 						addUniform ( "d",          GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->d );
 
-						co.setFrameBuffer( "F-PASS1" );
-						co.addClearBits( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-						co.addOutTexture ( "T-PASS1" );
 						co.setShader ( "S-PASS1-" + name );
 
 						contNames[ PASSES_1 ].push_back( coName );
@@ -415,7 +196,8 @@ ObjExample::add2GLR ( OBJ & p_obj, std::string const & p_objName, std::string co
 							addUniform ( "Ns",         GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->Ns ).
 							addUniform ( "d",          GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->d );
 
-						co.addInTexture ( "T-PASS1" );
+						co.addInTexture ( "T-PASS1-COL" );
+
 						co.setShader ( "S-PASS2-" + name );
 
 						contNames[ PASSES_2 ].push_back ( coName );
@@ -478,17 +260,6 @@ ObjExample::add2GLR ( OBJ & p_obj, std::string const & p_objName, std::string co
 						addUniform ( "Ns",         GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->Ns ).
 						addUniform ( "d",          GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->d );
 
-						co.setFrameBuffer( "F-PASS1" );
-
-						if( contNames [ PASSES_1 ].size ( ) < 1 )
-
-							co.addClearBits( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-						else
-
-							co.subClearBits( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-						co.addOutTexture ( "T-PASS1" );
 						co.setShader ( "S-PASS1-" + name );
 
 						contNames[ PASSES_1 ].push_back( coName );
@@ -512,8 +283,8 @@ ObjExample::add2GLR ( OBJ & p_obj, std::string const & p_objName, std::string co
 							addUniform ( "Ns",         GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->Ns ).
 							addUniform ( "d",          GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->d );
 
-						co.addInTexture ( "T-PASS1" );
-						co.subClearBits( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+						co.addInTexture ( "T-PASS1-COL" );
+
 						co.setShader ( "S-PASS2-" + name );
 
 						contNames[ PASSES_2 ].push_back ( coName );
@@ -570,17 +341,6 @@ ObjExample::add2GLR ( OBJ & p_obj, std::string const & p_objName, std::string co
 							addUniform ( "Ns",         GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->Ns ).
 							addUniform ( "d",          GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->d );
 
-						co.setFrameBuffer( "F-PASS1" );
-
-						if( contNames [ PASSES_1 ].size ( ) < 1 )
-
-							co.addClearBits( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-						else
-
-							co.subClearBits( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-						co.addOutTexture ( "T-PASS1" );
 						co.setShader ( "S-PASS1-" + name );
 
 						contNames[ PASSES_1 ].push_back( coName );
@@ -604,9 +364,9 @@ ObjExample::add2GLR ( OBJ & p_obj, std::string const & p_objName, std::string co
 							addUniform ( "Ns",         GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->Ns ).
 							addUniform ( "d",          GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->d );
 
-						co.addInTexture ( "T-PASS1" );
+						co.addInTexture ( "T-PASS1-COL" );
+
 						co.setShader ( "S-PASS2-" + name );
-						co.subClearBits( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 						contNames[ PASSES_2 ].push_back ( coName );
 					}
@@ -634,12 +394,12 @@ ObjExample::add2GLR ( OBJ & p_obj, std::string const & p_objName, std::string co
 void
 ObjExample::init ( ) {
 
-	// frame buffer
+	// offscreen
 	{
-		// F-PASS1
-		{
-			glr.frameBuffer( "F-PASS1" );
-		}
+		glr.
+			createOffScreen ( ).
+			addOutTexture ( "T-PASS1-Z" ).
+			addOutTexture ( "T-PASS1-COL" );
 	}
 
 	// vertex arrays
@@ -733,16 +493,28 @@ ObjExample::init ( ) {
 
 	// textures
 	{
-		//T-PASS1
+		//T-PASS1-COL
 		{
 			glr.texture (
-				"T-PASS1",
+				"T-PASS1-COL",
 				new GLR::Texture (
 					"pass1",
 					GL_TEXTURE_2D, 0, GL_RGBA32F,
 					GL_NEAREST, GL_NEAREST,
 					GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE,
 					GL_RGBA, GL_FLOAT,
+					512, 512 ) );
+		}
+		//T-PASS1-Z
+		{
+			glr.texture (
+				"T-PASS1-Z",
+				new GLR::Texture (
+					"pass2",
+					GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32,
+					GL_NEAREST, GL_NEAREST,
+					GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE,
+					GL_DEPTH_COMPONENT, GL_UNSIGNED_INT,
 					512, 512 ) );
 		}
 	}
@@ -756,21 +528,19 @@ ObjExample::init ( ) {
 			build ( );
 
 		glr.container ( "C-PASS2" ).
-			addInTexture ( "T-PASS1" ).
+			addInTexture ( "T-PASS1-COL" ).
 			setVertexArray ( "V-PASS2" ).
 			setShader( "S-PASS2" ).
 			build ( );
 	}
 
 	cAudi  = add2GLR( obj1, "audi000tri.obj", "/home/friedrich/Downloads/models/audi000/", "/home/friedrich/Downloads/models/audi000/" );
-//	cWoman = add2GLR( obj2, "rosawomantri.obj", "/home/friedrich/Development/c++/2018.06.03/obj/", "/home/friedrich/Development/c++/2018.06.03/pix/" );
+	cWoman = add2GLR( obj2, "rosawomantri.obj", "/home/friedrich/Development/c++/2018.06.03/obj/", "/home/friedrich/Development/c++/2018.06.03/pix/" );
 
 	projection = view = model = glm::mat4 ( 1. );
 
 	model = glm::translate( model, V3 ( +0, +0, +0 ) );
 	view  = glm::translate( view,  V3 ( +0, +0, -10 ) );
-
-	lightPos = V3 ( 1.f, 3.f, 1.f );
 
 	glClearColor( .51f, .52f, .53f, 1. );
 
@@ -780,8 +550,6 @@ ObjExample::init ( ) {
 
 void
 ObjExample:: paint ( ) {
-
-	glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	GLR::CameraCenterView
 	ccv( model, view, vcd, glm::vec3 ( .02f, .02f, .1f ) );
@@ -794,11 +562,62 @@ ObjExample:: paint ( ) {
 
 	view  = ccv.view ( );
 
+	GLfloat const
+	pi = 3.141593f;
+
+	GLfloat
+	tm = glm::mod ( vcd->time, 20.f * pi ),
+	r;
+
+	if ( 10.f * pi < tm )
+
+		tm = 20.f * pi - tm;
+
+	r  = 2.f + .33f * tm;
+
+	lightPos = V3( model * V4 ( r * sinf( vcd->time ), 2.f + 8.f * cosf( .1f * vcd->time ), r * cosf( vcd->time ), 1. ) );
+
+	glr.screenoff ( );
 	glEnable ( GL_DEPTH_TEST );
 	glDisable ( GL_CULL_FACE );
+	glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+	M4
+	tmpGlobal = model;
+
+	model = glm::translate ( model, V3 ( 0.f, -10.f, 0.f ) );
+
+	M4
+	tmpLocal = model;
+
+	model = glm::scale ( model, V3 ( 5.f, 5.f, 5.f ) );
+
+	glr.run ( cWoman [ PASSES_1 ] );
+
+	model = glm::rotate ( tmpLocal, 1.57f, V3 ( 0.f, 1.f, 0.f ) );
+	model = glm::translate ( model, V3 ( 0.f, +4.5f, 0.f ) );
+
 	glr.run ( cAudi [ PASSES_1 ] );
+	glr.run ( { "C-LIGHT" } );
+
+	glr.screenon ( );
+	glDisable ( GL_DEPTH_TEST );
+	glEnable ( GL_CULL_FACE );
 	glr.run ( { "C-PASS2" } );
-//	glr.run ( cAudi [ PASSES_2 ] );
+	glEnable ( GL_CULL_FACE );
+	glEnable ( GL_DEPTH_TEST );
+	glr.run ( cAudi [ PASSES_2 ] );
+
+	model = glm::scale ( tmpLocal, V3 ( 5.f, 5.f, 5.f ) );
+
+	glr.run ( cWoman [ PASSES_1 ] );
+
+	model = glm::rotate ( tmpLocal, 1.57f, V3 ( 0.f, 1.f, 0.f ) );
+	model = glm::translate ( model, V3 ( 0.f, +4.5f, 0.f ) );
+
+	glr.run ( cAudi [ PASSES_1 ] );
+
+	model = tmpGlobal;
 
 /*
 	GLfloat const
@@ -860,4 +679,3 @@ ObjExample:: resize ( int p_width, int p_height ) {
 	// create a projection matrix
 	projection = glm::perspective( 30.f * 3.14159f / 180.f, ratio, 1.0f, 300.f );
 }
-

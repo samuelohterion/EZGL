@@ -70,6 +70,12 @@ Named {
 struct
 ViewControlData {
 
+	ViewControlData ( ) :
+	ok ( false ) { }
+
+	bool
+	ok;
+
 	GLint
 	width,
 	height,
@@ -347,7 +353,7 @@ GLR {
 
 				FrameBuffer ( bool const & p_fixedSize, GLR & p_glr ) :
 				GLRRef ( p_glr ),
-				__id( 0 ),
+				__id ( 0 ),
 				fixedSize ( p_fixedSize ) {
 
 					glGenFramebuffers ( 1, & __id );
@@ -378,7 +384,7 @@ GLR {
 				}
 
 				FrameBuffer
-				& delOutTexture ( CStr & p_textureName ) {
+				& removeOutTexture ( CStr & p_textureName ) {
 
 					outTextures.erase ( p_textureName );
 
@@ -429,7 +435,6 @@ GLR {
 						}
 					}
 				}
-
 		};
 
 		class Texture :
@@ -1886,21 +1891,16 @@ GLR {
 						}
 					}
 
-					std::size_t
-					i = 0;
-
 					for( auto t : inTextures ) {
 
-						glActiveTexture( GL_TEXTURE0 + i );
-
 						Texture
-						*tx = __glr->tx[ t ];
+						* tx = __glr->tx[ t ];
+
+						glActiveTexture( GL_TEXTURE0 + tx->id );
 
 						tx->bind( );
 
-						shLoc->setUniformSamplerId( tx->name( ).c_str( ), i );
-
-						++ i;
+						shLoc->setUniformSamplerId( tx->name( ).c_str( ), tx->id );
 					}
 
 					for( auto t : inTextures ) {
@@ -1963,19 +1963,15 @@ GLR {
 						sh->sendUniforms( );
 					}
 
-					std::size_t
-					i = 0;
-
 					for( auto t : inTextures ) {
 
-						glActiveTexture( GL_TEXTURE0 + i );
-
 						Texture
-						*tx = __glr->tx[ t ];
+						* tx = __glr->tx[ t ];
+
+//						glActiveTexture( GL_TEXTURE0 + i );
+						glActiveTexture( GL_TEXTURE0 + tx->id );
 
 						tx->bind( );
-
-						++ i;
 					}
 
 					//addUniformInt( tx->name( ).c_str( ), i );
@@ -2105,6 +2101,12 @@ GLR {
 			currentIndexArray = ia[ p_name ];
 
 			return * currentIndexArray;
+		}
+
+		FrameBuffer
+		& offScreen ( ) {
+
+			return * fb;
 		}
 
 		FrameBuffer

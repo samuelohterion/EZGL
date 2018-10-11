@@ -7,7 +7,7 @@ public GLProject {
 
 	public:
 
-		Triangle2D( CStr const & p_name = "Triangle2D", ViewControlData *p_vcd = nullptr );
+		Triangle2D( CStr const & p_name = "Triangle2D" );
 
 	public:
 

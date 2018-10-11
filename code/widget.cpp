@@ -136,6 +136,8 @@ GLWidget::initializeGL( ) {
 	viewControlData.buttons = 0;
 	viewControlData.time    = 0;
 
+	viewControlData.ok = true;
+
 	glViewport( 0, 0, viewControlData.width, viewControlData.height );
 
 	if( projects.contains( currentProject ) ) {
@@ -189,15 +191,6 @@ GLWidget::removeGLProject( QString const & p_name ) {
 }
 
 void
-GLWidget::selectGLProject( QString const & p_name ) {
-
-	currentProject = p_name;
-
-	projects[ currentProject ]->resizeViewport( viewControlData.width, viewControlData.height );
-	projects[ currentProject ]->resize( viewControlData.width, viewControlData.height );
-}
-
-void
 GLWidget::toggleFullscreen( ) {
 
 	setWindowState( windowState( ) ^ Qt::WindowFullScreen );
@@ -225,9 +218,17 @@ GLWidget::slotStopTimer( ) {
 	timer.stop( );
 }
 
-void GLWidget::slotSetGLProject( QString const & p_name ) {
+void
+GLWidget::slotSetGLProject( QString const & p_name ) {
 
 	currentProject = p_name;
 
 	this->setWindowTitle( "EZGL - " + currentProject );
+
+	if ( ! viewControlData.ok )
+
+		return;
+
+	projects[ currentProject ]->resizeViewport( viewControlData.width, viewControlData.height );
+	projects[ currentProject ]->resize( viewControlData.width, viewControlData.height );
 }

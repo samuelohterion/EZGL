@@ -1,7 +1,7 @@
 #include "texturetest.hpp"
 
-TextureTest::TextureTest( const CStr &p_name, ViewControlData *p_vcd ) :
-GLProject ( p_name, p_vcd ) {
+TextureTest::TextureTest ( CStr const & p_name ) :
+GLProject ( p_name ) {
 
 }
 
@@ -16,7 +16,7 @@ TextureTest::init( ) {
 	// texture test
 	{
 		glr.vertices( "VERTICES-LIGHTED-CHECKERBOARD-BACKGROUND" ).
-		attrib( "vertex", 3, 0 ) <<
+		attrib( "vertex", 0, 3 ) <<
 		-1.f << -1.f << +0.f <<
 		+1.f << -1.f << +0.f <<
 		+1.f << +1.f << +0.f <<
@@ -51,7 +51,7 @@ TextureTest::init( ) {
 
 			glr.texture(
 				"TEXTURE-LIGHTED-CHECKERBOARD-BACKGROUND",
-				new GLR::Texture( "txIn0", "../EZGL/glprojects/texturetest/pix/Schubler.png" ) );
+				new GLR::Texture( "txIn0", "../pix/Schubler.png" ) );
 
 			glr.container( "PROGRAM-LIGHTED-CHECKERBOARD-BACKGROUND" ).
 				setVertexArray( "VERTICES-LIGHTED-CHECKERBOARD-BACKGROUND" ).
@@ -65,7 +65,7 @@ TextureTest::init( ) {
 		// create a simple 2d quad as triangle fan
 		glr.vertices( "VERTICES-LIGHTED-CHECKERBOARD-CHECKERBOARD" ).
 			setUsage( GL_STATIC_DRAW ).
-			attrib( "vertex", 2, 0 ) <<
+			attrib( "vertex", 0, 2 ) <<
 			-1.f << -1.f <<
 			+1.f << -1.f <<
 			+1.f << +1.f <<
@@ -74,7 +74,7 @@ TextureTest::init( ) {
 
 		glr.texture(
 			"TEXTURE-LIGHTED-CHECKERBOARD-CHECKERBOARD-TX-IN-1",
-			new GLR::Texture( "txIn1", "../EZGL/glprojects/texturetest/pix/Schubler.png" ) );
+			new GLR::Texture( "txIn1", "../pix/Schubler.png" ) );
 
 		// create a shader for the checkerboard
 		glr.shader(
@@ -312,7 +312,7 @@ TextureTest::init( ) {
 	{
 		glr.vertices( "VERTICES-LIGHTED-CHECKERBOARD-LIGHT-IN-MODEL-SPACE" ).
 			setUsage( GL_STATIC_DRAW ).
-			attrib( "color", 3, 0 ) <<
+			attrib( "color", 0, 3 ) <<
 			0.f << 0.f << 0.f <<
 			GLR::VertexArray::Object( 0, 1, GL_POINTS );
 
@@ -399,7 +399,7 @@ TextureTest::init( ) {
 	{
 		glr.vertices( "VERTICES-LIGHTED-CHECKERBOARD-LIGHT-IN-CAMERA-SPACE" ).
 			setUsage( GL_STATIC_DRAW ).
-			attrib( "color", 3, 0 ) <<
+			attrib( "color", 0, 3 ) <<
 			0.f << 0.f << 0.f <<
 			GLR::VertexArray::Object( 0, 1, GL_POINTS );
 
@@ -607,4 +607,6 @@ TextureTest::resize( int p_width, int p_height ) {
 
 	// create a projection matrix
 	projection = glm::perspective( 45.0f, ratio, 1.0f, 100.f );
+
+	glr.screenon ( );
 }

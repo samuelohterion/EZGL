@@ -1,8 +1,8 @@
 #include "triangle2d.hpp"
 #include "../../code/glmprinter.hpp"
 
-Triangle2D::Triangle2D( CStr const & p_name, ViewControlData *p_vcd ) :
-GLProject ( p_name, p_vcd ) {
+Triangle2D::Triangle2D( CStr const & p_name ) :
+GLProject ( p_name ) {
 
 }
 
@@ -96,4 +96,5 @@ Triangle2D::paint( ) {
 void
 Triangle2D::resize( int p_width, int p_height ) {
 
+	glr.screenon ( );
 }

@@ -1,8 +1,8 @@
 #include "quad3d.hpp"
 #include "../../code/glmprinter.hpp"
 
-Quad3D::Quad3D( CStr const & p_name, ViewControlData *p_vcd ) :
-GLProject ( p_name, p_vcd ) {
+Quad3D::Quad3D( CStr const & p_name ) :
+GLProject ( p_name ) {
 
 }
 
@@ -135,5 +135,5 @@ Quad3D::resize( int p_width, int p_height ) {
 
 	p = glm::perspective(  45.0f, ratio, 1.0f, 100.f );
 
-	std::cout << std::endl;
+	glr.screenon ( );
 }

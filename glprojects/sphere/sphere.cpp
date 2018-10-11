@@ -3,8 +3,8 @@
 typedef glm::vec3 V3;
 typedef glm::mat4 M4;
 
-Sphere::Sphere( CStr const & p_name, ViewControlData *p_vcd ) :
-GLProject ( p_name, p_vcd ) {
+Sphere::Sphere( CStr const & p_name ) :
+GLProject ( p_name ) {
 
 }
 
@@ -23,7 +23,8 @@ Sphere::init( ) {
 
 	glr.vertices( "SPHERE-VERTICES" ).
 		setUsage( GL_STATIC_DRAW ).
-		attrib( "vertex", 3, 0 ).attrib( "normal", 3, 3 );
+		attrib( "vertex", 0, 3 ).
+		attrib( "normal", 3, 3 );
 
 	GLR::VertexArray
 	& va = glr.vertices( "SPHERE-VERTICES" );
@@ -108,7 +109,6 @@ Sphere::init( ) {
 		vertexOff = vertexSiz - vertexOff;
 	}
 
-
 	glr.shader(
 		"SPHERE-SHADER",
 		//Vertex Shader
@@ -144,7 +144,6 @@ Sphere::init( ) {
 		setVertexArray( "SPHERE-VERTICES" ).
 		setShader( "SPHERE-SHADER" ).
 		build( );
-
 
 	glr.shader(
 		"NORMALS-SHADER",
@@ -240,9 +239,10 @@ Sphere::paint( ) {
 			glm::vec3( sin( .3 * angle ), sin( .23 * angle ), sin( .13 * angle ) ) );
 
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-	for( int i = 0; i < 1; ++ i ){
 
-		for( int j = 0; j < 1; ++ j ){
+	for ( int i = 0; i < 1; ++ i ) {
+
+		for ( int j = 0; j < 1; ++ j ) {
 
 			m = glm::translate( glm::mat4( 1.f ), glm::vec3( 5.f * sinf( 3.14 * i / 5. * angle ), 5.f * sinf( j * angle ), -5.f ) );
 
@@ -279,5 +279,7 @@ Sphere::resize( int p_width, int p_height ) {
 	ratio = ( 1.f * p_width / p_height );
 
 	p = glm::perspective( 45.0f, ratio, 1.0f, 10.f );
+
+	glr.screenon ( );
 }
 

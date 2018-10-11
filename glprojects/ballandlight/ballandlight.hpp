@@ -8,7 +8,7 @@ public GLProject {
 
 	public:
 
-		BallAndLight( CStr const & p_name, ViewControlData *p_vcd = nullptr );
+		BallAndLight( CStr const & p_name );
 
 	public:
 
@@ -46,9 +46,6 @@ public GLProject {
 
 		void
 		resize( int p_width, int p_height );
-
-
-
 };
 void
 print( glm::vec4 const & p_vec );

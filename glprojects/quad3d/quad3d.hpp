@@ -7,7 +7,7 @@ public GLProject {
 
 	public:
 
-		Quad3D( CStr const & p_name = "Quad3D", ViewControlData *p_vcd = nullptr );
+		Quad3D( CStr const & p_name = "Quad3D" );
 
 	public:
 

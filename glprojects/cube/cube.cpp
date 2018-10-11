@@ -1,7 +1,7 @@
 #include "cube.hpp"
 
-Cube::Cube( CStr const & p_name, ViewControlData * p_vcd ) :
-GLProject( p_name, p_vcd ),
+Cube::Cube( CStr const & p_name ) :
+GLProject( p_name ),
 textureBuilt( false ) {
 
 }
@@ -31,14 +31,6 @@ Cube::init( ) {
 	lightColors[ 6 ] = px + py + pz;
 
 	textureWidth = textureHeight = 128;
-
-	// frame buffer
-	{
-		// F-SOME-NICE-TEXTURE
-		{
-			glr.frameBuffer( "F-SOME-NICE-TEXTURE" );
-		}
-	}
 
 	// textures
 	{
@@ -346,11 +338,8 @@ Cube::init( ) {
 		// C-COORDINATE-SYSTEM
 		{
 			glr.container( "C-SOME-NICE-TEXTURE-CHECKERBOARD" ).
-				setFrameBuffer( "F-SOME-NICE-TEXTURE" ).
 				setVertexArray( "V-SOME-NICE-TEXTURE" ).
 				setShader( "S-SOME-NICE-TEXTURE-CHECKERBOARD" ).
-				addOutTexture( "T-SOME-NICE-TEXTURE-CHECKERBOARD" ).
-				setFixSize( textureWidth, textureHeight ).
 				build( );
 		}
 		// C-SOME-NICE-TEXTURE-ROBERTS-LIGHT-TEST
@@ -358,9 +347,6 @@ Cube::init( ) {
 			glr.container( "C-SOME-NICE-TEXTURE-ROBERTS-LIGHT-TEST" ).
 				setVertexArray( "V-SOME-NICE-TEXTURE" ).
 				setShader( "S-SOME-NICE-TEXTURE-ROBERTS-LIGHT-TEST" ).
-					setFrameBuffer( "F-SOME-NICE-TEXTURE" ).
-					addOutTexture( "T-SOME-NICE-TEXTURE-ROBERTS-LIGHT-TEST" ).
-					setFixSize( textureWidth, textureHeight ).
 				build( );
 		}
 		// C-LIGHTS
@@ -381,6 +367,12 @@ Cube::init( ) {
 		}
 	}
 
+	// offscreen
+	{
+		glr.createOffScreen ( textureWidth, textureHeight ).
+			addOutTexture ( "T-SOME-NICE-TEXTURE-CHECKERBOARD" );
+	}
+
 	glClearColor( .11f, .13f, .12f, 1. );
 
 	projection = view = model = glm::mat4( 1. );
@@ -396,17 +388,24 @@ Cube::init( ) {
 void
 Cube::paint( ) {
 
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
 	if( ! textureBuilt ) {
 
+		glr.screenoff ( );
+
 		glr.run( { "C-SOME-NICE-TEXTURE-CHECKERBOARD" } );
+
+		glr.offScreen( ).
+			removeOutTexture ( "T-SOME-NICE-TEXTURE-CHECKERBOARD" ).
+			addOutTexture( "T-SOME-NICE-TEXTURE-ROBERTS-LIGHT-TEST" );
 
 		textureBuilt = true;
 	}
 
 	glr.run( { "C-SOME-NICE-TEXTURE-ROBERTS-LIGHT-TEST" } );
 
+	glr.screenon ( );
+
+	glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	// ----------------------------------------------------------
 	// use a camera center view
 	GLR::CameraCenterView
@@ -483,6 +482,7 @@ Cube::paint( ) {
 				model = glm::translate( tmp, ( 6.f - 4.f * f ) * glm::vec3( x, y, z ) );
 				model = glm::rotate( model, ( x + y + z ) * 3.14f * ( 1.f - f ) * ( 1.f - f ) * ( 1.f - f ), glm::vec3( sinf( .1f * angle ), sinf( .21f * angle ), sinf( .31f * angle ) ) );
 
+//				setFrameBuffer( "F-SOME-NICE-TEXTURE" ).
 				glr.run( { "C-CUBE" } );
 			}
 		}
@@ -498,4 +498,6 @@ Cube::resize( int p_width, int p_height ) {
 	ratio = 1.f * p_width / p_height;
 
 	projection = glm::perspective( 45.0f, ratio, 1.0f, 200.f );
+
+	glr.screenon ( );
 }

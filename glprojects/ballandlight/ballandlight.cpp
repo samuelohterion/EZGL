@@ -2,8 +2,8 @@
 
 typedef glm::vec3 V3;
 typedef glm::mat4 M4;
-BallAndLight::BallAndLight( CStr const & p_name, ViewControlData *p_vcd ) :
-GLProject ( p_name, p_vcd ) {
+BallAndLight::BallAndLight( CStr const & p_name ) :
+GLProject ( p_name ) {
    tex = false;
    ballintr = new Interaction(glm::vec3(0,0,0), glm::vec3(0,0,0), glm::vec3(-.5,3,-5), glm::vec3(0,-2.981,0), .8);
 
@@ -19,8 +19,8 @@ BallAndLight::init( ) {
 	m = v = p = glm::mat4( 1. );
 	nrm = glm::mat3( 1. );
 	glr.vertices( "VERTICES-BALLANDLIGHT" ).
-		setUsage( GL_STATIC_DRAW ).
-		attrib( "vertex", 3, 0 ).attrib( "color", 3, 3 ).attrib("normal", 3, 6);
+	setUsage( GL_STATIC_DRAW ).
+	attrib( "vertex", 0, 3 ).attrib( "color", 3, 3 ).attrib("normal", 6, 3 );
 
 	GLR::VertexArray
 	& va = glr.vertices( "VERTICES-BALLANDLIGHT" );
@@ -73,7 +73,7 @@ BallAndLight::init( ) {
 			zB = rad*sa*cosf(factLong*(1+longid));
 
 			va << xA << yA << zA << color << xA << yA << zA<<
-				  xB << yB << zB << color << xB << yB << zB;
+			xB << yB << zB << color << xB << yB << zB;
 
 			vxCount +=2;
 		}
@@ -88,7 +88,7 @@ BallAndLight::init( ) {
 	 cl = cosf(latd*factLat);
 	 sl = sinf(latd*factLat);
 
-		for(int longid = 0; longid <= longS; ++longid){
+	 for(int longid = 0; longid <= longS; ++longid){
 			x = rad * cl;
 			y = rad* sl*sinf(factLong*longid);
 			z = rad* sl*cosf(factLong*longid);
@@ -102,8 +102,8 @@ BallAndLight::init( ) {
 	va << GLR::VertexArray::Object( off, vxCount, GL_TRIANGLE_FAN );
 
 	glr.vertices( "VERTICES-FlOOR" ).
-		setUsage( GL_STATIC_DRAW ).
-		attrib( "vertex", 3, 0 ).attrib( "color", 3, 3 ).attrib("normal", 3, 6);
+	setUsage( GL_STATIC_DRAW ).
+	attrib( "vertex", 0, 3 ).attrib( "color", 3, 3 ).attrib("normal", 6, 3 );
 
 	GLR::VertexArray
 	& vb = glr.vertices( "VERTICES-FlOOR" );
@@ -112,53 +112,53 @@ BallAndLight::init( ) {
 	normal = glm::vec3(0.f, 0.f, 1.f);
 
 	vb << glm::vec3(-1, -1, -3) << color << normal <<
-		  glm::vec3( 1, -1, -3) << color << normal <<
-		  glm::vec3( 1,  3, -3) << color << normal <<
-		  glm::vec3(-1,  3, -3) << color << normal;
+	glm::vec3( 1, -1, -3) << color << normal <<
+	glm::vec3( 1,  3, -3) << color << normal <<
+	glm::vec3(-1,  3, -3) << color << normal;
 
 	vb << GLR::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN);
 
 	normal = glm::vec3(0.f, 1.f, 0.f);
 
 	vb << glm::vec3(-1, -1,  2) << color << normal <<
-		  glm::vec3( 1, -1,  2) << color << normal <<
-		  glm::vec3( 1, -1, -3) << color << normal <<
-		  glm::vec3(-1, -1, -3) << color << normal ;
+	glm::vec3( 1, -1,  2) << color << normal <<
+	glm::vec3( 1, -1, -3) << color << normal <<
+	glm::vec3(-1, -1, -3) << color << normal ;
 
 
 	vb << GLR::VertexArray::Object( 4, 4, GL_TRIANGLE_FAN);
 
 
 	glr.vertices( "VERTICES-CUBE" ).
-		setUsage( GL_STATIC_DRAW ).
-		attrib( "vertex", 3, 0 ).attrib("coord", 3, 3);
+	setUsage( GL_STATIC_DRAW ).
+	attrib( "vertex", 0, 3 ).attrib("coord", 3, 3 );
 
 	GLR::VertexArray
 	& vc = glr.vertices( "VERTICES-CUBE" );
 	float b = 1.;
 	glm::vec3
-			vUl (-b, -b, b),
-			vUr ( b,-b,  b),
-			vOr ( b, b,  b),
-			vOl (-b, b,  b),
-			hUl (-b,-b, -b),
-			hUr ( b,-b, -b),
-			hOr ( b, b, -b),
-			hOl (-b, b, -b);
+	vUl (-b, -b, b),
+	vUr ( b,-b,  b),
+	vOr ( b, b,  b),
+	vOl (-b, b,  b),
+	hUl (-b,-b, -b),
+	hUr ( b,-b, -b),
+	hOr ( b, b, -b),
+	hOl (-b, b, -b);
 
 //front:
-	
-	glm::vec3 normal (0,0,1);
-	
+
+	normal = glm::vec3(0,0,1);
+
 	vc << vUl << normal << glm::vec2(.5, 0.) << vUr << normal << glm::vec2(.75, 0) << vOr << normal << glm::vec2(.75, .25)
-	   << vUl << normal << glm::vec2(.5, 0.) << vOr << normal << glm:.vec2(.75, .25) << vOl << normal << glm:.vec2(.5, .25);
+	   << vUl << normal << glm::vec2(.5, 0.) << vOr << normal << glm::vec2(.75, .25) << vOl << normal << glm:.vec2(.5, .25);
 
 	vc << GLRenderer::VertexArray::Object( 0, 6, GL_TRIANGLES);
-//left 
+//left
 	normal = glm:vec3(-1,0,0);
-	
-	vc << vUl << normal << glm::vec2(.25, .25.) << vOl << normal << glm::vec2(.5, .25) << hOl << normal << glm::vec2(.5, .5)
-	   << vUl << normal << glm::vec2(.25, .25.) << hOl << normal << glm::vec2(.5, .5) << hUl << normal << glm::vec2(.25, .5)
+
+	vc << vUl << normal << glm::vec2(.25, .25 ) << vOl << normal << glm::vec2(.5, .25) << hOl << normal << glm::vec2(.5, .5)
+	   << vUl << normal << glm::vec2(.25, .25 ) << hOl << normal << glm::vec2(.5, .5) << hUl << normal << glm::vec2(.25, .5);
 
 	vc << GLR::VertexArray::Object( 0, 8, GL_TRIANGLE_FAN);
 
@@ -166,322 +166,320 @@ BallAndLight::init( ) {
 
 	vc << GLR::VertexArray::Object( 8, 8, GL_TRIANGLE_FAN);
 
-	glr.frameBuffer( "FRAMEBUFFER-TEXTURE" );
-
 	glr.texture(	"TEXTURE-CUBE",
-			new GLRenderer::Texture( "txCube", "../EZGL/glprojects/ballandlight/pix/wuerfelnetz.jpg" ) );
+	new GLRenderer::Texture( "txCube", "../EZGL/glprojects/ballandlight/pix/wuerfelnetz.jpg" ) );
 
 	glr.vertices( "VERTICES-TEXTURE" ).
-		setUsage( GL_STATIC_DRAW ).
-		attrib( "vertex", 2, 0 ) <<
-		coUl << coUr << coOr << coOl;
+	setUsage( GL_STATIC_DRAW ).
+	attrib( "vertex", 2, 0 ) <<
+	coUl << coUr << coOr << coOl;
 
 
-		GLR::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
+	GLR::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
 		tWidth = tHeight = 128;
 		glr.texture(
-			"TEXTURE-CUBE",
-			new GLR::Texture(
-				"TX",
-				GL_TEXTURE_2D,
-				0,
-				GL_RGBA32F,
-				GL_NEAREST, GL_NEAREST,
-				GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE,
-				GL_RGBA, GL_FLOAT,
-				tWidth, tHeight ) );
+		"TEXTURE-CUBE",
+		new GLR::Texture(
+		"TX",
+		GL_TEXTURE_2D,
+		0,
+		GL_RGBA32F,
+		GL_NEAREST, GL_NEAREST,
+		GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE,
+		GL_RGBA, GL_FLOAT,
+		tWidth, tHeight ) );
 
 		glr.shader(
-			"SHADER-TEXTURE",
-			// VERTEX SHADER
-			"#version 330 core\n"
-			"layout( location = 0 ) in vec2 coord;\n"
+		"SHADER-TEXTURE",
+		// VERTEX SHADER
+		"#version 330 core\n"
+		"layout( location = 0 ) in vec2 coord;\n"
 
-			"out vec2 vCoords;\n"
-			"void main( ) {\n"
-			"	vCoords = .5 + .5 * coord;\n"
-			"	gl_Position = vec4( coord, 0, 1 );\n"
-			"}\n",
-			// FRAGMENT SHADER
-			"#version 330 core\n"
-			"in  vec2 vCoords;\n"
-			"out vec4 fColor;\n"
-			"void main( ) {\n"
-			"    fColor =  int(5*vCoords.x*sin(vCoords.y))%3==0?vec4(1, 1, 1, 1):int(5*vCoords.x*cos(vCoords.y))%3==1?vec4(.2, .4, .7, 1):vec4(.1,.4,.3, 1);\n"
-				 // "fColor = vec4(1,1,1,1);\n"
-			"}\n",
-			GLR::ShaderCode::FROM_CODE );
+		"out vec2 vCoords;\n"
+		"void main( ) {\n"
+		"	vCoords = .5 + .5 * coord;\n"
+		"	gl_Position = vec4( coord, 0, 1 );\n"
+		"}\n",
+		// FRAGMENT SHADER
+		"#version 330 core\n"
+		"in  vec2 vCoords;\n"
+		"out vec4 fColor;\n"
+		"void main( ) {\n"
+		"    fColor =  int(5*vCoords.x*sin(vCoords.y))%3==0?vec4(1, 1, 1, 1):int(5*vCoords.x*cos(vCoords.y))%3==1?vec4(.2, .4, .7, 1):vec4(.1,.4,.3, 1);\n"
+		// "fColor = vec4(1,1,1,1);\n"
+		"}\n",
+		GLR::ShaderCode::FROM_CODE );
 
 		glr.container( "PROGRAM-TEXTURE" ).
-			setFrameBuffer( "FRAMEBUFFER-TEXTURE" ).
-			setVertexArray( "VERTICES-TEXTURE" ).
-			setShader( "SHADER-TEXTURE" ).
-			addOutTexture( "TEXTURE-CUBE" ).
-			setFixSize( tWidth, tHeight ).
-			build( );
+		setFrameBuffer( "FRAMEBUFFER-TEXTURE" ).
+		setVertexArray( "VERTICES-TEXTURE" ).
+		setShader( "SHADER-TEXTURE" ).
+		addOutTexture( "TEXTURE-CUBE" ).
+		setFixSize( tWidth, tHeight ).
+		build( );
 
 	glr.shader(
-		"SHADER-CUBE",
-		//Vertex Shader
-		"#version 330 core\n"
-		"layout( location = 0 ) in vec3 vertex;\n"
-		"layout( location = 1 ) in vec3 normal;\n"
-		"layout( location = 2 ) in vec2 coord;\n"
+	"SHADER-CUBE",
+	//Vertex Shader
+	"#version 330 core\n"
+	"layout( location = 0 ) in vec3 vertex;\n"
+	"layout( location = 1 ) in vec3 normal;\n"
+	"layout( location = 2 ) in vec2 coord;\n"
 
-		"uniform mat4 mv; \n"
-		"uniform mat4 v; \n"
-		"uniform mat4 p;\n"
-		"uniform vec3 light;\n"
-	
-		"out VS2FS {\n"
-		 "	vec3 vertex, normal;\n"
-		 " 	vec4 light;\n"
-		 "	vec2 coord;"
-		 "	} vs2gs;\n"
-		" \n"
-		"void main( void ) {\n"
-		"	vs2gs.normal   = normalize( transpose(inverse(mv))*vec4(normal,0)).xzy;\n"
-		"    	vs2fs.light    = v* vec4( light.xyz, 1 );\n"
-		"   	vs2fs.vertex   = (mv * vec4(vertex, 1 )).xyz; \n"
-		"   	vs2fs.coord    = coord; \n"
-		"    	gl_Position    = p*mv*vec4(vertex, 1);\n"
-		"}\n",
-	
-		//Fragment Shader
-		"#version 330 core\n"
+	"uniform mat4 mv; \n"
+	"uniform mat4 v; \n"
+	"uniform mat4 p;\n"
+	"uniform vec3 light;\n"
 
-		"in VS2FS {\n"
-		" 	vec3 vertex,, normal;\n"
-		"  	vec4 light;\n"
-		"   	vec2 coord;\n"
-		"} gs2fs;\n"
-		"uniform sampler2D TxCube;\n"
-		"\n"
-		"out vec4 fColor;\n"
-		"\n"
-		"void main( void ) {\n"
-		"   \n"
-		"   vec3  d     = gs2fs.light.xyz - gs2fs.vertex.xyz; \n"
-		"   vec3 color  = texture( TxCube, gs2fs.coord ).xyz;  \n"
-		"   float a =10*dot(d, gs2fs.normal)/dot(d,d); \n"
-		"   fColor = vec4( clamp(a*color.x,0,1),clamp(a*color.y,0,1), clamp(a*color.z,0,1),  1 );\n"
-		"}\n",
-			GLR::ShaderCode::FROM_CODE ).
-			addUniform( "mv", GLR::Shader::MAT4, GLR::Shader::SCALAR, & mv ).
-			addUniform( "p", GLR::Shader::MAT4, GLR::Shader::SCALAR, & p ).
-			addUniform( "v", GLR::Shader::MAT4, GLR::Shader::SCALAR, & v ).
-			addUniform( "pos", GLR::Shader::VEC3, GLR::Shader::SCALAR, & pos ).
-			addUniform( "light", GLR::Shader::VEC3, GLR::Shader::SCALAR, & light2 );
+	"out VS2FS {\n"
+	"	vec3 vertex, normal;\n"
+	" 	vec4 light;\n"
+	"	vec2 coord;"
+	"	} vs2gs;\n"
+	" \n"
+	"void main( void ) {\n"
+	"	vs2gs.normal   = normalize( transpose(inverse(mv))*vec4(normal,0)).xzy;\n"
+	"    	vs2fs.light    = v* vec4( light.xyz, 1 );\n"
+	"   	vs2fs.vertex   = (mv * vec4(vertex, 1 )).xyz; \n"
+	"   	vs2fs.coord    = coord; \n"
+	"    	gl_Position    = p*mv*vec4(vertex, 1);\n"
+	"}\n",
+
+	//Fragment Shader
+	"#version 330 core\n"
+
+	"in VS2FS {\n"
+	" 	vec3 vertex,, normal;\n"
+	"  	vec4 light;\n"
+	"   	vec2 coord;\n"
+	"} gs2fs;\n"
+	"uniform sampler2D TxCube;\n"
+	"\n"
+	"out vec4 fColor;\n"
+	"\n"
+	"void main( void ) {\n"
+	"   \n"
+	"   vec3  d     = gs2fs.light.xyz - gs2fs.vertex.xyz; \n"
+	"   vec3 color  = texture( TxCube, gs2fs.coord ).xyz;  \n"
+	"   float a =10*dot(d, gs2fs.normal)/dot(d,d); \n"
+	"   fColor = vec4( clamp(a*color.x,0,1),clamp(a*color.y,0,1), clamp(a*color.z,0,1),  1 );\n"
+	"}\n",
+	GLR::ShaderCode::FROM_CODE ).
+	addUniform( "mv", GLR::Shader::MAT4, GLR::Shader::SCALAR, & mv ).
+	addUniform( "p", GLR::Shader::MAT4, GLR::Shader::SCALAR, & p ).
+	addUniform( "v", GLR::Shader::MAT4, GLR::Shader::SCALAR, & v ).
+	addUniform( "pos", GLR::Shader::VEC3, GLR::Shader::SCALAR, & pos ).
+	addUniform( "light", GLR::Shader::VEC3, GLR::Shader::SCALAR, & light2 );
 
 
 	glr.container( "PROGRAM-CUBE" ).
-		setVertexArray( "VERTICES-CUBE" ).
-		addInTexture( "TEXTURE-CUBE" ).
-		setShader( "SHADER-CUBE" ).
-		build( );
+	setVertexArray( "VERTICES-CUBE" ).
+	addInTexture( "TEXTURE-CUBE" ).
+	setShader( "SHADER-CUBE" ).
+	build( );
 
 
 	glr.shader(
-		"SHADER-FLOOR",
-		//Vertex Shader
-		"#version 330 core\n"
-		"layout( location = 0 ) in vec3 vertex;\n"
-		"layout( location = 1 ) in vec3 color;\n"
-		"layout( location = 2 ) in vec3 normal;\n"
+	"SHADER-FLOOR",
+	//Vertex Shader
+	"#version 330 core\n"
+	"layout( location = 0 ) in vec3 vertex;\n"
+	"layout( location = 1 ) in vec3 color;\n"
+	"layout( location = 2 ) in vec3 normal;\n"
 
-		"uniform float time;\n"
-		"uniform mat4 mv; \n"
-		"uniform mat4 v; \n"
-		"uniform mat4 p;\n"
-		"uniform vec3 light;\n"
-		"uniform vec3 pos;\n"
-		"uniform float rad;\n"
-		"out vec3 vColor;\n"
-		"out vec4 vNormal;\n"
-		"out vec4 vVert;\n"
-		"out vec4 vPos;\n"
-		"out vec4 vLight;\n"
-		"out float radB;\n"
-		" \n"
-		"void main( void ) {\n"
-		"    mat4 nrm = transpose( inverse( mv ) );\n"
-		"    vNormal  = normalize( nrm * ( vec4( normal, 0 ) ) ) ;\n"
-		"    vLight = v* vec4( light.xyz, 1 );\n"
-		"    vPos   = v* vec4(pos.xyz, 1);\n"
-		"    vVert  = mv * vec4(vertex, 1 ); \n"
-		"    radB   = rad;\n"
-		"    vec3 vColor = color;\n"
-		"    gl_Position = p*mv*vec4(vertex, 1);\n"
-		"}\n",
+	"uniform float time;\n"
+	"uniform mat4 mv; \n"
+	"uniform mat4 v; \n"
+	"uniform mat4 p;\n"
+	"uniform vec3 light;\n"
+	"uniform vec3 pos;\n"
+	"uniform float rad;\n"
+	"out vec3 vColor;\n"
+	"out vec4 vNormal;\n"
+	"out vec4 vVert;\n"
+	"out vec4 vPos;\n"
+	"out vec4 vLight;\n"
+	"out float radB;\n"
+	" \n"
+	"void main( void ) {\n"
+	"    mat4 nrm = transpose( inverse( mv ) );\n"
+	"    vNormal  = normalize( nrm * ( vec4( normal, 0 ) ) ) ;\n"
+	"    vLight = v* vec4( light.xyz, 1 );\n"
+	"    vPos   = v* vec4(pos.xyz, 1);\n"
+	"    vVert  = mv * vec4(vertex, 1 ); \n"
+	"    radB   = rad;\n"
+	"    vec3 vColor = color;\n"
+	"    gl_Position = p*mv*vec4(vertex, 1);\n"
+	"}\n",
 
-		//Fragment Shader
-		"#version 330 core\n"
+	//Fragment Shader
+	"#version 330 core\n"
 
-		"in vec3 vColor;\n"
-		"in vec4 vVert;\n"
-		"in vec4 vNormal;\n"
-		"in vec4 vLight;\n"
-		"in vec4 vPos;\n"
-		"in float radB;\n"
-		"\n"
-		"out vec4 fColor;\n"
-		"\n"
-		"void main( void ) {\n"
-		"   vec3  d = vLight.xyz - vVert.xyz; \n"
-		"   vec3 hP = vPos.xyz - vLight.xyz;\n"
-		"   vec3 color = int(vVert.x*vVert.y*vVert.z )%2==0?vec3(1,1,1):vec3(.2,.4,.3);\n"
-		"   hP = cross(hP, d);\n"
-		"   float distance = sqrt(dot(hP,hP) )/sqrt(dot(d,d));\n"
-		"   float a =10*dot(d, vNormal.xyz)/dot(d,d); \n"
-		"   a = distance>radB?a:.2*pow(a,2);\n"
-		"   fColor = vec4(clamp(a*color.x,0,1), clamp(a*color.y,0,1), clamp(a*color.z,0,1), 1);\n"
-		"}\n",
-			GLR::ShaderCode::FROM_CODE ).
-			addUniform( "mv", GLR::Shader::MAT4, GLR::Shader::SCALAR, & mv ).
-			addUniform( "p", GLR::Shader::MAT4, GLR::Shader::SCALAR, & p ).
-			addUniform( "v", GLR::Shader::MAT4, GLR::Shader::SCALAR, & v ).
-			addUniform( "pos", GLR::Shader::VEC3, GLR::Shader::SCALAR, & pos ).
-			addUniform( "light", GLR::Shader::VEC3, GLR::Shader::SCALAR, & light ).
-			addUniform( "rad", GLR::Shader::FLOAT, GLR::Shader::SCALAR, & ballintr->rad );
+	"in vec3 vColor;\n"
+	"in vec4 vVert;\n"
+	"in vec4 vNormal;\n"
+	"in vec4 vLight;\n"
+	"in vec4 vPos;\n"
+	"in float radB;\n"
+	"\n"
+	"out vec4 fColor;\n"
+	"\n"
+	"void main( void ) {\n"
+	"   vec3  d = vLight.xyz - vVert.xyz; \n"
+	"   vec3 hP = vPos.xyz - vLight.xyz;\n"
+	"   vec3 color = int(vVert.x*vVert.y*vVert.z )%2==0?vec3(1,1,1):vec3(.2,.4,.3);\n"
+	"   hP = cross(hP, d);\n"
+	"   float distance = sqrt(dot(hP,hP) )/sqrt(dot(d,d));\n"
+	"   float a =10*dot(d, vNormal.xyz)/dot(d,d); \n"
+	"   a = distance>radB?a:.2*pow(a,2);\n"
+	"   fColor = vec4(clamp(a*color.x,0,1), clamp(a*color.y,0,1), clamp(a*color.z,0,1), 1);\n"
+	"}\n",
+	GLR::ShaderCode::FROM_CODE ).
+	addUniform( "mv", GLR::Shader::MAT4, GLR::Shader::SCALAR, & mv ).
+	addUniform( "p", GLR::Shader::MAT4, GLR::Shader::SCALAR, & p ).
+	addUniform( "v", GLR::Shader::MAT4, GLR::Shader::SCALAR, & v ).
+	addUniform( "pos", GLR::Shader::VEC3, GLR::Shader::SCALAR, & pos ).
+	addUniform( "light", GLR::Shader::VEC3, GLR::Shader::SCALAR, & light ).
+	addUniform( "rad", GLR::Shader::FLOAT, GLR::Shader::SCALAR, & ballintr->rad );
 
 	glr.container( "PROGRAM-FLOOR" ).
-		setVertexArray( "VERTICES-FlOOR" ).
-		setShader( "SHADER-FLOOR" ).
-		build( );
+	setVertexArray( "VERTICES-FlOOR" ).
+	setShader( "SHADER-FLOOR" ).
+	build( );
 
 	glr.shader(
-		"SHADER-FLOOR-LEFT",
-		//Vertex Shader
-		"#version 330 core\n"
-		"layout( location = 0 ) in vec3 vertex;\n"
-		"layout( location = 1 ) in vec3 color;\n"
-		"layout( location = 2 ) in vec3 normal;\n"
+	"SHADER-FLOOR-LEFT",
+	//Vertex Shader
+	"#version 330 core\n"
+	"layout( location = 0 ) in vec3 vertex;\n"
+	"layout( location = 1 ) in vec3 color;\n"
+	"layout( location = 2 ) in vec3 normal;\n"
 
-		"uniform float time;\n"
-		"uniform mat4 mv; \n"
-		"uniform mat4 v; \n"
-		"uniform mat4 m; \n"
-		"uniform mat4 p;\n"
-		"uniform vec3 light;\n"
-		"uniform vec3 pos;\n"
-		"uniform float rad;\n"
-		"out mat4 mO;\n"
-		"out vec3 vColor;\n"
-		"out vec4 vNormal;\n"
-		"out vec4 vVert;\n"
-		"out vec4 vPos;\n"
-		"out vec4 vLight;\n"
-		"out float radB;\n"
-		" \n"
-		"void main( void ) {\n"
-		"    mat4 nrm = transpose( inverse( mv ) );\n"
-		"    mO = m;"
-		"    vNormal  = normalize( nrm * ( vec4( normal, 0 ) ) ) ;\n"
-		"    vLight = v* vec4( light.xyz, 1 );\n"
-		"    vPos   = v* vec4(pos.xyz, 1);\n"
-		"    vVert  = mv * vec4(vertex, 1 ); \n"
-		"    radB   = rad;\n"
-		"    vec3 vColor = color;\n"
-		"    gl_Position = p*mv*vec4(vertex, 1);\n"
-		"}\n",
+	"uniform float time;\n"
+	"uniform mat4 mv; \n"
+	"uniform mat4 v; \n"
+	"uniform mat4 m; \n"
+	"uniform mat4 p;\n"
+	"uniform vec3 light;\n"
+	"uniform vec3 pos;\n"
+	"uniform float rad;\n"
+	"out mat4 mO;\n"
+	"out vec3 vColor;\n"
+	"out vec4 vNormal;\n"
+	"out vec4 vVert;\n"
+	"out vec4 vPos;\n"
+	"out vec4 vLight;\n"
+	"out float radB;\n"
+	" \n"
+	"void main( void ) {\n"
+	"    mat4 nrm = transpose( inverse( mv ) );\n"
+	"    mO = m;"
+	"    vNormal  = normalize( nrm * ( vec4( normal, 0 ) ) ) ;\n"
+	"    vLight = v* vec4( light.xyz, 1 );\n"
+	"    vPos   = v* vec4(pos.xyz, 1);\n"
+	"    vVert  = mv * vec4(vertex, 1 ); \n"
+	"    radB   = rad;\n"
+	"    vec3 vColor = color;\n"
+	"    gl_Position = p*mv*vec4(vertex, 1);\n"
+	"}\n",
 
-		//Fragment Shader
-		"#version 330 core\n"
+	//Fragment Shader
+	"#version 330 core\n"
 
-		"in mat4 mO;"
-		"in vec3 vColor;\n"
-		"in vec4 vVert;\n"
-		"in vec4 vNormal;\n"
-		"in vec4 vLight;\n"
-		"in vec4 vPos;\n"
-		"in float radB;\n"
-		"\n"
-		"out vec4 fColor;\n"
-		"\n"
-		""
-		"float shadow(vec3 lightVecB){\n"
-		"  return 1.; \n"
-		"}\n"
-		"void main( void ) {\n"
-		"   vec3  d = vLight.xyz - vVert.xyz; \n"
-		"   float t = 1;\n"
-		"   vec3 hP = vPos.xyz - vLight.xyz;\n"
-		"   vec3 color = int(5*sin(vVert.x)*pow((cos(vVert.x-vVert.y+vVert.z)),2))%2==0?vec3(1,1,1):vec3(.1,.2,.6);\n"
-		"   hP = cross(hP, d);\n"
-		"   float distance = sqrt(dot(hP,hP) )/sqrt(dot(d,d));\n"
-		"   float a =t*10*dot(d, vNormal.xyz)/dot(d,d); \n"
-		"   fColor = vec4(clamp(a*color.x,0,1), clamp(a*color.y,0,1), clamp(a*color.z,0,1), 1);\n"
-		"}\n",
+	"in mat4 mO;"
+	"in vec3 vColor;\n"
+	"in vec4 vVert;\n"
+	"in vec4 vNormal;\n"
+	"in vec4 vLight;\n"
+	"in vec4 vPos;\n"
+	"in float radB;\n"
+	"\n"
+	"out vec4 fColor;\n"
+	"\n"
+	""
+	"float shadow(vec3 lightVecB){\n"
+	"  return 1.; \n"
+	"}\n"
+	"void main( void ) {\n"
+	"   vec3  d = vLight.xyz - vVert.xyz; \n"
+	"   float t = 1;\n"
+	"   vec3 hP = vPos.xyz - vLight.xyz;\n"
+	"   vec3 color = int(5*sin(vVert.x)*pow((cos(vVert.x-vVert.y+vVert.z)),2))%2==0?vec3(1,1,1):vec3(.1,.2,.6);\n"
+	"   hP = cross(hP, d);\n"
+	"   float distance = sqrt(dot(hP,hP) )/sqrt(dot(d,d));\n"
+	"   float a =t*10*dot(d, vNormal.xyz)/dot(d,d); \n"
+	"   fColor = vec4(clamp(a*color.x,0,1), clamp(a*color.y,0,1), clamp(a*color.z,0,1), 1);\n"
+	"}\n",
 
-			GLR::ShaderCode::FROM_CODE ).
-			addUniform( "mv", GLR::Shader::MAT4, GLR::Shader::SCALAR, & mv ).
-			addUniform( "p", GLR::Shader::MAT4, GLR::Shader::SCALAR, & p ).
-			addUniform( "v", GLR::Shader::MAT4, GLR::Shader::SCALAR, & v ).
-			addUniform( "m", GLR::Shader::MAT4, GLR::Shader::SCALAR, & m ).
-			addUniform( "pos", GLR::Shader::VEC3, GLR::Shader::SCALAR, & pos2 ).
-			addUniform( "light", GLR::Shader::VEC3, GLR::Shader::SCALAR, & light2 ).
-			addUniform( "rad", GLR::Shader::FLOAT, GLR::Shader::SCALAR, & ballintr->rad );
+	GLR::ShaderCode::FROM_CODE ).
+	addUniform( "mv", GLR::Shader::MAT4, GLR::Shader::SCALAR, & mv ).
+	addUniform( "p", GLR::Shader::MAT4, GLR::Shader::SCALAR, & p ).
+	addUniform( "v", GLR::Shader::MAT4, GLR::Shader::SCALAR, & v ).
+	addUniform( "m", GLR::Shader::MAT4, GLR::Shader::SCALAR, & m ).
+	addUniform( "pos", GLR::Shader::VEC3, GLR::Shader::SCALAR, & pos2 ).
+	addUniform( "light", GLR::Shader::VEC3, GLR::Shader::SCALAR, & light2 ).
+	addUniform( "rad", GLR::Shader::FLOAT, GLR::Shader::SCALAR, & ballintr->rad );
 
 	glr.container( "PROGRAM-FLOOR-LEFT" ).
-		setVertexArray( "VERTICES-FlOOR" ).
-		setShader( "SHADER-FLOOR-LEFT" ).
-		build( );
+	setVertexArray( "VERTICES-FlOOR" ).
+	setShader( "SHADER-FLOOR-LEFT" ).
+	build( );
 
 	glr.shader(
-		"SHADER-BALLANDLIGHT",
-		//Vertex Shader
-		"#version 330 core\n"
-		"layout( location = 0 ) in vec3 vertex;\n"
-		"layout( location = 1 ) in vec3 color;\n"
-		"layout( location = 2 ) in vec3 normal;\n"
+	"SHADER-BALLANDLIGHT",
+	//Vertex Shader
+	"#version 330 core\n"
+	"layout( location = 0 ) in vec3 vertex;\n"
+	"layout( location = 1 ) in vec3 color;\n"
+	"layout( location = 2 ) in vec3 normal;\n"
 
-		"uniform float time;\n"
-		"uniform mat4 mv; \n"
-		"uniform mat4 v; \n"
-		"uniform mat4 p;\n"
-		"uniform vec3 light;\n"
-		"out vec3 vColor;\n"
-		"out vec4 vNormal;\n"
-		"out vec4 vLight;\n"
-		"out vec4 vVert;\n"
-		" \n"
-		"void main( void ) {\n"
-		"    vColor = color;\n"
-		"    mat4 nrm = transpose( inverse( mv ) );\n"
-		"    vNormal  = normalize( nrm * ( vec4( normal, 0 ) ) ) ;\n"
-		"    vLight  = v* vec4( light.xyz, 1 );\n"
-		"    vVert   = mv * vec4(vertex, 1 ); \n"
-		"    gl_Position = p * mv * vec4( vertex, 1. );\n"
-		"}\n",
+	"uniform float time;\n"
+	"uniform mat4 mv; \n"
+	"uniform mat4 v; \n"
+	"uniform mat4 p;\n"
+	"uniform vec3 light;\n"
+	"out vec3 vColor;\n"
+	"out vec4 vNormal;\n"
+	"out vec4 vLight;\n"
+	"out vec4 vVert;\n"
+	" \n"
+	"void main( void ) {\n"
+	"    vColor = color;\n"
+	"    mat4 nrm = transpose( inverse( mv ) );\n"
+	"    vNormal  = normalize( nrm * ( vec4( normal, 0 ) ) ) ;\n"
+	"    vLight  = v* vec4( light.xyz, 1 );\n"
+	"    vVert   = mv * vec4(vertex, 1 ); \n"
+	"    gl_Position = p * mv * vec4( vertex, 1. );\n"
+	"}\n",
 
-		//Fragment Shader
-		"#version 330 core\n"
-		"in vec3 vColor;\n"
-		"in vec4 vVert;\n"
-		"in vec4 vNormal;\n"
-		"in vec4 vLight;\n"
-		"out vec4 fColor;\n"
-		"\n"
-		"void main( void ) {\n"
-			"vec3  d = vLight.xyz - vVert.xyz; \n"
-			"float a =10*dot(d, vNormal.xyz)/dot(d,d); \n"
-			"fColor = vec4( clamp(a*vColor.x,0,1),clamp(a*vColor.y,0,1), clamp(a*vColor.z,0,1),  1 );\n"
-		"}\n",
+	//Fragment Shader
+	"#version 330 core\n"
+	"in vec3 vColor;\n"
+	"in vec4 vVert;\n"
+	"in vec4 vNormal;\n"
+	"in vec4 vLight;\n"
+	"out vec4 fColor;\n"
+	"\n"
+	"void main( void ) {\n"
+	"vec3  d = vLight.xyz - vVert.xyz; \n"
+	"float a =10*dot(d, vNormal.xyz)/dot(d,d); \n"
+	"fColor = vec4( clamp(a*vColor.x,0,1),clamp(a*vColor.y,0,1), clamp(a*vColor.z,0,1),  1 );\n"
+	"}\n",
 
-		GLR::ShaderCode::FROM_CODE ).
-			addUniform( "mv", GLR::Shader::MAT4, GLR::Shader::SCALAR, & mv ).
-			addUniform( "v", GLR::Shader::MAT4, GLR::Shader::SCALAR, & v ).
-			addUniform( "p", GLR::Shader::MAT4, GLR::Shader::SCALAR, & p ).
-			addUniform( "light", GLR::Shader::VEC3, GLR::Shader::SCALAR, & light ).
-			addUniform( "time", GLR::Shader::FLOAT, GLR::Shader::SCALAR, & vcd->time );
+	GLR::ShaderCode::FROM_CODE ).
+	addUniform( "mv", GLR::Shader::MAT4, GLR::Shader::SCALAR, & mv ).
+	addUniform( "v", GLR::Shader::MAT4, GLR::Shader::SCALAR, & v ).
+	addUniform( "p", GLR::Shader::MAT4, GLR::Shader::SCALAR, & p ).
+	addUniform( "light", GLR::Shader::VEC3, GLR::Shader::SCALAR, & light ).
+	addUniform( "time", GLR::Shader::FLOAT, GLR::Shader::SCALAR, & vcd->time );
 
 	glr.container( "PROGRAM-BALLANDLIGHT" ).
-		setVertexArray( "VERTICES-BALLANDLIGHT" ).
-		setShader( "SHADER-BALLANDLIGHT" ).
-		build( );
+	setVertexArray( "VERTICES-BALLANDLIGHT" ).
+	setShader( "SHADER-BALLANDLIGHT" ).
+	build( );
 
-		ballintr->curTime = vcd->time;
-	}
+	ballintr->curTime = vcd->time;
+}
 
 void
 BallAndLight::paint( ) {
@@ -527,5 +525,7 @@ BallAndLight::resize( int p_width, int p_height ) {
 	float
 	ratio = ( 1.f * p_width / p_height );
 	p = glm::perspective( 45.0f, ratio, 1.0f, 10.f );
+
+	glr.screenon ( );
 }
 

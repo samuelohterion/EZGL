@@ -1,14 +1,14 @@
-#include "lighttest.hpp"
+#include "lightedcheckerboardcave.hpp"
 
-LightedCheckerboardCave::LightedCheckerboardCave( const CStr &p_name, ViewControlData *p_vcd ) :
-GLProject ( p_name, p_vcd ) {
+LightedCheckerboardCave::LightedCheckerboardCave( const CStr &p_name ) :
+GLProject ( p_name ) {
 
 }
 
 void
-LightedCheckerboardCave::init( ) {
+LightedCheckerboardCave::init  ( ) {
 
-	glClearColor( .12f, .11f, .10f, 1. );
+	glClearColor ( .12f, .11f, .10f, 1. );
 
 	projection = view = model = glm::mat4( 1. );
 
@@ -18,7 +18,7 @@ LightedCheckerboardCave::init( ) {
 		// create a simple 2d quad as triangle fan
 		glr.vertices( "VERTICES-LIGHTED-CHECKERBOARD-CHECKERBOARD" ).
 			setUsage( GL_STATIC_DRAW ).
-			attrib( "vertex", 2, 0 ) <<
+			attrib( "vertex", 0, 2 ) <<
 			-1.f << -1.f <<
 			+1.f << -1.f <<
 			+1.f << +1.f <<
@@ -238,7 +238,7 @@ LightedCheckerboardCave::init( ) {
 	{
 		glr.vertices( "VERTICES-LIGHTED-CHECKERBOARD-LIGHT-IN-MODEL-SPACE" ).
 			setUsage( GL_STATIC_DRAW ).
-			attrib( "color", 3, 0 ) <<
+			attrib( "color", 0, 3 ) <<
 			0.f << 0.f << 0.f <<
 			GLR::VertexArray::Object( 0, 1, GL_POINTS );
 
@@ -314,7 +314,6 @@ LightedCheckerboardCave::init( ) {
 			addUniform( "light1InModelSpacePosition",  GLR::Shader::VEC3, GLR::Shader::SCALAR, & light1InModelSpacePosition ).
 			addUniform( "light1InModelSpaceColor",  GLR::Shader::VEC3, GLR::Shader::SCALAR, & light1InModelSpaceColor );
 
-
 		glr.container( "PROGRAM-LIGHTED-CHECKERBOARD-LIGHT-IN-MODEL-SPACE" ).
 			setVertexArray( "VERTICES-LIGHTED-CHECKERBOARD-LIGHT-IN-MODEL-SPACE" ).
 			setShader( "SHADER-LIGHTED-CHECKERBOARD-LIGHT-IN-MODEL-SPACE" ).
@@ -325,7 +324,7 @@ LightedCheckerboardCave::init( ) {
 	{
 		glr.vertices( "VERTICES-LIGHTED-CHECKERBOARD-LIGHT-IN-CAMERA-SPACE" ).
 			setUsage( GL_STATIC_DRAW ).
-			attrib( "color", 3, 0 ) <<
+			attrib( "color", 0, 3 ) <<
 			0.f << 0.f << 0.f <<
 			GLR::VertexArray::Object( 0, 1, GL_POINTS );
 
@@ -406,14 +405,15 @@ LightedCheckerboardCave::init( ) {
 			setShader( "SHADER-LIGHTED-CHECKERBOARD-LIGHT-IN-CAMERA-SPACE" ).
 			build( );
 	}
+
+	glFrontFace( GL_CCW );
 }
 
 void
-LightedCheckerboardCave::paint( ) {
+LightedCheckerboardCave::paint ( ) {
 
 	// do the usual stuff
 	{
-
 		glEnable( GL_DEPTH_TEST );
 		glEnable( GL_CULL_FACE );
 
@@ -513,4 +513,6 @@ LightedCheckerboardCave::resize( int p_width, int p_height ) {
 
 	// create a projection matrix
 	projection = glm::perspective( 45.0f, ratio, 1.0f, 100.f );
+
+	glr.screenon ( );
 }

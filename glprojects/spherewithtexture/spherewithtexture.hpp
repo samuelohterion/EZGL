@@ -8,7 +8,7 @@ public GLProject {
 
 	public:
 
-		SphereWithTexture( CStr const & p_name = "SphereWithTexture", ViewControlData * p_vcd = nullptr );
+		SphereWithTexture( CStr const & p_name = "SphereWithTexture" );
 
 	public:
 

@@ -1,8 +1,8 @@
 #include "solarsystem.hpp"
 #include "../../code/glmprinter.hpp"
 
-SolarsSystem::SolarsSystem( const CStr &p_name, ViewControlData *p_vcd ) :
-GLProject ( p_name, p_vcd ) {
+SolarsSystem::SolarsSystem( const CStr &p_name ) :
+GLProject ( p_name ) {
 
 }
 
@@ -417,55 +417,55 @@ SolarsSystem::init( ) {
 		{
 			glr.texture(
 				"T-SPHERE-WITH-TEXTURE-SPHERE-EARTH-DAYMAP",
-				new GLR::Texture( "txSphere", "../EZGL/pix/2k_earth_daymap.jpg" ) );
+				new GLR::Texture( "txSphere", "../pix/2k_earth_daymap.jpg" ) );
 		}
 		// T-SPHERE-WITH-TEXTURE-SPHERE-EARTH-CLOUDS
 		{
 			glr.texture(
 				"T-SPHERE-WITH-TEXTURE-SPHERE-EARTH-CLOUDS",
-				new GLR::Texture( "txClouds", "../EZGL/pix/2k_earth_clouds.jpg" ) );
+				new GLR::Texture( "txClouds", "../pix/2k_earth_clouds.jpg" ) );
 		}
 		// T-SPHERE-WITH-TEXTURE-SPHERE-EARTH-NIGHTMAP
 		{
 			glr.texture(
 				"T-SPHERE-WITH-TEXTURE-SPHERE-EARTH-NIGHTMAP",
-				new GLR::Texture( "txNightmap", "../EZGL/pix/2k_earth_nightmap.jpg" ) );
+				new GLR::Texture( "txNightmap", "../pix/2k_earth_nightmap.jpg" ) );
 		}
 		// T-SPHERE-WITH-TEXTURE-SPHERE-MOON
 		{
 			glr.texture(
 				"T-SPHERE-WITH-TEXTURE-SPHERE-MOON",
-				new GLR::Texture( "txSphere", "../EZGL/pix/2k_moon.jpg" ) );
+				new GLR::Texture( "txSphere", "../pix/2k_moon.jpg" ) );
 		}
 		// T-SPHERE-WITH-TEXTURE-SPHERE-MERCURY
 		{
 			glr.texture(
 				"T-SPHERE-WITH-TEXTURE-SPHERE-MERCURY",
-				new GLR::Texture( "txSphere", "../EZGL/pix/2k_mercury.jpg" ) );
+				new GLR::Texture( "txSphere", "../pix/2k_mercury.jpg" ) );
 		}
 		// T-SPHERE-WITH-TEXTURE-SPHERE-MARS
 		{
 			glr.texture(
 				"T-SPHERE-WITH-TEXTURE-SPHERE-MARS",
-				new GLR::Texture( "txSphere", "../EZGL/pix/2k_mars.jpg" ) );
+				new GLR::Texture( "txSphere", "../pix/2k_mars.jpg" ) );
 		}
 		// T-SPHERE-WITH-TEXTURE-SPHERE-VENUS-SURFACE
 		{
 			glr.texture(
 				"T-SPHERE-WITH-TEXTURE-SPHERE-VENUS-SURFACE",
-				new GLR::Texture( "txS", "../EZGL/pix/2k_venus_surface.jpg" ) );
+				new GLR::Texture( "txS", "../pix/2k_venus_surface.jpg" ) );
 		}
 		// T-SPHERE-WITH-TEXTURE-SPHERE-VENUS-ATMOSPHERE
 		{
 			glr.texture(
 				"T-SPHERE-WITH-TEXTURE-SPHERE-VENUS-ATMOSPHERE",
-				new GLR::Texture( "txA", "../EZGL/pix/2k_venus_atmosphere.jpg" ) );
+				new GLR::Texture( "txA", "../pix/2k_venus_atmosphere.jpg" ) );
 		}
 		// T-SPHERE-WITH-TEXTURE-SPHERE-SUN
 		{
 			glr.texture(
 				"T-SPHERE-WITH-TEXTURE-SPHERE-SUN",
-				new GLR::Texture( "txSphere", "../EZGL/pix/2k_sun.jpg" ) );
+				new GLR::Texture( "txSphere", "../pix/2k_sun.jpg" ) );
 		}
 	}
 
@@ -669,4 +669,6 @@ SolarsSystem::resize( int p_width, int p_height ) {
 
 	// create a projection matrix
 	projection = glm::perspective( 30.f * 3.14159f / 180.f, ratio, 1.0f, 300.f );
+
+	glr.screenon ( );
 }

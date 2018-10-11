@@ -8,7 +8,7 @@ public GLProject {
 
 	public:
 
-		TextureTest( CStr const & p_name = "TextureTest", ViewControlData * p_vcd = nullptr );
+		TextureTest( CStr const & p_name = "TextureTest" );
 
 	public:
 

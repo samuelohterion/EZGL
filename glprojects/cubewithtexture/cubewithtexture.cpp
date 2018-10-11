@@ -1,8 +1,8 @@
 #include "cubewithtexture.hpp"
 #include "../../code/glmprinter.hpp"
 
-CubeWithTexture::CubeWithTexture( const CStr &p_name, ViewControlData *p_vcd ) :
-GLProject ( p_name, p_vcd ) {
+CubeWithTexture::CubeWithTexture( const CStr &p_name ) :
+GLProject ( p_name ) {
 
 }
 
@@ -19,13 +19,13 @@ CubeWithTexture::init( ) {
 		{
 			glr.texture(
 			"T-CUBE-WITH-TEXTURE-BACKGROUND",
-			new GLR::Texture( "txBackground", "../EZGL/pix/cubemapsmall.jpg" ) );
+			new GLR::Texture( "txBackground", "../pix/cubemapsmall.jpg" ) );
 		}
 		// T-CUBE-WITH-TEXTURE-CUBE
 		{
 			glr.texture(
 			"T-CUBE-WITH-TEXTURE-CUBE",
-			new GLR::Texture( "txCube", "../EZGL/pix/cubemapsmall.png" ) );
+			new GLR::Texture( "txCube", "../pix/cubemapsmall.png" ) );
 		}
 	}
 
@@ -342,4 +342,6 @@ CubeWithTexture::resize( int p_width, int p_height ) {
 
 	// create a projection matrix
 	projection = glm::perspective( 45.0f, ratio, .1f, 100.f );
+
+	glr.screenon ( );
 }

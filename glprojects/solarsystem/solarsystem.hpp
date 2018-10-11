@@ -8,7 +8,7 @@ public GLProject {
 
 	public:
 
-		SolarsSystem( CStr const & p_name = "SolarsSystem", ViewControlData * p_vcd = nullptr );
+		SolarsSystem( CStr const & p_name = "SolarsSystem" );
 
 	public:
 

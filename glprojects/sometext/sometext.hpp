@@ -8,7 +8,7 @@ public GLProject {
 
 	public:
 
-		SomeText( CStr const & p_name = "SomeText", ViewControlData * p_vcd = nullptr );
+		SomeText ( CStr const & p_name = "SomeText" );
 
 	public:
 
@@ -23,13 +23,13 @@ public GLProject {
 	public:
 
 		void
-		init( );
+		init ( );
 
 		void
-		paint( );
+		paint ( );
 
 		void
-		resize( int p_width, int p_height );
+		resize ( int p_width, int p_height );
 };
 
 #endif // INTERACTION_HPP

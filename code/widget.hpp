@@ -99,9 +99,6 @@ public QGLWidget {
 		toggleFullscreen ( );
 
 		void
-		selectGLProject ( QString const & p_name );
-
-		void
 		removeGLProject ( QString const & p_name );
 
 	public slots:

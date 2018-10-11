@@ -1,22 +1,18 @@
 #include "spherewithtexture.hpp"
 #include "../../code/glmprinter.hpp"
 
-SphereWithTexture::SphereWithTexture( const CStr &p_name, ViewControlData *p_vcd ) :
-GLProject ( p_name, p_vcd ) {
+SphereWithTexture::SphereWithTexture ( const CStr &p_name ) :
+GLProject ( p_name ) {
 
 }
 
 
 void
-SphereWithTexture::init( ) {
+SphereWithTexture::init ( ) {
 
 	GLsizei
 	xSize = 64,
 	ySize = 32;
-
-	// frame buffer
-	{
-	}
 
 	// vertex arrays
 	{
@@ -26,7 +22,8 @@ SphereWithTexture::init( ) {
 			& va =
 				glr.vertices( "VA-SPHERE-WITH-TEXTURE-SPHERE" ).
 					setUsage( GL_STATIC_DRAW ).
-					attrib( "vertex", 3, 0 ). attrib( "coord", 2, 3 );
+					attrib( "vertex", 0, 3 ).
+					attrib( "coord", 3, 2 );
 
 			va << 0.f << 1.f << 0.f << .5f << 1.f;
 
@@ -291,31 +288,31 @@ SphereWithTexture::init( ) {
 		{
 			glr.texture(
 				"TX-SPHERE-WITH-TEXTURE-SPHERE-EARTH-LANDSCAPE",
-				new GLR::Texture( "txSphere", "../EZGL/glprojects/spherewithtexture/pix/2k_earth_daymap.jpg" ) );
+				new GLR::Texture( "txSphere", "../pix/2k_earth_daymap.jpg" ) );
 		}
 		// TX-SPHERE-WITH-TEXTURE-SPHERE-EARTH-CLOUDS
 		{
 			glr.texture(
 				"TX-SPHERE-WITH-TEXTURE-SPHERE-EARTH-CLOUDS",
-				new GLR::Texture( "txClouds", "../EZGL/glprojects/spherewithtexture/pix/2k_earth_clouds.jpg" ) );
+				new GLR::Texture( "txClouds", "../pix/2k_earth_clouds.jpg" ) );
 		}
 		// TX-SPHERE-WITH-TEXTURE-SPHERE-EARTH-NIGHTMAP
 		{
 			glr.texture(
 				"TX-SPHERE-WITH-TEXTURE-SPHERE-EARTH-NIGHTMAP",
-				new GLR::Texture( "txNightmap", "../EZGL/glprojects/spherewithtexture/pix/2k_earth_nightmap.jpg" ) );
+				new GLR::Texture( "txNightmap", "../pix/2k_earth_nightmap.jpg" ) );
 		}
 		// TX-SPHERE-WITH-TEXTURE-SPHERE-MOON
 		{
 			glr.texture(
 				"TX-SPHERE-WITH-TEXTURE-SPHERE-MOON",
-				new GLR::Texture( "txSphere", "../EZGL/glprojects/spherewithtexture/pix/2k_moon.jpg" ) );
+				new GLR::Texture( "txSphere", "../pix/2k_moon.jpg" ) );
 		}
 		// TX-SPHERE-WITH-TEXTURE-SPHERE-SUN
 		{
 			glr.texture(
 				"TX-SPHERE-WITH-TEXTURE-SPHERE-SUN",
-				new GLR::Texture( "txSphere", "../EZGL/glprojects/spherewithtexture/pix/2k_sun.jpg" ) );
+				new GLR::Texture( "txSphere", "../pix/2k_sun.jpg" ) );
 		}
 	}
 
@@ -407,4 +404,6 @@ SphereWithTexture::resize( int p_width, int p_height ) {
 
 	// create a projection matrix
 	projection = glm::perspective( 45.0f, ratio, 1.0f, 300.f );
+
+	glr.screenon ( );
 }

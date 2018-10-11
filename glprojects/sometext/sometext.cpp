@@ -1,16 +1,12 @@
 #include "sometext.hpp"
 
-SomeText::SomeText ( const CStr &p_name, ViewControlData * p_vcd ) :
-GLProject ( p_name, p_vcd ) {
+SomeText::SomeText ( const CStr & p_name ) :
+GLProject ( p_name ) {
 
 }
 
 void
-SomeText::init( ) {
-
-	// frame buffer
-	{
-	}
+SomeText::init ( ) {
 
 	// vertex arrays
 	{
@@ -26,6 +22,7 @@ SomeText::init( ) {
 				GLR::VertexArray::Object( 0, 4, GL_TRIANGLE_FAN );
 		}
 	}
+
 	// index arrays
 	{
 
@@ -37,6 +34,7 @@ SomeText::init( ) {
 //				GLRenderer::IndexArray::Object( 0, 4, GL_TRIANGLE_FAN );
 //		}
 	}
+
 	// shaders
 	{
 		// S-CHARACTER
@@ -91,7 +89,7 @@ SomeText::init( ) {
 		{
 			glr.texture(
 			"T-CHARACTERS",
-			new GLR::Texture( "txChars", "../EZGL/pix/characters.png" ) );
+			new GLR::Texture( "txChars", "../pix/characters.png" ) );
 		}
 	}
 	// containers
@@ -115,7 +113,7 @@ SomeText::init( ) {
 }
 
 void
-SomeText::paint( ) {
+SomeText::paint ( ) {
 
 	glEnable( GL_DEPTH_TEST );
 	glDisable( GL_CULL_FACE );
@@ -163,7 +161,7 @@ SomeText::paint( ) {
 }
 
 void
-SomeText::resize( int p_width, int p_height ) {
+SomeText::resize ( int p_width, int p_height ) {
 
 	// get aspect ratio
 	float
@@ -171,4 +169,6 @@ SomeText::resize( int p_width, int p_height ) {
 
 	// create a projection matrix
 	projection = glm::perspective( 45.0f, ratio, 1.0f, 100.f );
+
+	glr.screenon ( );
 }

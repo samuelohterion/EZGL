@@ -9,7 +9,7 @@ public GLProject {
 
 	public:
 
-		FunIn2D( CStr const & p_name, ViewControlData * p_vcd = nullptr );
+		FunIn2D( CStr const & p_name = "FunIn2D" );
 
 		void
 		init( );
