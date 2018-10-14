@@ -2052,7 +2052,9 @@ GLR {
 
 		GLR ( ) :
 		fb ( nullptr ),
-		mode ( ONSCREEN ) {
+		mode ( ONSCREEN ),
+		screenWidth ( 16 ),
+		screenHeight ( 9 ) {
 
 		}
 

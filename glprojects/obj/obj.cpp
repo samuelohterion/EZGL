@@ -578,6 +578,7 @@ ObjExample:: paint ( ) {
 	lightPos = V3( model * V4 ( r * sinf( vcd->time ), 2.f + 8.f * cosf( .1f * vcd->time ), r * cosf( vcd->time ), 1. ) );
 
 	glr.screenoff ( );
+
 	glEnable ( GL_DEPTH_TEST );
 	glDisable ( GL_CULL_FACE );
 	glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -601,21 +602,25 @@ ObjExample:: paint ( ) {
 	glr.run ( { "C-LIGHT" } );
 
 	glr.screenon ( );
+
 	glDisable ( GL_DEPTH_TEST );
+//	glEnable ( GL_DEPTH_TEST );
 	glEnable ( GL_CULL_FACE );
+
 	glr.run ( { "C-PASS2" } );
-	glEnable ( GL_CULL_FACE );
-	glEnable ( GL_DEPTH_TEST );
+
+	//glEnable ( GL_DEPTH_TEST );
 	glr.run ( cAudi [ PASSES_2 ] );
 
 	model = glm::scale ( tmpLocal, V3 ( 5.f, 5.f, 5.f ) );
 
-	glr.run ( cWoman [ PASSES_1 ] );
+	glEnable ( GL_DEPTH_TEST );
+//	glr.run ( cWoman [ PASSES_1 ] );
 
 	model = glm::rotate ( tmpLocal, 1.57f, V3 ( 0.f, 1.f, 0.f ) );
 	model = glm::translate ( model, V3 ( 0.f, +4.5f, 0.f ) );
 
-	glr.run ( cAudi [ PASSES_1 ] );
+//	glr.run ( cAudi [ PASSES_1 ] );
 
 	model = tmpGlobal;
 
@@ -678,4 +683,6 @@ ObjExample:: resize ( int p_width, int p_height ) {
 
 	// create a projection matrix
 	projection = glm::perspective( 30.f * 3.14159f / 180.f, ratio, 1.0f, 300.f );
+
+	glr.screenon ( );
 }
