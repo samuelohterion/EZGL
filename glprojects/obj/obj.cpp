@@ -556,7 +556,7 @@ ObjExample:: paint ( ) {
 
 	ccv.reactOnMouse ( );
 
-	ccv.rotate_around_y ( .001f );
+	ccv.rotate_around_y ( .01f );
 
 	model = ccv.model ( );
 
