@@ -398,8 +398,8 @@ ObjExample::init ( ) {
 	{
 		glr.
 			createOffScreen ( ).
-			addOutTexture ( "T-PASS1-Z" ).
-			addOutTexture ( "T-PASS1-COL" );
+			addOutTexture ( "T-PASS1-COL" ).
+			addOutTexture ( "T-PASS1-Z" );
 	}
 
 	// vertex arrays
@@ -482,10 +482,10 @@ ObjExample::init ( ) {
 					"in VS2FS {\n"
 					"	vec2 tx;\n"
 					"} vs2fs;\n"
-					"uniform sampler2D pass1;\n"
+					"uniform sampler2D pass1C;\n"
 					"out vec4 fColor;"
 					"void main ( ) {\n"
-					"	fColor = texture( pass1, vs2fs.tx );\n"
+					"	fColor = texture( pass1C, vs2fs.tx );\n"
 					"}\n",
 					GLR::ShaderCode::FROM_CODE );
 		}
@@ -498,24 +498,24 @@ ObjExample::init ( ) {
 			glr.texture (
 				"T-PASS1-COL",
 				new GLR::Texture (
-					"pass1",
+					"pass1C",
 					GL_TEXTURE_2D, 0, GL_RGBA32F,
 					GL_NEAREST, GL_NEAREST,
 					GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE,
 					GL_RGBA, GL_FLOAT,
-					512, 512 ) );
+					16, 9 ) );
 		}
 		//T-PASS1-Z
 		{
 			glr.texture (
 				"T-PASS1-Z",
 				new GLR::Texture (
-					"pass2",
+					"pass1Z",
 					GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32,
 					GL_NEAREST, GL_NEAREST,
 					GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE,
 					GL_DEPTH_COMPONENT, GL_UNSIGNED_INT,
-					512, 512 ) );
+					16, 9 ) );
 		}
 	}
 
@@ -562,6 +562,8 @@ ObjExample:: paint ( ) {
 
 	view  = ccv.view ( );
 
+	glr.run ( cWoman [ PASSES_1 ] );
+
 	GLfloat const
 	pi = 3.141593f;
 
@@ -602,25 +604,22 @@ ObjExample:: paint ( ) {
 	glr.run ( { "C-LIGHT" } );
 
 	glr.screenon ( );
+	glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-	glDisable ( GL_DEPTH_TEST );
-//	glEnable ( GL_DEPTH_TEST );
-	glEnable ( GL_CULL_FACE );
+//	glr.run ( { "C-PASS2" } );
 
-	glr.run ( { "C-PASS2" } );
-
-	//glEnable ( GL_DEPTH_TEST );
+	glEnable ( GL_DEPTH_TEST );
 	glr.run ( cAudi [ PASSES_2 ] );
 
 	model = glm::scale ( tmpLocal, V3 ( 5.f, 5.f, 5.f ) );
 
-	glEnable ( GL_DEPTH_TEST );
-//	glr.run ( cWoman [ PASSES_1 ] );
+	glr.run ( cWoman [ PASSES_1 ] );
 
 	model = glm::rotate ( tmpLocal, 1.57f, V3 ( 0.f, 1.f, 0.f ) );
 	model = glm::translate ( model, V3 ( 0.f, +4.5f, 0.f ) );
 
-//	glr.run ( cAudi [ PASSES_1 ] );
+	glr.run ( cAudi [ PASSES_1 ] );
+	glr.run ( { "C-LIGHT" } );
 
 	model = tmpGlobal;
 

@@ -2314,12 +2314,12 @@ GLR {
 
 				return;
 
-			fb->release( );
-
 			for ( auto t : fb->outTextures ) {
 
 				tx[ t ]->release( );
 			}
+
+			fb->release( );
 		}
 };
 
