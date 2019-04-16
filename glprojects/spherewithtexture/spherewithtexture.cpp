@@ -6,7 +6,6 @@ GLProject ( p_name ) {
 
 }
 
-
 void
 SphereWithTexture::init ( ) {
 
@@ -383,7 +382,7 @@ SphereWithTexture::paint( ) {
 	M4
 	tmp = model;
 	model = glm::rotate( model, +23.f / 180.f * 3.14159f, normalize( glm::vec3( 0.f, 0.f, 1.0f ) ) );
-	model = glm::rotate( model, day, glm::vec3( 0.f, 1.f, 0.f ) );
+	model = glm::rotate( model, -day, glm::vec3( 0.f, 1.f, 0.f ) );
 	//model = glm::rotate( model, day, glm::vec3( 0.f, cosf( 23.f / 180.f * 3.14f ), sinf( 23.f / 180.f * 3.14f ) ) );
 
 	glr.run( { "PR-SPHERE-WITH-TEXTURE-SPHERE-EARTH" } );

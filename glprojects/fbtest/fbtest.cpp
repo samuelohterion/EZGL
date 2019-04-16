@@ -11,7 +11,7 @@ FBTest::init( ) {
 
 	// textures
 	{
-		// T-MS-TEST-COL
+		// T-FB-TEST-CANVAS-COL
 		{
 			glr.texture(
 				"T-FB-TEST-CANVAS-COL",
@@ -267,7 +267,7 @@ FBTest::paint ( ) {
 
 	m = ccv.model ( );
 
-	v  = ccv.view ( );
+	v = ccv.view ( );
 
 	M4
 	t = m;

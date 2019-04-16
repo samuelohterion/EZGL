@@ -537,6 +537,12 @@ ObjExample::init ( ) {
 	cAudi  = add2GLR( obj1, "audi000tri.obj", "/home/friedrich/Downloads/models/audi000/", "/home/friedrich/Downloads/models/audi000/" );
 	cWoman = add2GLR( obj2, "rosawomantri.obj", "/home/friedrich/Development/c++/2018.06.03/obj/", "/home/friedrich/Development/c++/2018.06.03/pix/" );
 
+	for ( auto p : cAudi[ PASSES_1 ] ) {
+
+		piecePositions.push_back ( 20.f * V3( 1. * rand( ) / RAND_MAX - .5, 1. * rand( ) / RAND_MAX - .5, 1. * rand( ) / RAND_MAX - .5 ) );
+	}
+
+
 	projection = view = model = glm::mat4 ( 1. );
 
 	model = glm::translate( model, V3 ( +0, +0, +0 ) );
@@ -600,7 +606,24 @@ ObjExample:: paint ( ) {
 	model = glm::rotate ( tmpLocal, 1.57f, V3 ( 0.f, 1.f, 0.f ) );
 	model = glm::translate ( model, V3 ( 0.f, +4.5f, 0.f ) );
 
-	glr.run ( cAudi [ PASSES_1 ] );
+	tm = .1f * vcd->time;
+
+	std::size_t
+	len = static_cast< std::size_t > ( tm ) % cAudi [ PASSES_1 ].size ( );
+
+
+	for ( std::size_t i = 0; i < cAudi [ PASSES_1 ].size ( ); ++ i ) {
+
+		if ( i <= len ) {
+
+//			model = glm::translate( model, ( 1.f - glm::fract ( tm ) ) * piecePositions[ i ] );
+
+			glr.run ( { cAudi [ PASSES_1 ][ i ] } );
+
+//			model = glm::translate( model, -( 1.f - glm::fract ( tm ) ) * piecePositions[ i ] );
+		}
+	}
+
 	glr.run ( { "C-LIGHT" } );
 
 	glr.screenon ( );
@@ -608,69 +631,43 @@ ObjExample:: paint ( ) {
 
 //	glr.run ( { "C-PASS2" } );
 
+	glEnable( GL_CULL_FACE );
 	glEnable ( GL_DEPTH_TEST );
+
+	glCullFace( GL_FRONT );
+	glr.run ( cAudi [ PASSES_2 ] );
+
+	glCullFace( GL_BACK );
 	glr.run ( cAudi [ PASSES_2 ] );
 
 	model = glm::scale ( tmpLocal, V3 ( 5.f, 5.f, 5.f ) );
 
-	glr.run ( cWoman [ PASSES_1 ] );
+	glCullFace( GL_FRONT );
+	glr.run ( cWoman [ PASSES_2 ] );
 
-	model = glm::rotate ( tmpLocal, 1.57f, V3 ( 0.f, 1.f, 0.f ) );
-	model = glm::translate ( model, V3 ( 0.f, +4.5f, 0.f ) );
-
-	glr.run ( cAudi [ PASSES_1 ] );
-	glr.run ( { "C-LIGHT" } );
-
-	model = tmpGlobal;
-
-/*
-	GLfloat const
-	pi = 3.141593f;
-
-	GLfloat
-	tm = glm::mod ( vcd->time, 20.f * pi ),
-	r;
-
-	if ( 10.f * pi < tm )
-
-		tm = 20.f * pi - tm;
-
-	r  = 2.f + .33f * tm;
-
-	lightPos = V3( model * V4 ( r * sinf( vcd->time ), 2.f + 8.f * cosf( .1f * vcd->time ), r * cosf( vcd->time ), 1. ) );
-
-	M4
-	tmpGlobal = model;
-
-	model = glm::translate ( model, V3 ( 0.f, -10.f, 0.f ) );
-
-	M4
-	tmpLocal = model;
-
-	model = glm::scale ( model, V3 ( 5.f, 5.f, 5.f ) );
+	glCullFace( GL_BACK );
+	glr.run ( cWoman [ PASSES_2 ] );
 
 	glr.run ( cWoman [ PASSES_1 ] );
 
 	model = glm::rotate ( tmpLocal, 1.57f, V3 ( 0.f, 1.f, 0.f ) );
 	model = glm::translate ( model, V3 ( 0.f, +4.5f, 0.f ) );
 
-	glr.run ( cAudi [ PASSES_1 ] );
+	for ( std::size_t i = 0; i < cAudi [ PASSES_1 ].size ( ); ++ i ) {
 
-	glr.run ( { "C-PASS2" } );
+		if ( i <= len ) {
 
-//	model = glm::scale ( tmpLocal, V3 ( 5.f, 5.f, 5.f ) );
+//			model = glm::translate( model, ( 1.f - glm::fract ( tm ) ) * piecePositions[ i ] );
 
-//	glr.run ( cWoman [ PASSES_2 ] );
+			glr.run ( { cAudi [ PASSES_1 ][ i ] } );
 
-	model = glm::rotate ( tmpLocal, 1.57f, V3 ( 0.f, 1.f, 0.f ) );
-	model = glm::translate ( model, V3 ( 0.f, +4.5f, 0.f ) );
-
-	glr.run ( cAudi [ PASSES_2 ] );
+//			model = glm::translate( model, -( 1.f - glm::fract ( tm ) ) * piecePositions[ i ] );
+		}
+	}
 
 	glr.run ( { "C-LIGHT" } );
 
 	model = tmpGlobal;
-*/
 }
 
 void
@@ -684,4 +681,394 @@ ObjExample:: resize ( int p_width, int p_height ) {
 	projection = glm::perspective( 30.f * 3.14159f / 180.f, ratio, 1.0f, 300.f );
 
 	glr.screenon ( );
+}
+
+std::vector < std::vector < std::string > >
+OBJ::add2GLR( GLR & p_glr , CStr & p_objName, CStr & p_pixPath ) {
+
+	std::vector < std::vector < std::string > >
+	contNames;
+
+	contNames.push_back ( std::vector < std::string > ( ) );
+	contNames.push_back ( std::vector < std::string > ( ) );
+
+	auto
+	obj = objekts.find( p_objName );
+
+	if ( obj == objekts.cend ( ) ) {
+
+		return contNames;
+	}
+
+	return contNames;
+
+	//fromFile ( p_objPath + p_objName );
+/*
+	for ( auto m : mtl.materials ) {
+
+		if ( m.second->map_Kd != "" ) {
+
+			p_glr.texture(
+				"T-" + m.second->map_Kd,
+				new GLR::Texture (
+					"map_Kd",
+					 p_pixPath + m.second->map_Kd ) );
+		}
+	}
+
+	for ( auto o : objekts ) {
+
+		for ( auto s : o.second->surfaces ) {
+
+			std::string
+			name = o.second->name ( ) + "-" + s.second->name ( ),
+			vaName = "V-" + name,
+			coName = "C-" + name;
+
+			GLR::VertexArray
+			& va = p_glr.vertices( vaName );
+
+			GLR::Container
+			& co = p_glr.container ( coName );
+
+			GLuint
+			vCount = 0;
+
+			switch ( s.second->toi ) {
+
+				case TOI_VERTEX_ONLY : {
+
+					va.attrib ( "v", 0, 3 );
+
+					for ( auto id : s.second->idx ) {
+
+						++ vCount;
+
+						GLuint
+						i = 3 * id - 3;
+
+						va <<
+							v [ i + 0 ] <<
+							v [ i + 1 ] <<
+							v [ i + 2 ];
+					}
+
+					va << GLR::VertexArray::Object ( 0, vCount, GL_TRIANGLES );
+
+					Material
+					* mat = mtl.materials[ s.second->mat ];
+
+					if ( .999f < mat->d ) {
+
+						p_glr.shader (
+							"S-PASS1-" + name,
+							SHADERS[ PASSES_1 ][ SA_V ][ ST_VERTEX ],
+							SHADERS[ PASSES_1 ][ SA_V ][ ST_FRAGMENT ],
+							GLR::ShaderCode::FROM_CODE ).
+						addUniform ( "projection", GLR::Shader::MAT4,  GLR::Shader::SCALAR, & projection ).
+						addUniform ( "view",       GLR::Shader::MAT4,  GLR::Shader::SCALAR, & view ).
+						addUniform ( "model",      GLR::Shader::MAT4,  GLR::Shader::SCALAR, & model ).
+						addUniform ( "lightPos",   GLR::Shader::VEC3,  GLR::Shader::SCALAR, & lightPos ).
+						addUniform ( "Kd",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Kd ).
+						addUniform ( "Ks",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Ks ).
+						addUniform ( "Ka",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Ka ).
+						addUniform ( "Ke",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Ke ).
+						addUniform ( "Ni",         GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->Ni ).
+						addUniform ( "Ns",         GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->Ns ).
+						addUniform ( "d",          GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->d );
+
+						co.setShader ( "S-PASS1-" + name );
+
+						contNames[ PASSES_1 ].push_back( coName );
+					}
+					else {
+
+						glr.shader (
+							"S-PASS2-" + name,
+							SHADERS[ PASSES_2 ][ SA_V ][ ST_VERTEX ],
+							SHADERS[ PASSES_2 ][ SA_V ][ ST_FRAGMENT ],
+							GLR::ShaderCode::FROM_CODE ).
+							addUniform ( "model",      GLR::Shader::MAT4,  GLR::Shader::SCALAR, & model ).
+							addUniform ( "view",       GLR::Shader::MAT4,  GLR::Shader::SCALAR, & view ).
+							addUniform ( "projection", GLR::Shader::MAT4,  GLR::Shader::SCALAR, & projection ).
+							addUniform ( "lightPos",   GLR::Shader::VEC3,  GLR::Shader::SCALAR, & lightPos ).
+							addUniform ( "Kd",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Kd ).
+							addUniform ( "Ks",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Ks ).
+							addUniform ( "Ka",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Ka ).
+							addUniform ( "Ke",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Ke ).
+							addUniform ( "Ni",         GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->Ni ).
+							addUniform ( "Ns",         GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->Ns ).
+							addUniform ( "d",          GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->d );
+
+						co.addInTexture ( "T-PASS1-COL" );
+
+						co.setShader ( "S-PASS2-" + name );
+
+						contNames[ PASSES_2 ].push_back ( coName );
+					}
+
+					break;
+				}
+				case TOI_VERTEX_TEXTURE : {
+
+					std::size_t
+					len = s.second->idx.size ( );
+
+					for ( std::size_t id = 0; id < len; id += 2 ) {
+
+						++ vCount;
+
+						GLuint
+						i = 3 * s.second->idx [ id + 0 ] - 3,
+						j = 2 * s.second->idx [ id + 1 ] - 2;
+
+						va <<
+							p_obj.v  [ i + 0 ] << p_obj.v  [ i + 1 ] << p_obj.v [ i + 2 ] <<
+							p_obj.vt [ j + 0 ] << p_obj.vt [ j + 1 ];
+					}
+
+					va.
+					attrib ( "v",  0, 3 ).
+					attrib ( "vt", 3, 2 );
+
+					va << GLR::VertexArray::Object ( 0, vCount, GL_TRIANGLES );
+
+					Material
+					* mat = p_obj.mtl.materials[ s.second->mat ];
+
+					if ( .999f < mat->d ) {
+
+						glr.shader (
+							"S-PASS1-" + name,
+							SHADERS[ PASSES_1 ][ SA_VVT ][ ST_VERTEX ],
+							SHADERS[ PASSES_1 ][ SA_VVT ][ ST_FRAGMENT ],
+							GLR::ShaderCode::FROM_CODE ).
+						addUniform ( "projection", GLR::Shader::MAT4,  GLR::Shader::SCALAR, & projection ).
+						addUniform ( "view",       GLR::Shader::MAT4,  GLR::Shader::SCALAR, & view ).
+						addUniform ( "model",      GLR::Shader::MAT4,  GLR::Shader::SCALAR, & model ).
+						addUniform ( "lightPos",   GLR::Shader::VEC3,  GLR::Shader::SCALAR, & lightPos ).
+						addUniform ( "Kd",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Kd ).
+						addUniform ( "Ks",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Ks ).
+						addUniform ( "Ka",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Ka ).
+						addUniform ( "Ke",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Ke ).
+						addUniform ( "Ni",         GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->Ni ).
+						addUniform ( "Ns",         GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->Ns ).
+						addUniform ( "d",          GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->d );
+
+						co.setShader ( "S-PASS1-" + name );
+
+						contNames[ PASSES_1 ].push_back( coName );
+					}
+					else {
+
+						glr.shader (
+							"S-PASS2-" + name,
+							SHADERS[ PASSES_2 ][ SA_VVT ][ ST_VERTEX ],
+							SHADERS[ PASSES_2 ][ SA_VVT ][ ST_FRAGMENT ],
+							GLR::ShaderCode::FROM_CODE ).
+							addUniform ( "model",      GLR::Shader::MAT4,  GLR::Shader::SCALAR, & model ).
+							addUniform ( "view",       GLR::Shader::MAT4,  GLR::Shader::SCALAR, & view ).
+							addUniform ( "projection", GLR::Shader::MAT4,  GLR::Shader::SCALAR, & projection ).
+							addUniform ( "lightPos",   GLR::Shader::VEC3,  GLR::Shader::SCALAR, & lightPos ).
+							addUniform ( "Kd",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Kd ).
+							addUniform ( "Ks",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Ks ).
+							addUniform ( "Ka",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Ka ).
+							addUniform ( "Ke",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Ke ).
+							addUniform ( "Ni",         GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->Ni ).
+							addUniform ( "Ns",         GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->Ns ).
+							addUniform ( "d",          GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->d );
+
+						co.addInTexture ( "T-PASS1-COL" );
+
+						co.setShader ( "S-PASS2-" + name );
+
+						contNames[ PASSES_2 ].push_back ( coName );
+					}
+
+					if ( mat->map_Kd != "" ) {
+
+						co.addInTexture( "T-" + mat->map_Kd );
+					}
+
+					break;
+				}
+				case TOI_VERTEX_NORMAL : {
+
+					va.
+						setUsage( GL_STATIC_DRAW ).
+						attrib ( "v",  0, 3 ).
+						attrib ( "vn", 3, 3 );
+
+					std::size_t
+					len = s.second->idx.size ( );
+
+					for ( std::size_t id = 0; id < len; id += 2 ) {
+
+						++ vCount;
+
+						GLuint
+						i = 3 * s.second->idx [ id + 0 ] - 3,
+						j = 3 * s.second->idx [ id + 1 ] - 3;
+
+						va << p_obj.v  [ i + 0 ] << p_obj.v  [ i + 1 ] << p_obj.v  [ i + 2 ];
+						va << p_obj.vn [ j + 0 ] << p_obj.vn [ j + 1 ] << p_obj.vn [ j + 2 ];
+
+//							std::cout << "v:  " << obj.v  [ i + 0 ] << " " << obj.v  [ i + 1 ] << " " << obj.v  [ i + 2 ] << std::endl;
+//							std::cout << "vn: " << obj.vn [ j + 0 ] << " " << obj.vn [ j + 1 ] << " " << obj.vn [ j + 2 ] << std::endl;
+						//std::cout << ".";
+					}
+
+					va << GLR::VertexArray::Object ( 0, vCount, GL_TRIANGLES );
+
+					Material
+					* mat = p_obj.mtl.materials[ s.second->mat ];
+
+					if ( .999f < mat->d ) {
+
+						glr.shader (
+							"S-PASS1-" + name,
+							SHADERS[ PASSES_1 ][ SA_VVN ][ ST_VERTEX ],
+							SHADERS[ PASSES_1 ][ SA_VVN ][ ST_FRAGMENT ],
+							GLR::ShaderCode::FROM_CODE ).
+						addUniform ( "projection", GLR::Shader::MAT4,  GLR::Shader::SCALAR, & projection ).
+						addUniform ( "view",       GLR::Shader::MAT4,  GLR::Shader::SCALAR, & view ).
+						addUniform ( "model",      GLR::Shader::MAT4,  GLR::Shader::SCALAR, & model ).
+						addUniform ( "lightPos",   GLR::Shader::VEC3,  GLR::Shader::SCALAR, & lightPos ).
+						addUniform ( "Kd",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Kd ).
+						addUniform ( "Ks",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Ks ).
+						addUniform ( "Ka",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Ka ).
+						addUniform ( "Ke",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Ke ).
+						addUniform ( "Ni",         GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->Ni ).
+						addUniform ( "Ns",         GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->Ns ).
+						addUniform ( "d",          GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->d );
+
+						co.setShader ( "S-PASS1-" + name );
+
+						contNames[ PASSES_1 ].push_back( coName );
+					}
+					else {
+
+						glr.shader (
+							"S-PASS2-" + name,
+							SHADERS[ PASSES_2 ][ SA_VVN ][ ST_VERTEX ],
+							SHADERS[ PASSES_2 ][ SA_VVN ][ ST_FRAGMENT ],
+							GLR::ShaderCode::FROM_CODE ).
+							addUniform ( "model",      GLR::Shader::MAT4,  GLR::Shader::SCALAR, & model ).
+							addUniform ( "view",       GLR::Shader::MAT4,  GLR::Shader::SCALAR, & view ).
+							addUniform ( "projection", GLR::Shader::MAT4,  GLR::Shader::SCALAR, & projection ).
+							addUniform ( "lightPos",   GLR::Shader::VEC3,  GLR::Shader::SCALAR, & lightPos ).
+							addUniform ( "Kd",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Kd ).
+							addUniform ( "Ks",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Ks ).
+							addUniform ( "Ka",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Ka ).
+							addUniform ( "Ke",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Ke ).
+							addUniform ( "Ni",         GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->Ni ).
+							addUniform ( "Ns",         GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->Ns ).
+							addUniform ( "d",          GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->d );
+
+						co.addInTexture ( "T-PASS1-COL" );
+
+						co.setShader ( "S-PASS2-" + name );
+
+						contNames[ PASSES_2 ].push_back ( coName );
+					}
+
+					break;
+				}
+				case TOI_VERTEX_TEXTURE_NORMAL : {
+
+					std::size_t
+					len = s.second->idx.size ( );
+
+					for ( std::size_t id = 0; id < len; id += 3 ) {
+
+						++ vCount;
+
+						GLuint
+						i = 3 * s.second->idx [ id + 0 ] - 3,
+						j = 2 * s.second->idx [ id + 1 ] - 2,
+						k = 3 * s.second->idx [ id + 2 ] - 3;
+
+						va <<
+							p_obj.v  [ i + 0 ] << p_obj.v  [ i + 1 ] << p_obj.v  [ i + 2 ] <<
+							p_obj.vt [ j + 0 ] << p_obj.vt [ j + 1 ] <<
+							p_obj.vn [ k + 0 ] << p_obj.vn [ k + 1 ] << p_obj.vn [ k + 2 ];
+					}
+
+					va.
+						attrib ( "v",  0, 3 ).
+						attrib ( "vt", 3, 2 ).
+						attrib ( "vn", 5, 3 );
+
+					va << GLR::VertexArray::Object ( 0, vCount, GL_TRIANGLES );
+
+					Material
+					* mat = p_obj.mtl.materials[ s.second->mat ];
+
+					if ( .999f < mat->d ) {
+
+						glr.shader (
+							"S-PASS1-" + name,
+							SHADERS[ PASSES_1 ][ SA_VVTVN ][ ST_VERTEX ],
+							SHADERS[ PASSES_1 ][ SA_VVTVN ][ ST_FRAGMENT ],
+							GLR::ShaderCode::FROM_CODE ).
+							addUniform ( "model",      GLR::Shader::MAT4,  GLR::Shader::SCALAR, & model ).
+							addUniform ( "view",       GLR::Shader::MAT4,  GLR::Shader::SCALAR, & view ).
+							addUniform ( "projection", GLR::Shader::MAT4,  GLR::Shader::SCALAR, & projection ).
+							addUniform ( "lightPos",   GLR::Shader::VEC3,  GLR::Shader::SCALAR, & lightPos ).
+							addUniform ( "Kd",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Kd ).
+							addUniform ( "Ks",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Ks ).
+							addUniform ( "Ka",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Ka ).
+							addUniform ( "Ke",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Ke ).
+							addUniform ( "Ni",         GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->Ni ).
+							addUniform ( "Ns",         GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->Ns ).
+							addUniform ( "d",          GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->d );
+
+						co.setShader ( "S-PASS1-" + name );
+
+						contNames[ PASSES_1 ].push_back( coName );
+					}
+					else {
+
+						glr.shader (
+							"S-PASS2-" + name,
+							SHADERS[ PASSES_2 ][ SA_VVTVN ][ ST_VERTEX ],
+							SHADERS[ PASSES_2 ][ SA_VVTVN ][ ST_FRAGMENT ],
+							GLR::ShaderCode::FROM_CODE ).
+							addUniform ( "model",      GLR::Shader::MAT4,  GLR::Shader::SCALAR, & model ).
+							addUniform ( "view",       GLR::Shader::MAT4,  GLR::Shader::SCALAR, & view ).
+							addUniform ( "projection", GLR::Shader::MAT4,  GLR::Shader::SCALAR, & projection ).
+							addUniform ( "lightPos",   GLR::Shader::VEC3,  GLR::Shader::SCALAR, & lightPos ).
+							addUniform ( "Kd",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Kd ).
+							addUniform ( "Ks",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Ks ).
+							addUniform ( "Ka",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Ka ).
+							addUniform ( "Ke",         GLR::Shader::VEC3,  GLR::Shader::SCALAR, & mat->Ke ).
+							addUniform ( "Ni",         GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->Ni ).
+							addUniform ( "Ns",         GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->Ns ).
+							addUniform ( "d",          GLR::Shader::FLOAT, GLR::Shader::SCALAR, & mat->d );
+
+						co.addInTexture ( "T-PASS1-COL" );
+
+						co.setShader ( "S-PASS2-" + name );
+
+						contNames[ PASSES_2 ].push_back ( coName );
+					}
+
+					if ( mat->map_Kd != "" ) {
+
+						co.addInTexture ( "T-" + mat->map_Kd );
+					}
+
+					break;
+				}
+
+				default : break;
+			}
+
+			co.
+				setVertexArray ( "V-" + name ).
+				build ( );
+		}
+	}
+
+	return contNames;*/
 }

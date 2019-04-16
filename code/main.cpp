@@ -141,7 +141,7 @@ main( int argc, char *argv[ ] ) {
 
 	w.addGLProject ( fbTest );
 
-	w.slotSetGLProject ( "ObjExample" );
+	w.slotSetGLProject ( "ZBufferTexture" );
 
 	w.show( );
 

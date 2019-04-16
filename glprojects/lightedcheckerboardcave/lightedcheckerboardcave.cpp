@@ -101,7 +101,7 @@ LightedCheckerboardCave::init  ( ) {
 			"	vec2\n"
 			"		squareCoordsInWorldSpace;\n"
 
-			//	tranformed vectors
+			//	transformed vectors
 			"	vec4\n"
 			"		vertexInModelSpace,\n"
 			"		vertexInCameraSpace,\n"

@@ -343,7 +343,6 @@ SHADERS [ PASSES_COUNT ][ SA_COUNT ][ ST_COUNT ] = {
 
 			"void main( ) {\n"
 			"	vs2fs.v  = vec3( model * vec4( v, 1 ) );\n"
-			"	vs2fs.vt = vt;\n"
 			"	vs2fs.vn = normalize( vec3( vec4( vn, 0 ) * inverse( model ) ) );\n"
 			"	vec4 p = projection * view * model * vec4( v, 1 );\n"
 			"	vs2fs.tx = .5 + .5 * ( p / p.a );\n"
@@ -387,7 +386,7 @@ SHADERS [ PASSES_COUNT ][ SA_COUNT ][ ST_COUNT ] = {
 			"		specular = pow( specAngle, Ns );\n"
 			"	}\n"
 			"	vec3 backCol = vec3( texture( pass1C, vs2fs.tx.xy ) );\n"
-			"	vec3 colorLinear = Ka + ( mix( Kd, backCol, d ) * ( lambertian1 + lambertian2 ) + Ks * specular ) * lightColor * lightPower / distance;\n"
+			"	vec3 colorLinear = Ka + ( mix( backCol, Kd, d ) * ( lambertian1 + lambertian2 ) + Ks * specular ) * lightColor * lightPower / distance;\n"
 			"	vec3 colorGammaCorrected = pow( colorLinear, vec3( 1.0 / screenGamma ) );\n"
 			"	fColor = vec4( colorGammaCorrected, 1. );"
 			"}\n"
@@ -459,7 +458,7 @@ SHADERS [ PASSES_COUNT ][ SA_COUNT ][ ST_COUNT ] = {
 			"	}\n"
 			"	vec3 texCol = vec3( texture( map_Kd, vs2fs.vt ) );\n"
 			"	vec3 backCol = vec3( texture( pass1C, vs2fs.tx.xy ) );\n"
-			"	vec3 colorLinear = Ka + ( mix( backCol, texCol + Kd, d ) * ( lambertian1 + lambertian2 ) + Ks * specular ) * lightColor * lightPower / distance;\n"
+			"	vec3 colorLinear = Ka + ( mix( backCol, texCol * Kd, d ) * ( lambertian1 + lambertian2 ) + Ks * specular ) * lightColor * lightPower / distance;\n"
 			"	vec3 colorGammaCorrected = pow( colorLinear, vec3( 1.0 / screenGamma ) );\n"
 			"	fColor = vec4( colorGammaCorrected, 1. );"
 			"}\n"
@@ -1038,6 +1037,9 @@ class OBJ {
 
 			return true;
 		}
+
+		std::vector< std::vector< std::string > >
+		add2GLR( GLR & p_glr, CStr & p_objName , CStr & p_pixPath );
 };
 
 class ObjExample :
@@ -1072,6 +1074,9 @@ public GLProject {
 
 		GLint
 		renderPass;
+
+		std::vector< V3 >
+		piecePositions;
 
 	public :
 
