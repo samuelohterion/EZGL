@@ -16,7 +16,7 @@ Triangle {
 
 		}
 
-		~ Triangle ( ) {
+		~Triangle ( ) {
 
 			if ( ! t )
 

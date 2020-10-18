@@ -320,8 +320,8 @@ CubeWithTexture::paint( ) {
 	// now react on mouse input
 	ccv.reactOnMouse( );
 
-	// add additional rotation around z
-	ccv.rotate_around_z( .01f );
+	// add additional rotation around y
+	ccv.rotate_around_y( .01f );
 
 	// get new model matrix
 	model = ccv.model( );
